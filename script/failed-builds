@@ -7,21 +7,15 @@ require 'byebug'
 require 'faraday'
 require 'faraday/detailed_logger'
 
+Dotenv.load
+
 # https://evergreen.mongodb.com/version/5b216f090305b92b1f660e80
 start_url = ARGV.shift
 if start_url.nil?
   raise "Need a URL"
 end
 
-unless start_url =~ %r,https://evergreen.mongodb.com/version/(\w+)$,
-  raise 'URL malformed'
-end
-
-Dotenv.load
-
-version_id = $1
-
-conn = Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
+$conn = Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
   #f.request :url_encoded
   #f.response :detailed_logger
   f.adapter  Faraday.default_adapter
@@ -29,7 +23,45 @@ conn = Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
   f.headers['auth-username'] = ENV['AUTH_USERNAME']
   f.headers['api-key'] = ENV['API_KEY']
 end
-resp = conn.get("versions/#{version_id}/builds")
+
+def do_log(version_id, build_variant_id)
+  resp = $conn.get("versions/#{version_id}/builds")
+  payload = JSON.parse(resp.body)
+  variant = payload.detect do |build|
+    build['build_variant'] == build_variant_id
+  end
+  if variant.nil?
+    raise 'Variant not found'
+  end
+
+  if variant['tasks'].length != 1
+    raise "Have #{variant['tasks'].length} tasks, expecting 1"
+  end
+
+  task_id = variant['tasks'].first
+
+  resp = $conn.get("tasks/#{task_id}")
+  payload = JSON.parse(resp.body)
+
+  log_url = payload['logs']['all_log']
+
+  resp = $conn.get(log_url)
+  puts resp.body
+end
+
+unless start_url =~ %r,https://evergreen.mongodb.com/version/(\w+)$,
+  raise 'URL malformed'
+end
+
+version_id = $1
+
+if ARGV.first == 'log'
+  ARGV.shift
+  do_log(version_id, ARGV.shift)
+  exit
+end
+
+resp = $conn.get("versions/#{version_id}/builds")
 payload = JSON.parse(resp.body)
 
 payload = payload.sort_by { |build| build['build_variant'] }
