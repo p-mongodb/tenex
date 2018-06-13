@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'dotenv'
+require 'nokogiri'
+require 'byebug'
+require 'faraday'
+require 'faraday/detailed_logger'
+
+# https://evergreen.mongodb.com/version/5b216f090305b92b1f660e80
+start_url = ARGV.shift
+if start_url.nil?
+  raise "Need a URL"
+end
+
+unless start_url =~ %r,https://evergreen.mongodb.com/version/(\w+)$,
+  raise 'URL malformed'
+end
+
+Dotenv.load
+
+version_id = $1
+
+conn = Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
+  #f.request :url_encoded
+  #f.response :detailed_logger
+  f.adapter  Faraday.default_adapter
+  f.headers['user-agent'] = 'Mozilla/5.0 (Linux; X11; rv:27.9) Gecko/20100101 Firefox/27.9 (Pale Moon)'
+  f.headers['auth-username'] = ENV['AUTH_USERNAME']
+  f.headers['api-key'] = ENV['API_KEY']
+end
+resp = conn.get("versions/#{version_id}/builds")
+payload = JSON.parse(resp.body)
+
+payload.each do |build|
+  puts "#{build['build_variant']} #{build['status']}"
+end
