@@ -67,16 +67,19 @@ payload = JSON.parse(resp.body)
 payload = payload.sort_by { |build| build['build_variant'] }
 success_count = 0
 pending_count = 0
+failed_count = 0
 payload.each do |build|
   case build['status']
   when 'failed'
-    puts "#{build['build_variant']} #{build['status']}"
+    puts "\e[31m#{build['build_variant']} #{build['status']}\e[0m"
+    failed_count += 1
   when 'success'
     success_count += 1
+    puts "\e[32m#{build['build_variant']} #{build['status']}\e[0m"
   else
     pending_count += 1
   end
 end
 if success_count > 0 || pending_count > 0
-  puts "Plus #{success_count} successful and #{pending_count} pending builds"
+  puts "#{success_count} successful, #{failed_count} failed and #{pending_count} pending builds"
 end
