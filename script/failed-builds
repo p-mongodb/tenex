@@ -71,11 +71,11 @@ failed_count = 0
 payload.each do |build|
   case build['status']
   when 'failed'
-    puts "\e[31m#{build['build_variant']} #{build['status']}\e[0m"
+    puts "\e[31m#{build['build_variant']}\e[0m"
     failed_count += 1
   when 'success'
     success_count += 1
-    puts "\e[32m#{build['build_variant']} #{build['status']}\e[0m"
+    puts "\e[32m#{build['build_variant']}\e[0m"
   else
     pending_count += 1
   end
