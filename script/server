@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+$: << 'lib'
+require 'app'
+require 'dotenv'
+require 'byebug'
+
+Dotenv.load
+
+App.run!

@@ -1,0 +1,14 @@
+style
+  | tr.success { background: #cfc; }
+  | tr.failure { background: #fcc; }
+  | tr.pending { background: #fcf; }
+
+h2
+  a href=@pull['html_url'] ##{@pull['number']}: #{@pull['title']}
+  '
+  span by #{@pull['user']['login']}
+table
+  - @pull['statuses'].each do |status|
+    tr class="#{status['state']}"
+      td
+        | #{status['context']}
