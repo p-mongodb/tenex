@@ -1,3 +1,4 @@
+require 'evergreen'
 require 'faraday'
 require 'faraday/detailed_logger'
 require 'slim'
@@ -19,6 +20,13 @@ class App < Sinatra::Base
       f.headers['user-agent'] = 'EvergreenRubyClient'
       f.basic_auth(ENV['GITHUB_USERNAME'], ENV['GITHUB_TOKEN'])
     end
+  end
+
+  def eg_client
+    @eg_client ||= Evergreen::Client.new(
+        username: ENV['EVERGREEN_AUTH_USERNAME'],
+        api_key: ENV['EVERGREEN_API_KEY'],
+      )
   end
 
   get '/' do
@@ -58,8 +66,20 @@ class App < Sinatra::Base
         other_status['updated_at'] > status['updated_at']
       end
     end
+    payload.each do |status|
+      if status['context'] =~ /^evergreen\// && status['target_url']
+        build_id = File.basename(status['target_url'])
+        status['log_url'] = "/pulls/#{id}/evergreen-log/#{build_id}"
+      end
+    end
     payload.sort_by! { |a| a['context'] }
     @pull['statuses'] = payload
     slim :pull
+  end
+
+  get '/pulls/:id/evergreen-log/:build_id' do |pull_id, build_id|
+    build = Evergreen::Build.new(eg_client, build_id)
+    build.log
+
   end
 end

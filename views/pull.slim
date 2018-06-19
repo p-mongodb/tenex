@@ -16,3 +16,6 @@ table
           div= status['description']
       td
         a href=status['target_url'] Go
+      td
+        - if status['log_url']
+          a href=status['log_url'] Log

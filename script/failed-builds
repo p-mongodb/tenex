@@ -20,8 +20,8 @@ $conn = Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
   #f.response :detailed_logger
   f.adapter  Faraday.default_adapter
   f.headers['user-agent'] = 'Mozilla/5.0 (Linux; X11; rv:27.9) Gecko/20100101 Firefox/27.9 (Pale Moon)'
-  f.headers['auth-username'] = ENV['AUTH_USERNAME']
-  f.headers['api-key'] = ENV['API_KEY']
+  f.headers['auth-username'] = ENV['EVERGREEN_AUTH_USERNAME']
+  f.headers['api-key'] = ENV['EVERGREEN_API_KEY']
 end
 
 def do_log(version_id, build_variant_id)

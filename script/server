@@ -1,10 +1,3 @@
-#!/usr/bin/env ruby
+#!/bin/sh
 
-$: << 'lib'
-require 'app'
-require 'dotenv'
-require 'byebug'
-
-Dotenv.load
-
-App.run!
+exec bundle exec shotgun .config.ru
