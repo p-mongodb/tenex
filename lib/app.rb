@@ -50,6 +50,14 @@ class App < Sinatra::Base
     sha = @pull['head']['sha']
     resp = gh_client.get("/repos/mongodb/mongo-ruby-driver/statuses/#{sha}?per_page=100")
     payload = JSON.parse(resp.body)
+    # sometimes the statuses are duplicated?
+    payload.delete_if do |status|
+      payload.any? do |other_status|
+        other_status['context'] == status['context'] &&
+        other_status['id'] != status['id'] &&
+        other_status['updated_at'] > status['updated_at']
+      end
+    end
     payload.sort_by! { |a| a['context'] }
     @pull['statuses'] = payload
     slim :pull

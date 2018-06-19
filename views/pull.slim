@@ -1,7 +1,7 @@
 style
   | tr.success { background: #cfc; }
   | tr.failure { background: #fcc; }
-  | tr.pending { background: #fcf; }
+  | tr.pending { background: #ffc; }
 
 h2
   a href=@pull['html_url'] ##{@pull['number']}: #{@pull['title']}
@@ -11,4 +11,8 @@ table
   - @pull['statuses'].each do |status|
     tr class="#{status['state']}"
       td
-        | #{status['context']}
+        = status['context']
+        - if status['description']
+          div= status['description']
+      td
+        a href=status['target_url'] Go
