@@ -1,8 +1,9 @@
 module Evergreen
   class Build
-    def initialize(client, id)
+    def initialize(client, id, info: nil)
       @client = client
       @id = id
+      @info = info
     end
 
     attr_reader :client, :id
@@ -32,6 +33,10 @@ module Evergreen
         resp = client.connection.post("tasks/#{task_id}/restart")
         puts resp.status
       end
+    end
+
+    def failed?
+      info['status'] == 'failed'
     end
   end
 end

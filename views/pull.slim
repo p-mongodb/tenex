@@ -7,6 +7,10 @@ h2
   a href=@pull['html_url'] ##{@pull['number']}: #{@pull['title']}
   '
   span by #{@pull['user']['login']}
+
+p
+  a href="/pulls/#{@pull['number']}/restart-failed" Restart failed
+
 table
   - @statuses.each do |status|
     tr class="#{status['state']}"

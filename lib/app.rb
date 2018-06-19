@@ -77,9 +77,18 @@ class App < Sinatra::Base
     redirect "/pulls/#{pull_id}"
   end
 
-  get '/pulls/:id/restart' do |pull_id|
-    build = Evergreen::Build.new(eg_client, build_id)
-    build.restart
+  get '/pulls/:id/restart-failed' do |pull_id|
+    @pull = gh_repo.pull(pull_id)
+    @statuses = @pull.statuses
+    status = @statuses.detect do |status|
+      status['context'] == 'evergreen'
+    end
+    if status.nil?
+      return 'Could not find'
+    end
+    version_id = File.basename(status['target_url'])
+    version = Evergreen::Version.new(eg_client, version_id)
+    version.restart_failed_builds
     redirect "/pulls/#{pull_id}"
   end
 end
