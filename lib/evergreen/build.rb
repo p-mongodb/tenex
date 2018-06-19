@@ -26,5 +26,12 @@ module Evergreen
       resp = client.connection.get(log_url)
       resp.body
     end
+
+    def restart
+      info['tasks'].each do |task_id|
+        resp = client.connection.post("tasks/#{task_id}/restart")
+        puts resp.status
+      end
+    end
   end
 end

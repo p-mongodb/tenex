@@ -8,7 +8,7 @@ h2
   '
   span by #{@pull['user']['login']}
 table
-  - @pull['statuses'].each do |status|
+  - @statuses.each do |status|
     tr class="#{status['state']}"
       td
         = status['context']
@@ -19,3 +19,6 @@ table
       td
         - if status['log_url']
           a href=status['log_url'] Log
+      td
+        - if status['restart_url']
+          a href=status['restart_url'] Restart
