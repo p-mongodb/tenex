@@ -16,6 +16,7 @@ GEM
       faraday (~> 0.8)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
+    link_header (0.0.8)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
     multi_json (1.13.1)
@@ -58,6 +59,7 @@ DEPENDENCIES
   dotenv
   faraday (~> 0.8.0)
   faraday-detailed_logger
+  link_header
   nokogiri
   shotgun
   sinatra

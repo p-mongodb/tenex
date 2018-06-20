@@ -1,4 +1,5 @@
 require 'forwardable'
+require "link_header"
 
 module Github
   class Pull
@@ -19,7 +20,22 @@ module Github
     end
 
     def statuses
-      payload = client.get_json("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
+      resp = client.connection.get("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
+      payload = JSON.parse(resp.body)
+      prev = []
+
+      while link_header = resp.headers['link']
+        link = LinkHeader.parse(link_header)
+        next_link = link.find_link(%w(rel next))
+        if next_link.nil?
+          break
+        end
+        prev += payload
+        resp = client.connection.get(next_link.href)
+        payload = JSON.parse(resp.body)
+      end
+      prev += payload
+      payload = prev + payload
 
       # sometimes the statuses are duplicated?
       payload.delete_if do |status|
