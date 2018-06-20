@@ -13,7 +13,7 @@ module Github
 
     attr_reader :client, :repo_full_name, :info
 
-    def_delegator :@info, :[]
+    def_delegators :@info, :[], :[]=
 
     def head_sha
       info['head']['sha']
