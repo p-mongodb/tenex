@@ -4,6 +4,8 @@
     '
     span by #{pull['user']['login']}
   p
+    a href="https://github.com/mongodb/mongo-ruby-driver/pull/#{pull['number']}" PR @ GH
+    '
     span
       ' #{pull.success_count} successful builds,
       ' #{pull.failure_count} failed builds,
