@@ -37,16 +37,13 @@ class App < Sinatra::Base
     @pulls.each do |pull|
       sha = pull.head_sha
       statuses = pull.statuses
-      resp = gh_client.connection.get("/repos/mongodb/mongo-ruby-driver/statuses/#{sha}")
-      payload = JSON.parse(resp.body)
-      payload.sort_by! { |a| a['context'] }
-      pull['success_count'] = payload.inject(0) do |sum, status|
+      pull['success_count'] = statuses.inject(0) do |sum, status|
         sum + (status['state'] == 'success' ? 1 : 0)
       end
-      pull['failure_count'] = payload.inject(0) do |sum, status|
+      pull['failure_count'] = statuses.inject(0) do |sum, status|
         sum + (status['state'] == 'failure' ? 1 : 0)
       end
-      pull['pending_count'] = payload.inject(0) do |sum, status|
+      pull['pending_count'] = statuses.inject(0) do |sum, status|
         sum + (%w(success failure).include?(status['state']) ? 0 : 1)
       end
     end
