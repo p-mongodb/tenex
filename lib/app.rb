@@ -34,19 +34,6 @@ class App < Sinatra::Base
 
   get '/' do
     @pulls = gh_repo.pulls
-    @pulls.each do |pull|
-      sha = pull.head_sha
-      statuses = pull.statuses
-      pull['success_count'] = statuses.inject(0) do |sum, status|
-        sum + (status['state'] == 'success' ? 1 : 0)
-      end
-      pull['failure_count'] = statuses.inject(0) do |sum, status|
-        sum + (status['state'] == 'failure' ? 1 : 0)
-      end
-      pull['pending_count'] = statuses.inject(0) do |sum, status|
-        sum + (%w(success failure).include?(status['state']) ? 0 : 1)
-      end
-    end
     slim :dashboard
   end
 

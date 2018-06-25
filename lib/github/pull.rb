@@ -20,35 +20,55 @@ module Github
     end
 
     def statuses
-      resp = client.connection.get("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
-      payload = JSON.parse(resp.body)
-      prev = []
+      @statuses ||= begin
+        resp = client.connection.get("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
+        payload = JSON.parse(resp.body)
+        prev = []
 
-      while link_header = resp.headers['link']
-        link = LinkHeader.parse(link_header)
-        next_link = link.find_link(%w(rel next))
-        if next_link.nil?
-          break
+        while link_header = resp.headers['link']
+          link = LinkHeader.parse(link_header)
+          next_link = link.find_link(%w(rel next))
+          if next_link.nil?
+            break
+          end
+          prev += payload
+          resp = client.connection.get(next_link.href)
+          payload = JSON.parse(resp.body)
         end
         prev += payload
-        resp = client.connection.get(next_link.href)
-        payload = JSON.parse(resp.body)
-      end
-      prev += payload
-      payload = prev + payload
+        payload = prev + payload
 
-      # sometimes the statuses are duplicated?
-      payload.delete_if do |status|
-        payload.any? do |other_status|
-          other_status['context'] == status['context'] &&
-          other_status['id'] != status['id'] &&
-          other_status['updated_at'] > status['updated_at']
+        # sometimes the statuses are duplicated?
+        payload.delete_if do |status|
+          payload.any? do |other_status|
+            other_status['context'] == status['context'] &&
+            other_status['id'] != status['id'] &&
+            other_status['updated_at'] > status['updated_at']
+          end
+        end
+        payload.sort_by! { |a| a['context'] }
+
+        payload.map do |info|
+          Status.new(client, info: info)
         end
       end
-      payload.sort_by! { |a| a['context'] }
+    end
 
-      payload.map do |info|
-        Status.new(client, info: info)
+    def success_count
+      @success_count ||= statuses.inject(0) do |sum, status|
+        sum + (status['state'] == 'success' ? 1 : 0)
+      end
+    end
+
+    def failure_count
+      @failure_count ||= statuses.inject(0) do |sum, status|
+        sum + (status['state'] == 'failure' ? 1 : 0)
+      end
+    end
+
+    def pending_count
+      @pending_count ||= statuses.inject(0) do |sum, status|
+        sum + (%w(success failure).include?(status['state']) ? 0 : 1)
       end
     end
   end
