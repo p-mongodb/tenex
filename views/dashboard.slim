@@ -3,6 +3,9 @@
     a href="/pulls/#{pull['number']}" ##{pull['number']}: #{pull['title']}
     '
     span by #{pull['user']['login']}
-  p #{pull.success_count} successful builds,
-    #{pull.failure_count} failed builds,
-    #{pull.pending_count} pending builds
+  p
+    span
+      ' #{pull.success_count} successful builds,
+      ' #{pull.failure_count} failed builds,
+      ' #{pull.pending_count} pending builds.
+    a href="/pulls/#{pull['number']}/restart-failed" Restart failed

@@ -74,6 +74,10 @@ class App < Sinatra::Base
     version_id = File.basename(status['target_url'])
     version = Evergreen::Version.new(eg_client, version_id)
     version.restart_failed_builds
-    redirect "/pulls/#{pull_id}"
+    redirect return_path || "/pulls/#{pull_id}"
+  end
+
+  private def return_path
+    URI.parse(request.env['HTTP_REFERER']).path
   end
 end
