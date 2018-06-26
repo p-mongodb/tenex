@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'evergreen'
 require 'github'
 require 'faraday'
@@ -6,6 +7,58 @@ require 'slim'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
+
+class EvergreenStatusPresenter
+  extend Forwardable
+
+  def initialize(status, pull)
+    @status = status
+    @pull = pull
+  end
+
+  def_delegators :@status, :[]
+
+  def build_id
+    if @status.context =~ %r,evergreen/,
+      File.basename(@status['target_url'])
+    else
+      # top level build
+      nil
+    end
+  end
+
+  def log_url
+    "/pulls/#{@pull['number']}/evergreen-log/#{build_id}"
+  end
+
+  def restart_url
+    "/pulls/#{@pull['number']}/restart/#{build_id}"
+  end
+end
+
+class PullPresenter
+  extend Forwardable
+
+  def initialize(pull)
+    @pull = pull
+  end
+
+  def_delegators :@pull, :[]
+
+  def statuses
+    @pull.statuses.map do |status|
+      EvergreenStatusPresenter.new(status, @pull)
+    end
+  end
+
+  def top_evergreen_status
+    status = @pull.top_evergreen_status
+    if status
+      status = EvergreenStatusPresenter.new(status)
+    end
+    status
+  end
+end
 
 class App < Sinatra::Base
   configure :development do
@@ -39,15 +92,9 @@ class App < Sinatra::Base
   end
 
   get '/pulls/:id' do |id|
-    @pull = gh_repo.pull(id)
+    pull = gh_repo.pull(id)
+    @pull = PullPresenter.new(pull)
     @statuses = @pull.statuses
-    @statuses.each do |status|
-      if status['context'] =~ /^evergreen\// && status['target_url']
-        build_id = File.basename(status['target_url'])
-        status['log_url'] = "/pulls/#{id}/evergreen-log/#{build_id}"
-        status['restart_url'] = "/pulls/#{id}/restart/#{build_id}"
-      end
-    end
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
       'topology' => %w(standalone replicaset sharded-cluster),

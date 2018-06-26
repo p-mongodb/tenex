@@ -71,5 +71,30 @@ module Github
         sum + (%w(success failure).include?(status['state']) ? 0 : 1)
       end
     end
+
+    def status_by_name(name)
+      statuses.select do |status|
+        status['context'] == name
+      end.last
+      # there can be more than one
+    end
+
+    def top_evergreen_status
+      status_by_name('evergreen')
+    end
+
+    def evergreen_version_id
+      status = top_evergreen_status
+      if status
+        if status['target_url'] =~ %r,version/([\da-fA-F]+),
+          return $1
+        end
+      end
+      nil
+    end
+
+    def travis_status
+      status_by_name('continuous-integration/travis-ci/pr')
+    end
   end
 end

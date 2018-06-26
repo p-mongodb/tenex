@@ -32,11 +32,11 @@ table
               td class="#{status['state']}"
                 a href=status['target_url'] Go
               td class="#{status['state']}"
-                - if status['log_url']
-                  a href=status['log_url'] Log
+                - if status.log_url
+                  a href=status.log_url Log
               td class="#{status['state']}"
-                - if status['restart_url']
-                  a href=status['restart_url'] Restart
+                - if status.restart_url
+                  a href=status.restart_url Restart
 
 table
   - @statuses.each do |status|
