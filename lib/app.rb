@@ -11,11 +11,14 @@ require 'travis'
 class EvergreenStatusPresenter
   extend Forwardable
 
-  def initialize(status, pull)
+  def initialize(status, pull, eg_client)
     @status = status
     @pull = pull
+    @eg_client = eg_client
   end
 
+  attr_reader :status
+  attr_reader :eg_client
   def_delegators :@status, :[]
 
   def build_id
@@ -34,29 +37,40 @@ class EvergreenStatusPresenter
   def restart_url
     "/pulls/#{@pull['number']}/restart/#{build_id}"
   end
+
+  def evergreen_build
+    Evergreen::Build.new(eg_client, build_id)
+  end
 end
 
 class PullPresenter
   extend Forwardable
 
-  def initialize(pull)
+  def initialize(pull, eg_client)
     @pull = pull
+    @eg_client = eg_client
   end
 
+  attr_reader :pull
+  attr_reader :eg_client
   def_delegators :@pull, :[]
 
   def statuses
     @pull.statuses.map do |status|
-      EvergreenStatusPresenter.new(status, @pull)
+      EvergreenStatusPresenter.new(status, @pull, eg_client)
     end
   end
 
   def top_evergreen_status
     status = @pull.top_evergreen_status
     if status
-      status = EvergreenStatusPresenter.new(status)
+      status = EvergreenStatusPresenter.new(status, @pull, eg_client)
     end
     status
+  end
+
+  def evergreen_version
+    @evergreen_version ||= Evergreen::Version.new(eg_client, @pull.evergreen_version_id)
   end
 end
 
@@ -93,7 +107,7 @@ class App < Sinatra::Base
 
   get '/pulls/:id' do |id|
     pull = gh_repo.pull(id)
-    @pull = PullPresenter.new(pull)
+    @pull = PullPresenter.new(pull, eg_client)
     @statuses = @pull.statuses
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
