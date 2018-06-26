@@ -1,7 +1,7 @@
 style
-  | tr.success { background: #cfc; }
-  | tr.failure { background: #fcc; }
-  | tr.pending { background: #ffc; }
+  | .success { background: #cfc; }
+  | .failure { background: #fcc; }
+  | .pending { background: #ffc; }
 
 h2
   a href=@pull['html_url'] ##{@pull['number']}: #{@pull['title']}
@@ -10,6 +10,33 @@ h2
 
 p
   a href="/pulls/#{@pull['number']}/restart-failed" Restart failed
+
+table
+  tr
+    td Server
+    td Topology
+    td Auth
+    - @ruby_versions.each do |ruby_version|
+      td colspan='3' = ruby_version
+  - @configs['mongodb-version'].each do |mongodb_version|
+    - @configs['topology'].each do |topology|
+      - @configs['auth-and-ssl'].each do |auth|
+        tr
+          td= mongodb_version
+          td= topology
+          td= auth
+          - @ruby_versions.each do |ruby_version|
+            - label = "evergreen/all__mongodb-version~#{mongodb_version}_topology~#{topology}_auth-and-ssl~#{auth}_ruby~ruby-#{ruby_version}"
+            - status = @statuses.detect { |s| s['context'] == label }
+            - if status
+              td class="#{status['state']}"
+                a href=status['target_url'] Go
+              td class="#{status['state']}"
+                - if status['log_url']
+                  a href=status['log_url'] Log
+              td class="#{status['state']}"
+                - if status['restart_url']
+                  a href=status['restart_url'] Restart
 
 table
   - @statuses.each do |status|

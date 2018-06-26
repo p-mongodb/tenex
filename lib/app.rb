@@ -48,6 +48,12 @@ class App < Sinatra::Base
         status['restart_url'] = "/pulls/#{id}/restart/#{build_id}"
       end
     end
+    @configs = {
+      'mongodb-version' => %w(2.6 3.0 3.2 3.4 3.6 4.0 latest),
+      'topology' => %w(standalone replicaset sharded-cluster),
+      'auth-and-ssl' => %w(auth-and-ssl noauth-and-nossl),
+    }
+    @ruby_versions = %w(1.9 2.3 2.4 2.5.0)
     slim :pull
   end
 
