@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'faraday', '~> 0.8.0'
+gem 'faraday'
 gem 'nokogiri'
 gem 'byebug'
 gem "faraday-detailed_logger"
@@ -10,3 +10,4 @@ gem 'sinatra-contrib'
 gem 'slim'
 gem 'shotgun'
 gem 'link_header'
+gem 'travis'

@@ -5,6 +5,7 @@ require 'faraday/detailed_logger'
 require 'slim'
 require 'sinatra'
 require 'sinatra/reloader'
+require 'travis'
 
 class App < Sinatra::Base
   configure :development do
@@ -65,15 +66,36 @@ class App < Sinatra::Base
   get '/pulls/:id/restart-failed' do |pull_id|
     @pull = gh_repo.pull(pull_id)
     @statuses = @pull.statuses
+    restarted = false
+
+    status = @statuses.detect do |status|
+      status['context'] == 'continuous-integration/travis-ci/pr'
+    end
+    if status && status['target_url'] =~ %r,builds/(\d+),
+      Travis.access_token = ENV['TRAVIS_TOKEN']
+      build = Travis::Build.find($1)
+      build.jobs.each do |job|
+        if job.failed?
+          job.restart
+        end
+      end
+      restarted = true
+    end
+
     status = @statuses.detect do |status|
       status['context'] == 'evergreen'
     end
-    if status.nil?
-      return 'Could not find'
+    if status
+      version_id = File.basename(status['target_url'])
+      version = Evergreen::Version.new(eg_client, version_id)
+      version.restart_failed_builds
+      restarted = true
     end
-    version_id = File.basename(status['target_url'])
-    version = Evergreen::Version.new(eg_client, version_id)
-    version.restart_failed_builds
+
+    unless restarted
+      return 'Could not find anything to restart'
+    end
+
     redirect return_path || "/pulls/#{pull_id}"
   end
 
