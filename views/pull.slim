@@ -27,7 +27,7 @@ table
           td= auth
           - @ruby_versions.each do |ruby_version|
             - label = "evergreen/all__mongodb-version~#{mongodb_version}_topology~#{topology}_auth-and-ssl~#{auth}_ruby~ruby-#{ruby_version}"
-            - status = @statuses.detect { |s| s['context'] == label }
+            - status = @pull.take_status(label)
             - if status
               td class="#{status['state']}"
                 a href=status['target_url'] Go
@@ -39,7 +39,7 @@ table
                   a href=status.restart_url Restart
 
 table
-  - @statuses.each do |status|
+  - @pull.untaken_statuses.each do |status|
     tr class="#{status['state']}"
       td
         = status['context']
