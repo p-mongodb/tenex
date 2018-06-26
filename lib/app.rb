@@ -49,9 +49,9 @@ class App < Sinatra::Base
       end
     end
     @configs = {
-      'mongodb-version' => %w(2.6 3.0 3.2 3.4 3.6 4.0 latest),
+      'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
       'topology' => %w(standalone replicaset sharded-cluster),
-      'auth-and-ssl' => %w(auth-and-ssl noauth-and-nossl),
+      'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
     @ruby_versions = %w(1.9 2.3 2.4 2.5.0)
     slim :pull
