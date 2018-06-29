@@ -8,7 +8,7 @@ module Evergreen
         #f.response :detailed_logger
         f.adapter Faraday.default_adapter
         f.headers['user-agent'] = 'EvergreenRubyClient'
-        f.headers['auth-username'] = username
+        f.headers['api-user'] = username
         f.headers['api-key'] = api_key
       end
     end
