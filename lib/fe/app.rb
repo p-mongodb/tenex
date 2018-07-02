@@ -27,8 +27,8 @@ class App < Sinatra::Base
       )
   end
 
-  def gh_repo
-    gh_client.repo('mongodb', 'mongo-ruby-driver')
+  def gh_repo(org_name, repo_name)
+    gh_client.repo(org_name, repo_name)
   end
 
   def eg_client
@@ -38,13 +38,13 @@ class App < Sinatra::Base
       )
   end
 
-  get '/' do
-    @pulls = gh_repo.pulls
+  get '/repos/:org/:repo' do |org_name, repo_name|
+    @pulls = gh_repo(org_name, repo_name).pulls
     slim :dashboard
   end
 
-  get '/pulls/:id' do |id|
-    pull = gh_repo.pull(id)
+  get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
+    pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client)
     @statuses = @pull.statuses
     @configs = {
@@ -68,8 +68,8 @@ class App < Sinatra::Base
     redirect "/pulls/#{pull_id}"
   end
 
-  get '/pulls/:id/restart-failed' do |pull_id|
-    @pull = gh_repo.pull(pull_id)
+  get '/repos/:org/:repo/pulls/:id/restart-failed' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @statuses = @pull.statuses
     restarted = false
 
