@@ -1,10 +1,10 @@
 - @pulls.each do |pull|
   h2
-    a href="/pulls/#{pull['number']}" ##{pull['number']}: #{pull['title']}
+    a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}" ##{pull['number']}: #{pull['title']}
     '
     span by #{pull['user']['login']}
   p
-    a href="https://github.com/mongodb/mongo-ruby-driver/pull/#{pull['number']}" PR @ GH
+    a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR @ GH
     '
     span
       ' #{pull.success_count} successful builds,
