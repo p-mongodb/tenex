@@ -1,6 +1,6 @@
 $: << 'lib'
 
-require 'app'
+require 'fe/app'
 require 'dotenv'
 require 'byebug'
 
