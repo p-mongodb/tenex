@@ -25,7 +25,9 @@ module Evergreen
     end
 
     def projects
-      paginated_get('projects')
+      payload = paginated_get('projects')
+      projects = payload.map { |info| Project.new(self, info['identifier'], info: info) }
+      projects.sort_by { |project| project.display_name }
     end
   end
 end

@@ -1,3 +1,5 @@
 require 'evergreen/client'
 require 'evergreen/build'
 require 'evergreen/version'
+require 'evergreen/project'
+require 'evergreen/patch'

@@ -99,15 +99,7 @@ class ProjectPresenter
 
   attr_reader :project
   attr_reader :eg_client
-  def_delegators :@project, :[]
-
-  def display_name
-    if project['display_name'] && !project['display_name'].empty?
-      project['display_name']
-    else
-      project['identifier']
-    end
-  end
+  def_delegators :@project, :[], :display_name
 
   def identifier
     @project['identifier']
@@ -209,6 +201,12 @@ class App < Sinatra::Base
   get '/projects' do
     @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
     slim :projects
+  end
+
+  get '/projects/:project' do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    @patches = @project.recent_patches
+    slim :patches
   end
 
   private def return_path
