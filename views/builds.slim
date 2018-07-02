@@ -1,0 +1,7 @@
+table
+  - @builds.each do |build|
+    tr
+      td= build.build_variant
+      td= build.status
+      td
+        a href=build.log_url Log

@@ -209,6 +209,12 @@ class App < Sinatra::Base
     slim :patches
   end
 
+  get '/projects/:project/versions/:version_id' do |project_id, version_id|
+    @version = Evergreen::Version.new(eg_client, version_id)
+    @builds = @version.builds
+    slim :builds
+  end
+
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
   end

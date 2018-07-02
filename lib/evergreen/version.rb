@@ -15,6 +15,8 @@ module Evergreen
       payload = client.get_json("versions/#{id}/builds")
       payload.map do |info|
         Build.new(client, info['id'], info: info)
+      end.sort_by do |build|
+        build.build_variant
       end
     end
 

@@ -15,5 +15,9 @@ module Evergreen
         "Patch #{info['patch_number']} by #{info['author']}"
       end
     end
+
+    def version
+      info['version']
+    end
   end
 end

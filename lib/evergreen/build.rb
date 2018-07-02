@@ -38,5 +38,13 @@ module Evergreen
     def failed?
       info['status'] == 'failed'
     end
+
+    def build_variant
+      info['build_variant']
+    end
+
+    def status
+      info['status']
+    end
   end
 end

@@ -1,6 +1,6 @@
 ul
   - @patches.each do |patch|
     li
-      a href="/projects/#{@project.id}/patches/#{patch.id}"
+      a href="/projects/#{@project.id}/versions/#{patch.version}"
         = patch.description
   
