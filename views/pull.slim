@@ -53,8 +53,8 @@ table
       td
         a href=status['target_url'] Go
       td
-        - if status['log_url']
-          a href=status['log_url'] Log
+        - if status.log_url
+          a href=status.log_url Log
       td
-        - if status['restart_url']
-          a href=status['restart_url'] Restart
+        - if status.restart_url
+          a href=status.restart_url Restart
