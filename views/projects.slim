@@ -1,0 +1,6 @@
+ul
+  - @projects.each do |project|
+    li
+      a href="/projects/#{project.identifier}"
+        = project.display_name
+  

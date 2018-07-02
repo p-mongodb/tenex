@@ -2,6 +2,8 @@ require 'faraday'
 
 module Github
   class Client
+    include PaginatedGet
+
     def initialize(username:, auth_token:)
       @connection ||= Faraday.new('https://api.github.com') do |f|
         f.request :url_encoded

@@ -89,6 +89,31 @@ class PullPresenter
   end
 end
 
+class ProjectPresenter
+  extend Forwardable
+
+  def initialize(project, eg_client)
+    @project = project
+    @eg_client = eg_client
+  end
+
+  attr_reader :project
+  attr_reader :eg_client
+  def_delegators :@project, :[]
+
+  def display_name
+    if project['display_name'] && !project['display_name'].empty?
+      project['display_name']
+    else
+      project['identifier']
+    end
+  end
+
+  def identifier
+    @project['identifier']
+  end
+end
+
 class App < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
@@ -179,6 +204,11 @@ class App < Sinatra::Base
     end
 
     redirect return_path || "/pulls/#{pull_id}"
+  end
+
+  get '/projects' do
+    @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
+    slim :projects
   end
 
   private def return_path

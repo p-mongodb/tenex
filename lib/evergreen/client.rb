@@ -1,7 +1,11 @@
 require 'faraday'
+require 'link_header'
+require_relative '../paginated_get'
 
 module Evergreen
   class Client
+    include PaginatedGet
+
     def initialize(username:, api_key:)
       @connection ||= Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
         #f.request :url_encoded
@@ -18,6 +22,10 @@ module Evergreen
     def get_json(url)
       response = connection.get(url)
       JSON.parse(response.body)
+    end
+
+    def projects
+      paginated_get('projects')
     end
   end
 end
