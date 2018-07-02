@@ -11,37 +11,38 @@ h2
 p
   a href="/pulls/#{@pull['number']}/restart-failed" Restart failed
 
-table
-  tr
-    td Server
-    td Topology
-    td Auth
-    - @ruby_versions.each do |ruby_version|
-      td= ruby_version
-  - @configs['mongodb-version'].each do |mongodb_version|
-    - @configs['topology'].each do |topology|
-      - @configs['auth-and-ssl'].each do |auth|
-        tr
-          td= mongodb_version
-          td= topology
-          td= auth
-          - @ruby_versions.each do |ruby_version|
-            td
-              - %w(all zlib).each do |flavor|
-                - suffix = flavor == 'zlib' ? '_compressor~zlib' : ''
-                - label = "evergreen/#{flavor}__mongodb-version~#{mongodb_version}_topology~#{topology}_auth-and-ssl~#{auth}_ruby~ruby-#{ruby_version}#{suffix}"
-                - status = @pull.take_status(label)
-                - prefix = flavor == 'all' ? 'A' : 'Z'
-                - if status
-                  div class="#{status['state']}"
-                    ' #{prefix}
-                    a href=status['target_url'] Go
-                    '
-                    - if status.log_url
-                      a href=status.log_url Log
-                    '
-                    - if status.restart_url
-                      a href=status.restart_url Restart
+- if @pull.repo_full_name == 'mongodb/mongo-ruby-driver'
+  table
+    tr
+      td Server
+      td Topology
+      td Auth
+      - @ruby_versions.each do |ruby_version|
+        td= ruby_version
+    - @configs['mongodb-version'].each do |mongodb_version|
+      - @configs['topology'].each do |topology|
+        - @configs['auth-and-ssl'].each do |auth|
+          tr
+            td= mongodb_version
+            td= topology
+            td= auth
+            - @ruby_versions.each do |ruby_version|
+              td
+                - %w(all zlib).each do |flavor|
+                  - suffix = flavor == 'zlib' ? '_compressor~zlib' : ''
+                  - label = "evergreen/#{flavor}__mongodb-version~#{mongodb_version}_topology~#{topology}_auth-and-ssl~#{auth}_ruby~ruby-#{ruby_version}#{suffix}"
+                  - status = @pull.take_status(label)
+                  - prefix = flavor == 'all' ? 'A' : 'Z'
+                  - if status
+                    div class="#{status['state']}"
+                      ' #{prefix}
+                      a href=status['target_url'] Go
+                      '
+                      - if status.log_url
+                        a href=status.log_url Log
+                      '
+                      - if status.restart_url
+                        a href=status.restart_url Restart
 
 table
   - @pull.untaken_statuses.each do |status|
