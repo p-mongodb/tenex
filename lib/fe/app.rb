@@ -56,13 +56,13 @@ class App < Sinatra::Base
     slim :pull
   end
 
-  get '/pulls/:id/evergreen-log/:build_id' do |pull_id, build_id|
+  get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     build.log
 
   end
 
-  get '/pulls/:id/restart/:build_id' do |pull_id, build_id|
+  get '/repos/:org/:repo/pulls/:id/restart/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     build.restart
     redirect "/pulls/#{pull_id}"
