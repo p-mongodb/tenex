@@ -10,4 +10,4 @@
       ' #{pull.success_count} successful builds,
       ' #{pull.failure_count} failed builds,
       ' #{pull.pending_count} pending builds.
-    a href="/pulls/#{pull['number']}/restart-failed" Restart failed
+    a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/restart-failed" Restart failed

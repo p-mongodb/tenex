@@ -9,7 +9,7 @@ h2
   span by #{@pull['user']['login']}
 
 p
-  a href="/pulls/#{@pull['number']}/restart-failed" Restart failed
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-failed" Restart failed
 
 - if @pull.repo_full_name == 'mongodb/mongo-ruby-driver'
   table
