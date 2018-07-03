@@ -12,6 +12,8 @@ Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
 end
 
+Travis.access_token = ENV['TRAVIS_TOKEN']
+
 class App < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
@@ -73,23 +75,14 @@ class App < Sinatra::Base
     @statuses = @pull.statuses
     restarted = false
 
-    status = @statuses.detect do |status|
-      status['context'] == 'continuous-integration/travis-ci/pr'
-    end
-    if status && status['target_url'] =~ %r,builds/(\d+),
-      Travis.access_token = ENV['TRAVIS_TOKEN']
-      build = Travis::Build.find($1)
-      build.jobs.each do |job|
-        if job.failed?
-          job.restart
-        end
+    @pull.travis_statuses.each do |status|
+      if status.failed?
+        status.restart
       end
       restarted = true
     end
 
-    status = @statuses.detect do |status|
-      status['context'] == 'evergreen'
-    end
+    status = @pull.top_evergreen_status
     if status
       version_id = File.basename(status['target_url'])
       version = Evergreen::Version.new(eg_client, version_id)

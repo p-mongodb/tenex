@@ -1,6 +1,6 @@
 style
-  | .success { background: #cfc; }
-  | .failure { background: #fcc; }
+  | .passed { background: #cfc; }
+  | .failed { background: #fcc; }
   | .pending { background: #ffc; }
 
 h2
@@ -34,7 +34,7 @@ p
                   - status = @pull.take_status(label)
                   - prefix = flavor == 'all' ? 'A' : 'Z'
                   - if status
-                    div class="#{status['state']}"
+                    div class="#{{'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]}"
                       ' #{prefix}
                       a href=status['target_url'] Go
                       '
@@ -46,7 +46,7 @@ p
 
 table
   - @pull.untaken_statuses.each do |status|
-    tr class="#{status['state']}"
+    tr class="#{{'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]}"
       td
         = status['context']
         - if status['description']
@@ -59,3 +59,16 @@ table
       td
         - if status.restart_url
           a href=status.restart_url Restart
+    - if status['context'] == 'continuous-integration/travis-ci/pr'
+      - @pull.travis_statuses.each do |status|
+        tr class="#{status.state}"
+          td
+            = status.context
+          td
+            a href=status.target_url Go
+          td
+            - if status.log_url
+              a href=status.log_url Log
+          td
+            - if status.restart_url
+              a href=status.restart_url Restart

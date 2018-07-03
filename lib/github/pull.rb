@@ -78,8 +78,52 @@ module Github
       nil
     end
 
-    def travis_status
+    def top_travis_status
       status_by_name('continuous-integration/travis-ci/pr')
+    end
+
+    def travis_statuses
+      @travis_statuses ||= begin
+        top_status = top_travis_status
+        return [] unless top_status
+
+        if top_status['target_url'] =~ %r,builds/(\d+),
+          build = Travis::Build.find($1)
+          build.jobs.map do |job|
+            TravisStatus.new(job)
+          end
+        else
+          []
+        end
+      end
+    end
+
+    class TravisStatus
+      extend Forwardable
+
+      def initialize(info)
+        @info = info
+      end
+
+      attr_reader :info
+
+      def_delegators :info, :failed?, :restart, :state
+
+      def context
+        "Ruby: #{info.config['rvm']} #{info.config['env']}"
+      end
+
+      def target_url
+        "https://travis-ci.org/#{info.repository.owner_name}/#{info.repository.name}/jobs/#{info.id}"
+      end
+
+      def log_url
+        "https://api.travis-ci.org/v3/job/#{info.id}/log.txt"
+      end
+
+      def restart_url
+        "/repos/#{info.repository.owner_name}/#{info.repository.name}/restart-travis/#{info.id}"
+      end
     end
   end
 end
