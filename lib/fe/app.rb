@@ -7,6 +7,7 @@ require 'slim'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
+require_relative './models'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -42,11 +43,13 @@ class App < Sinatra::Base
   end
 
   get '/repos/:org/:repo' do |org_name, repo_name|
+    hit_repo(org_name, repo_name)
     @pulls = gh_repo(org_name, repo_name).pulls
     slim :dashboard
   end
 
   get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
+    hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client)
     @statuses = @pull.statuses
@@ -117,5 +120,12 @@ class App < Sinatra::Base
 
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
+  end
+
+  private def hit_repo(owner_name, repo_name)
+    repo = Repo.find_or_create_by(owner_name: owner_name, repo_name: repo_name)
+    RepoHit.create!(repo: repo)
+    repo.hit_count = RepoHit.where(repo: repo).count
+    repo.save!
   end
 end

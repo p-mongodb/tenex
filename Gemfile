@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'mongoid'
 gem 'faraday'
 gem 'nokogiri'
 gem 'byebug'

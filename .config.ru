@@ -1,9 +1,6 @@
 $: << 'lib'
 
 require 'fe/app'
-require 'dotenv'
-require 'byebug'
-
-Dotenv.load
+require 'fe/boot'
 
 run App
