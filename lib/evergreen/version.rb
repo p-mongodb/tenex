@@ -12,11 +12,13 @@ module Evergreen
     end
 
     def builds
-      payload = client.get_json("versions/#{id}/builds")
-      payload.map do |info|
-        Build.new(client, info['id'], info: info)
-      end.sort_by do |build|
-        build.build_variant
+      @builds ||= begin
+        payload = client.get_json("versions/#{id}/builds")
+        payload.map do |info|
+          Build.new(client, info['id'], info: info)
+        end.sort_by do |build|
+          build.build_variant
+        end
       end
     end
 
@@ -29,9 +31,11 @@ module Evergreen
     end
 
     def tasks
-      payload = client.get_json("versions/#{id}/tasks")
-      payload.map do |info|
-        Task.new(client, info['id'], info: info)
+      @tasks ||= begin
+        payload = client.get_json("versions/#{id}/tasks")
+        payload.map do |info|
+          Task.new(client, info['id'], info: info)
+        end
       end
     end
 

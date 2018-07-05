@@ -21,6 +21,7 @@ class App < Sinatra::Base
 
   set :views, File.join(File.dirname(__FILE__), '..', '..', 'views')
   set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'public')
+  set :strict_paths, false
 
   def gh_client
     @gh_client ||= Github::Client.new(
