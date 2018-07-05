@@ -101,6 +101,13 @@ class App < Sinatra::Base
     redirect return_path || "/pulls/#{pull_id}"
   end
 
+  get '/repos/:org/:repo/pulls/:id/request-review' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @statuses = @pull.request_review('saghm')
+
+    redirect return_path || "/repos/:org/:repo/pulls/#{pull_id}"
+  end
+
   get '/projects' do
     @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
     slim :projects

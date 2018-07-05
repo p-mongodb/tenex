@@ -19,6 +19,14 @@ module Github
       info['head']['sha']
     end
 
+    def request_review(*reviewers)
+      r = client.connection.post("/repos/#{repo_full_name}/pulls/#{info['number']}/requested_reviewers",
+        body: JSON.generate(reviewers))
+      if r.status != 200
+        raise "Review request failed: #{r.body}"
+      end
+    end
+
     def statuses
       @statuses ||= begin
         payload = client.paginated_get("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
