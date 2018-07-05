@@ -21,11 +21,11 @@ class EvergreenStatusPresenter
   end
 
   def log_url
-    "/pulls/#{@pull['number']}/evergreen-log/#{build_id}"
+    "/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/evergreen-log/#{build_id}"
   end
 
   def restart_url
-    "/pulls/#{@pull['number']}/restart/#{build_id}"
+    "/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart/#{build_id}"
   end
 
   def evergreen_build
