@@ -17,7 +17,7 @@ module Evergreen
     end
 
     def recent_patches
-      payload = JSON.parse(client.connection.get("projects/#{id}/patches").body)
+      payload = client.get_json("projects/#{id}/patches")
       payload.map do |info|
         Patch.new(client, info['patch_id'], info: info)
       end

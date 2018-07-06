@@ -25,6 +25,9 @@ module Evergreen
 
     def log
       resp = client.connection.get(log_url)
+      if resp.status != 200
+        fail resp.status
+      end
       resp.body
     end
 

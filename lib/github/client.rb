@@ -4,6 +4,12 @@ module Github
   class Client
 
     class ApiError < StandardError
+      def initialize(message, status: nil)
+        super(message)
+        @status = status
+      end
+
+      attr_reader :status
     end
 
     include PaginatedGet
@@ -23,7 +29,7 @@ module Github
     def get_json(url)
       response = connection.get(url)
       if response.status != 200
-        raise ApiError, "Github GET #{url} failed: #{response.status}"
+        raise ApiError.new("Github GET #{url} failed: #{response.status}", status: response.status)
       end
       JSON.parse(response.body)
     end

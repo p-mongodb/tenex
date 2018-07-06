@@ -45,7 +45,18 @@ class App < Sinatra::Base
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
     hit_repo(org_name, repo_name)
-    @pulls = gh_repo(org_name, repo_name).pulls
+    begin
+      @pulls = gh_repo(org_name, repo_name).pulls
+    rescue Github::Client::ApiError => e
+      if e.status == 404
+        project = eg_client.project_for_github_repo(org_name, repo_name)
+        if project
+          redirect "/projects/#{project.id}"
+          return
+        end
+      end
+      raise
+    end
     slim :dashboard
   end
 
