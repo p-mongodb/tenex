@@ -2,6 +2,10 @@ require 'faraday'
 
 module Github
   class Client
+
+    class ApiError < StandardError
+    end
+
     include PaginatedGet
 
     def initialize(username:, auth_token:)
@@ -18,6 +22,9 @@ module Github
 
     def get_json(url)
       response = connection.get(url)
+      if response.status != 200
+        raise ApiError, "Github GET #{url} failed: #{response.status}"
+      end
       JSON.parse(response.body)
     end
 

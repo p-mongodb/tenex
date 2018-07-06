@@ -11,6 +11,6 @@ class ProjectPresenter
   def_delegators :@project, :[], :display_name
 
   def identifier
-    @project['identifier']
+    @project.id
   end
 end

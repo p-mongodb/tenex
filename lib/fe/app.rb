@@ -42,12 +42,14 @@ class App < Sinatra::Base
       )
   end
 
+  # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
     hit_repo(org_name, repo_name)
     @pulls = gh_repo(org_name, repo_name).pulls
     slim :dashboard
   end
 
+  # pull
   get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
     hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
@@ -62,6 +64,7 @@ class App < Sinatra::Base
     slim :pull
   end
 
+  # log
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     build.log
