@@ -122,21 +122,32 @@ class App < Sinatra::Base
     redirect return_path || "/repos/:org/:repo/pulls/#{pull_id}"
   end
 
+  # eg projects list
   get '/projects' do
     @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
     slim :projects
   end
 
+  # eg project
   get '/projects/:project' do |project_id|
     @project = Evergreen::Project.new(eg_client, project_id)
     @patches = @project.recent_patches
     slim :patches
   end
 
+  # eg version
   get '/projects/:project/versions/:version_id' do |project_id, version_id|
+    @project_id = project_id
     @version = Evergreen::Version.new(eg_client, version_id)
     @builds = @version.builds
     slim :builds
+  end
+
+  get '/projects/:project/versions/:version_id/restart-failed' do |project_id, version_id|
+    @version = Evergreen::Version.new(eg_client, version_id)
+    @version.restart_failed_builds
+
+    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
   end
 
   private def return_path
