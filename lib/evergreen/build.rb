@@ -12,6 +12,14 @@ module Evergreen
       @info ||= client.get_json("builds/#{id}")
     end
 
+    def tasks
+      @tasks ||= begin
+        info['tasks'].map do |task|
+          Task.new(client, task)
+        end
+      end
+    end
+
     def log_url
       if info['tasks'].length != 1
         raise "Have #{info['tasks'].length} tasks, expecting 1"

@@ -4,4 +4,14 @@ table
       td= build.build_variant
       td= build.status
       td
-        a href=build.log_url Log
+        - if build.tasks.length == 1
+          a href=build.log_url Log
+        - else
+          ul
+            - build.tasks.each do |task|
+              li
+                = task.display_name
+                '
+                = task.status
+                '
+                a href=task.log_url Log
