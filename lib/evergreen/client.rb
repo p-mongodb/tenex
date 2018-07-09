@@ -53,7 +53,7 @@ module Evergreen
           if patch
             return project
           end
-        rescue ApiError
+        rescue URI::InvalidURIError, ApiError
         end
       end
       nil

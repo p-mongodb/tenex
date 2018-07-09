@@ -8,7 +8,8 @@ class PullPresenter
 
   attr_reader :pull
   attr_reader :eg_client
-  def_delegators :@pull, :[], :repo_full_name, :travis_statuses
+  def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
+    :evergreen_version_id
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
@@ -41,5 +42,9 @@ class PullPresenter
 
   def evergreen_version
     @evergreen_version ||= Evergreen::Version.new(eg_client, @pull.evergreen_version_id)
+  end
+
+  def evergreen_project_id
+    eg_client.project_for_github_repo(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
   end
 end
