@@ -1,13 +1,14 @@
 class PullPresenter
   extend Forwardable
 
-  def initialize(pull, eg_client)
+  def initialize(pull, eg_client, system)
     @pull = pull
     @eg_client = eg_client
+    @system = system
   end
 
   attr_reader :pull
-  attr_reader :eg_client
+  attr_reader :eg_client, :system
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
     :evergreen_version_id
 
@@ -45,6 +46,6 @@ class PullPresenter
   end
 
   def evergreen_project_id
-    eg_client.project_for_github_repo(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
+    system.evergreen_project_for_github_repo(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
   end
 end

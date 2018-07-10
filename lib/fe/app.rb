@@ -54,7 +54,7 @@ class App < Sinatra::Base
       @pulls = gh_repo(org_name, repo_name).pulls
     rescue Github::Client::ApiError => e
       if e.status == 404
-        project = eg_client.project_for_github_repo(org_name, repo_name)
+        project = system.evergreen_project_for_github_repo(org_name, repo_name)
         if project
           redirect "/projects/#{project.id}"
           return
@@ -69,7 +69,7 @@ class App < Sinatra::Base
   get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
     system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
-    @pull = PullPresenter.new(pull, eg_client)
+    @pull = PullPresenter.new(pull, eg_client, system)
     @statuses = @pull.statuses
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
