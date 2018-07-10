@@ -6,6 +6,7 @@ class Repo
   field :owner_name, type: String
   field :repo_name, type: String
   field :hit_count, type: Integer
+  field :evergreen_project_id, type: String
 end
 
 class RepoHit

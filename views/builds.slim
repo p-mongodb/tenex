@@ -2,6 +2,9 @@ p
   a href="https://evergreen.mongodb.com/version/#{@version.id}" @ Evergreen
   '
   a href="/projects/#{@project_id}/versions/#{@version.id}/restart-failed" Restart failed
+  - if @newest_version
+    '
+    a href="/projects/#{@project_id}/versions/#{@newest_version.id}" Newest version
 
 table
   - @builds.each do |build|

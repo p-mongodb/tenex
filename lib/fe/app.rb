@@ -8,6 +8,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
 require_relative './models'
+require_relative './system'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -42,9 +43,13 @@ class App < Sinatra::Base
       )
   end
 
+  def system
+    System.new(eg_client, gh_client)
+  end
+
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
-    hit_repo(org_name, repo_name)
+    system.hit_repo(org_name, repo_name)
     begin
       @pulls = gh_repo(org_name, repo_name).pulls
     rescue Github::Client::ApiError => e
@@ -62,7 +67,7 @@ class App < Sinatra::Base
 
   # pull
   get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
-    hit_repo(org_name, repo_name)
+    system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client)
     @statuses = @pull.statuses
@@ -140,6 +145,12 @@ class App < Sinatra::Base
   get '/projects/:project/versions/:version_id' do |project_id, version_id|
     @project_id = project_id
     @version = Evergreen::Version.new(eg_client, version_id)
+    if @version.pr_info
+      @newest_version = system.newest_evergreen_version(@version)
+      if @newest_version.id == @version.id
+        @newest_version = nil
+      end
+    end
     @builds = @version.builds
     slim :builds
   end
@@ -153,12 +164,5 @@ class App < Sinatra::Base
 
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
-  end
-
-  private def hit_repo(owner_name, repo_name)
-    repo = Repo.find_or_create_by(owner_name: owner_name, repo_name: repo_name)
-    RepoHit.create!(repo: repo)
-    repo.hit_count = RepoHit.where(repo: repo).count
-    repo.save!
   end
 end

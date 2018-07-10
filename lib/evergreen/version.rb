@@ -42,5 +42,24 @@ module Evergreen
     def revision
       Revision.new(client, info['revision'])
     end
+
+    def pr_info
+      if @pr_info_parsed
+        @pr_info
+      else
+        @pr_info_parsed = true
+        @pr_info = begin
+          if info['message'] =~ %r,'(.+?)/(.+?)' pull request #(\d+) by (.*): (.*),
+            {owner_name: $1, repo_name: $2, pr_number: $3}
+          else
+            nil
+          end
+        end
+      end
+    end
+
+    def message
+      info['message']
+    end
   end
 end
