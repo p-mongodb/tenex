@@ -138,6 +138,7 @@ class App < Sinatra::Base
   get '/projects/:project' do |project_id|
     @project = Evergreen::Project.new(eg_client, project_id)
     @patches = @project.recent_patches
+    @versions = @project.recent_versions
     slim :patches
   end
 

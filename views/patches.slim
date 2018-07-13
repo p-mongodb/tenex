@@ -1,6 +1,15 @@
+h3 Patches
+
 ul
   - @patches.each do |patch|
     li
       a href="/projects/#{@project.id}/versions/#{patch.version}"
         = patch.description
-  
+
+h3 Versions
+
+ul
+  - @versions.each do |version|
+    li
+      a href="/projects/#{@project.id}/versions/#{version.id}"
+        = version.message

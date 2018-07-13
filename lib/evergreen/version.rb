@@ -1,8 +1,9 @@
 module Evergreen
   class Version
-    def initialize(client, id)
+    def initialize(client, id, info: nil)
       @client = client
       @id = id
+      @info = info
     end
 
     attr_reader :client, :id

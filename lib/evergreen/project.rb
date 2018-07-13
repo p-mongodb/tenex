@@ -22,5 +22,13 @@ module Evergreen
         Patch.new(client, info['patch_id'], info: info)
       end
     end
+
+    def recent_versions
+      payload = client.get_json("projects/#{id}/recent_versions")
+      payload['versions'].map do |info|
+        info = info['versions'].first
+        Version.new(client, info['version_id'], info: info)
+      end
+    end
   end
 end
