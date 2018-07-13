@@ -1,3 +1,8 @@
+style
+  | .passed { background: #cfc; }
+  | .failed { background: #fcc; }
+  | .pending { background: #ffc; }
+
 p
   a href="/projects/#{@project_id}" #{@project_id}
   '
@@ -10,7 +15,7 @@ p
 
 table
   - @builds.each do |build|
-    tr
+    tr class="#{{'failure' => 'failed', 'success' => 'passed', 'started' => 'pending'}[build.status]}"
       td= build.build_variant
       td= build.status
       td
@@ -19,7 +24,7 @@ table
         - else
           ul
             - build.tasks.each do |task|
-              li
+              li class="#{{'failure' => 'failed', 'success' => 'passed', 'started' => 'pending', 'undispatched' => 'pending'}[task.status]}"
                 = task.display_name
                 '
                 = task.status
