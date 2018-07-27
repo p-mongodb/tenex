@@ -13,7 +13,7 @@ module Evergreen
     end
 
     def log_url
-      info['logs']['all_log']
+      info['logs']['task_log']
     end
 
     def log

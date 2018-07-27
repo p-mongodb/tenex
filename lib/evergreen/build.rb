@@ -28,7 +28,7 @@ module Evergreen
       task_id = info['tasks'].first
 
       task_info = client.get_json("tasks/#{task_id}")
-      task_info['logs']['all_log']
+      task_info['logs']['task_log']
     end
 
     def log
