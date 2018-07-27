@@ -15,6 +15,10 @@ module Evergreen
     def builds
       @builds ||= begin
         payload = client.get_json("versions/#{id}/builds")
+        if payload.is_a?(Hash)
+          # https://jira.mongodb.org/browse/EVG-3696
+          payload = [payload]
+        end
         payload.map do |info|
           Build.new(client, info['id'], info: info)
         end.sort_by do |build|
