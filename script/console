@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'irb'
+$: << 'lib'
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'evergreen'
+require 'fe/boot'
+require 'fe/models'
+require 'github'
+
+IRB.start
