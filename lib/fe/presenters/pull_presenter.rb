@@ -46,6 +46,6 @@ class PullPresenter
   end
 
   def evergreen_project_id
-    system.evergreen_project_for_github_repo(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
+    system.evergreen_project_for_github_repo!(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
   end
 end

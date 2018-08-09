@@ -31,7 +31,16 @@ module Evergreen
     def get_json(url)
       response = connection.get(url)
       if response.status != 200
-        raise ApiError.new("Evergreen GET #{url} failed: #{response.status}", status: response.status)
+        error = nil
+        begin
+          error = JSON.parse(response.body)['error']
+        rescue
+        end
+        msg = "Evergreen GET #{url} failed: #{response.status}"
+        if error
+          msg += ": #{error}"
+        end
+        raise ApiError.new(msg, status: response.status)
       end
       JSON.parse(response.body)
     end
@@ -53,7 +62,8 @@ module Evergreen
           if patch
             return project
           end
-        rescue URI::InvalidURIError, ApiError
+        rescue URI::InvalidURIError, ApiError => e
+          puts "Error retrieving recent patches for #{project.id}: #{e}"
         end
       end
       nil

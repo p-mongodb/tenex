@@ -20,10 +20,18 @@ class System
     repo = Repo.find_or_create_by(owner_name: owner_name, repo_name: repo_name)
     if repo.evergreen_project_id.nil?
       project = eg_client.project_for_github_repo(owner_name, repo_name)
-      repo.evergreen_project_id = project.id
-      repo.save!
+      if project
+        repo.evergreen_project_id = project.id
+        repo.save!
+      end
     end
     Evergreen::Project.new(eg_client, repo.evergreen_project_id)
+  end
+
+  def evergreen_project_for_github_repo!(owner_name, repo_name)
+    evergreen_project_for_github_repo(owner_name, repo_name).tap do |p|
+      raise "No project for #{owner_name}/#{repo_name}" unless p
+    end
   end
 
   def hit_repo(owner_name, repo_name)

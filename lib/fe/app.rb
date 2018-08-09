@@ -47,6 +47,10 @@ class App < Sinatra::Base
     System.new(eg_client, gh_client)
   end
 
+  get '/' do
+    slim :landing
+  end
+
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
     system.hit_repo(org_name, repo_name)
