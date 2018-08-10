@@ -17,7 +17,7 @@ module Evergreen
     end
 
     def recent_patches
-      payload = client.get_json("projects/#{id}/patches")
+      payload = client.get_json("projects/#{id}/patches?start_at=\"2020-01-01T00:00:00.000Z\"")
       payload.map do |info|
         Patch.new(client, info['patch_id'], info: info)
       end
