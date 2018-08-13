@@ -28,6 +28,11 @@ of the branch being shown.
 Adds a list of recently spawned distros for quickly spawning more of
 the same distros.
 
+Adds a link to terminate all running spawned hosts.
+
+Adds an SSH command copy-pastable to the terminal to connect to each
+spawned host.
+
 ## Configuration
 
 Get credentials from [here](https://evergreen.mongodb.com/settings).

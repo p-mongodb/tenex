@@ -196,6 +196,13 @@ class App < Sinatra::Base
     redirect "/spawn"
   end
 
+  get '/spawn/terminate-all' do
+    eg_client.user_hosts.each do |host|
+      host.terminate
+    end
+    redirect "/spawn"
+  end
+
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
   end

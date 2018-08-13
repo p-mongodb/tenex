@@ -32,6 +32,13 @@ form method='post'
   ul
     - @hosts.each do |host|
       li
-        = host.distro.id
-        '
-        a href="/spawn/#{host.id}/terminate" Terminate
+        p
+          = host.distro.id
+          '
+          = host.status
+          '
+          a href="/spawn/#{host.id}/terminate" Terminate
+        pre
+          | ssh -l #{host.user} -o StrictHostKeyChecking=no #{host.host_url}
+
+a href='/spawn/terminate-all' Terminate all running hosts
