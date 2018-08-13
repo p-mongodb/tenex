@@ -172,12 +172,17 @@ class App < Sinatra::Base
     @distros = eg_client.distros
     @keys = eg_client.keys
     @hosts = eg_client.user_hosts
+    @config = SpawnConfig.first || SpawnConfig.new
     slim :spawn
   end
 
   post '/spawn' do
     payload = eg_client.spawn_host(distro_name: params[:distro],
       key_name: params[:key])
+    spawn_config = SpawnConfig.first || SpawnConfig.new
+    spawn_config.last_distro_name = params[:distro]
+    spawn_config.last_key_name = params[:key]
+    spawn_config.save!
     redirect "/spawn"
   end
 

@@ -15,3 +15,10 @@ class RepoHit
   belongs_to :repo
   field :created_at, type: Time
 end
+
+class SpawnConfig
+  include Mongoid::Document
+
+  field :last_distro_name, type: String
+  field :last_key_name, type: String
+end
