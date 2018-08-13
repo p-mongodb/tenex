@@ -170,7 +170,7 @@ class App < Sinatra::Base
   # spawn
   get '/spawn' do
     @distros = distros_with_cache
-    @keys = eg_client.keys
+    @keys = keys_with_cache
     @hosts = eg_client.user_hosts
     @config = SpawnConfig.first || SpawnConfig.new
     @recent_distros = SpawnedHost.recent_distros
@@ -216,5 +216,25 @@ class App < Sinatra::Base
       cache_state.distros_updated_at = Time.now
       cache_state.save!
     end
+    distros
+  end
+
+  private def keys_with_cache
+    cache_state = CacheState.first || CacheState.new
+    if cache_state.keys_ok?
+      keys = Key.order(name: 1)
+      keys.map do |key|
+        Evergreen::Key.new(eg_client, key.name, info: {'name' => key.name})
+      end
+    else
+      keys = eg_client.keys
+      Key.delete_all
+      keys.each do |key|
+        Key.create!(name: key.name)
+      end
+      cache_state.keys_updated_at = Time.now
+      cache_state.save!
+    end
+    keys
   end
 end
