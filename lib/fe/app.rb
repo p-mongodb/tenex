@@ -215,8 +215,8 @@ class App < Sinatra::Base
       end
       cache_state.distros_updated_at = Time.now
       cache_state.save!
+      distros
     end
-    distros
   end
 
   private def keys_with_cache
@@ -234,7 +234,7 @@ class App < Sinatra::Base
       end
       cache_state.keys_updated_at = Time.now
       cache_state.save!
+      keys
     end
-    keys
   end
 end
