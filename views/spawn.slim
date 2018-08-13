@@ -3,10 +3,19 @@ h1 Spawn
 form method='post'
   p
     ' Distro
-    select name='distro'
+    select name='distro' id='distro'
       - @distros.each do |distro|
         option value=distro.id selected=(@config.last_distro_name == distro.name ? 'selected' : nil)
           =distro.name
+
+  p
+    ' Recent distros:
+    - @recent_distros.each_with_index do |distro, i|
+      - if i > 0
+        | ,
+        '
+      a href='#' onclick='document.getElementById("distro").value="#{distro}";return false'
+        = distro
 
   p
     ' Key
