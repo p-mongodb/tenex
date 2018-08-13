@@ -181,6 +181,11 @@ class App < Sinatra::Base
     redirect "/spawn"
   end
 
+  get '/spawn/:host_id/terminate' do |host_id|
+    Evergreen::Host.new(eg_client, host_id).terminate
+    redirect "/spawn"
+  end
+
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
   end

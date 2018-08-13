@@ -2,21 +2,25 @@ h1 Spawn
 
 form method='post'
   p
-    | Distro
+    ' Distro
     select name='distro'
       - @distros.each do |distro|
         option value=distro.id =distro.name
 
   p
-    | Key
+    ' Key
     select name='key'
       - @keys.each do |key|
         option value=key.id =key.name
 
   input type='submit' value='Spawn'
 
-h2 Running Hosts
+- if @hosts.any?
+  h2 Running Hosts
 
-ul
-  - @hosts.each do |host|
-    = host.distro.id
+  ul
+    - @hosts.each do |host|
+      li
+        = host.distro.id
+        '
+        a href="/spawn/#{host.id}/terminate" Terminate

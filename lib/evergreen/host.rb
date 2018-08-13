@@ -21,5 +21,9 @@ module Evergreen
     def distro
       Distro.new(client, info['distro']['distro_id'])
     end
+
+    def terminate
+      client.post_json("hosts/#{id}/terminate")
+    end
   end
 end

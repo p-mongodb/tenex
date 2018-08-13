@@ -33,7 +33,7 @@ module Evergreen
       request_json(:get, url)
     end
 
-    def post_json(url, params)
+    def post_json(url, params=nil)
       request_json(:post, url, params)
     end
 
@@ -106,9 +106,9 @@ module Evergreen
     end
 
     def user_hosts
-      payload = get_json("users/#{user_id}/hosts")
+      payload = get_json("users/#{user_id}/hosts") || []
       payload.map do |info|
-        Host.new(self, info['id'], info: info)
+        Host.new(self, info['host_id'], info: info)
       end
     end
 
