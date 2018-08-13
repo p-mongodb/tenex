@@ -1,0 +1,16 @@
+h1 Spawn
+
+form method='post'
+  p
+    | Distro
+    select name='distro'
+      - @distros.each do |distro|
+        option value=distro.id =distro.name
+
+  p
+    | Key
+    select name='key'
+      - @keys.each do |key|
+        option value=key.id =key.name
+
+  submit value='Spawn'

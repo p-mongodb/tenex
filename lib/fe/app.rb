@@ -167,6 +167,13 @@ class App < Sinatra::Base
     redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
   end
 
+  # spawn
+  get '/spawn' do
+    @distros = eg_client.distros
+    @keys = eg_client.keys
+    slim :spawn
+  end
+
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
   end

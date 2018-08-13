@@ -68,5 +68,19 @@ module Evergreen
       end
       nil
     end
+
+    def distros
+      payload = get_json("distros")
+      payload.map do |info|
+        Distro.new(self, info['id'], info: info)
+      end
+    end
+
+    def keys
+      payload = get_json("keys")
+      payload.map do |info|
+        Key.new(self, info['id'], info: info)
+      end
+    end
   end
 end
