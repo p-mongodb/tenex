@@ -68,5 +68,12 @@ module Evergreen
       end
       nil
     end
+
+    def distros
+      payload = get_json("distros")
+      payload.map do |info|
+        Distro.new(client, info['id'], info: info)
+      end
+    end
   end
 end
