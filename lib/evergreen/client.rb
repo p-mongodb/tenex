@@ -101,7 +101,7 @@ module Evergreen
     def hosts
       payload = get_json("hosts")
       payload.map do |info|
-        Host.new(self, info['id'], info: info)
+        Host.new(self, info['host_id'], info: info)
       end
     end
 

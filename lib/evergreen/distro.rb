@@ -9,7 +9,14 @@ module Evergreen
     attr_reader :client, :id
 
     def info
-      @info ||= client.get_json("tasks/#{id}")
+      @info ||= begin
+        # there is no distros/:id route.
+        # get full list of distros and filter down manually
+        payload = client.get_json('distros')
+        info = payload.detect do |info|
+          info['name'] == id
+        end
+      end
     end
 
     %w(name user_spawn_allowed provider image_id).each do |m|
