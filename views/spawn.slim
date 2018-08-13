@@ -14,3 +14,9 @@ form method='post'
         option value=key.id =key.name
 
   input type='submit' value='Spawn'
+
+h2 Running Hosts
+
+ul
+  - @hosts.each do |host|
+    = host.distro.id

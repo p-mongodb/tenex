@@ -16,6 +16,7 @@ module Evergreen
     include PaginatedGet
 
     def initialize(username:, api_key:)
+      @user_id = username
       @connection ||= Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
         #f.request :url_encoded
         #f.response :detailed_logger
@@ -26,17 +27,31 @@ module Evergreen
       end
     end
 
-    attr_reader :connection
+    attr_reader :connection, :user_id
 
     def get_json(url)
-      response = connection.get(url)
+      request_json(:get, url)
+    end
+
+    def post_json(url, params)
+      request_json(:post, url, params)
+    end
+
+    def request_json(meth, url, params=nil)
+      response = connection.send(meth) do |req|
+        req.url(url)
+        if params
+        p params
+          req.body = JSON.dump(params)
+        end
+      end
       if response.status != 200
         error = nil
         begin
           error = JSON.parse(response.body)['error']
         rescue
         end
-        msg = "Evergreen GET #{url} failed: #{response.status}"
+        msg = "Evergreen #{meth.to_s.upcase} #{url} failed: #{response.status}"
         if error
           msg += ": #{error}"
         end
@@ -81,6 +96,25 @@ module Evergreen
       payload.map do |info|
         Key.new(self, info['id'], info: info)
       end
+    end
+
+    def hosts
+      payload = get_json("hosts")
+      payload.map do |info|
+        Host.new(self, info['id'], info: info)
+      end
+    end
+
+    def user_hosts
+      payload = get_json("users/#{user_id}/hosts")
+      payload.map do |info|
+        Host.new(self, info['id'], info: info)
+      end
+    end
+
+    def spawn_host(distro_name:, key_name:)
+      payload = post_json('hosts', distro: distro_name, keyname: key_name)
+      Host.new(self, payload['host_id'], info: payload)
     end
   end
 end
