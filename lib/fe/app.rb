@@ -169,7 +169,7 @@ class App < Sinatra::Base
 
   # spawn
   get '/spawn' do
-    @distros = eg_client.distros
+    @distros = distros_with_cache
     @keys = eg_client.keys
     @hosts = eg_client.user_hosts
     @config = SpawnConfig.first || SpawnConfig.new
@@ -198,5 +198,23 @@ class App < Sinatra::Base
 
   private def return_path
     URI.parse(request.env['HTTP_REFERER']).path
+  end
+
+  private def distros_with_cache
+    cache_state = CacheState.first || CacheState.new
+    if cache_state.distros_ok?
+      distros = Distro.order(name: 1)
+      distros.map do |distro|
+        Evergreen::Distro.new(eg_client, distro.name, info: {'name' => distro.name})
+      end
+    else
+      distros = eg_client.distros
+      Distro.delete_all
+      distros.each do |distro|
+        Distro.create!(name: distro.name)
+      end
+      cache_state.distros_updated_at = Time.now
+      cache_state.save!
+    end
   end
 end
