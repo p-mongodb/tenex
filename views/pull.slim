@@ -33,11 +33,11 @@ p
             td= auth
             - @ruby_versions.each do |ruby_version|
               td
-                - %w(all zlib).each do |flavor|
+                - %w(all zlib ruby-head).each do |flavor|
                   - suffix = flavor == 'zlib' ? '_compressor~zlib' : ''
                   - label = "evergreen/#{flavor}__mongodb-version~#{mongodb_version}_topology~#{topology}_auth-and-ssl~#{auth}_ruby~ruby-#{ruby_version}#{suffix}"
                   - status = @pull.take_status(label)
-                  - prefix = flavor == 'all' ? 'A' : 'Z'
+                  - prefix = {'all' => 'A', 'zlib' => 'Z', 'ruby-head' => 'H'}[flavor]
                   - if status
                     div class="#{{'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]}"
                       ' #{prefix}
