@@ -7,6 +7,8 @@ h2
   a href=@pull['html_url'] ##{@pull['number']}: #{@pull['title']}
   '
   span by #{@pull['user']['login']}
+  '
+  code= @pull.head_branch
 
 p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-failed" Restart failed

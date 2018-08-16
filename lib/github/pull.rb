@@ -65,6 +65,10 @@ module Github
       end
     end
 
+    def head_branch
+      info['head']['ref']
+    end
+
     def status_by_name(name)
       statuses.select do |status|
         status['context'] == name
