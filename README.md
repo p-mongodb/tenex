@@ -33,6 +33,8 @@ Adds a link to terminate all running spawned hosts.
 Adds an SSH command copy-pastable to the terminal to connect to each
 spawned host.
 
+![Spawn page](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/spawn.png) 
+
 ## Configuration
 
 Get credentials from [here](https://evergreen.mongodb.com/settings).
