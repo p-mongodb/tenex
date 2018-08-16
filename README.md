@@ -9,6 +9,12 @@ shortcuts to commonly used operations.
 
 ## Features
 
+### Pull Request List
+
+- Shows Evergreen build stats for each PR.
+
+![PR list](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr-list.png) 
+
 ### Pull Request CI Status
 
 Tenex merges Evergreen and Travis CI statuses on a single page.
@@ -16,12 +22,19 @@ Travis statuses are expanded to job level.
 Evergreen statuses are arranged in a matrix for supported projects
 (Ruby driver).
 
-PR status page adds a link to restart all failed Evergreen tasks.
+PR status page adds:
+- A link to restart all failed Evergreen tasks.
+- One click jump to full task logs.
+- One click to restart a task.
+
+![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 
 ### Evengreen Patch Status
 
 Adds a link to jump to the patch status page for the newest version
 of the branch being shown.
+
+![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/version.png) 
 
 ### Evergreen Spawn Hosts
 
@@ -35,9 +48,31 @@ spawned host.
 
 ![Spawn page](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/spawn.png) 
 
+## Installation
+
+    git clone https://github.com/p-mongo/tenex
+    cd tenex
+    cp .env.sample .env
+
 ## Configuration
 
-Get credentials from [here](https://evergreen.mongodb.com/settings).
+Edit `.env` file in project directory, and fill out:
+
+- Your Evergreen credentials - get them [here](https://evergreen.mongodb.com/settings).
+- Your GitHub credentials - create a personal access token [here](https://github.com/settings/tokens).
+- Your Travis credentials - get it at https://travis-ci.org/profile/your-username/settings
+(go to Profile -> Settings).
+
+## Running
+
+In development:
+
+    ./script/server
+
+This launches a self-reloading web server on port 9393.
+
+In production, use your favorite web server to run `.config.ru` (note the
+leading dot).
 
 ## License
 
