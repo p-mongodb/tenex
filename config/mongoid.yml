@@ -1,6 +1,6 @@
 development:
   clients:
     default:
-      database: egrc
+      database: tenex
       hosts:
         - localhost:27027

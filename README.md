@@ -50,8 +50,12 @@ spawned host.
 
 ## Installation
 
+Tenex uses MongoDB for persistence and is implemented in Ruby, therefore
+you'll need reasonably recent versions of both of these installed. Then:
+
     git clone https://github.com/p-mongo/tenex
     cd tenex
+    bundle install
     cp .env.sample .env
 
 ## Configuration
@@ -62,6 +66,10 @@ Edit `.env` file in project directory, and fill out:
 - Your GitHub credentials - create a personal access token [here](https://github.com/settings/tokens).
 - Your Travis credentials - get it at https://travis-ci.org/profile/your-username/settings
 (go to Profile -> Settings).
+
+Edit `config/mongoid.yml` and change the host, port and database used for
+MongoDB (note the MongoDB port specified by tenex is 27027, default MongoDB
+port is 27017).
 
 ## Running
 
