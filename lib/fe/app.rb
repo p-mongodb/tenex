@@ -66,7 +66,7 @@ class App < Sinatra::Base
       end
       raise
     end
-    slim :dashboard
+    slim :pulls
   end
 
   # pull
