@@ -5,9 +5,17 @@ Tenex is a mashup application built on top of
 [Travis](https://travis-ci.org/) and Github APIs.
 Its goal is to increase developer productivity by presenting
 commonly needed data in an effective fashion as well as providing
-shortcuts to commonly used operations.
+shortcuts for commonly used operations.
 
 ## Features
+
+### General
+
+- Reasonably quick operation in interactive use.
+- No jumping content due to multiple renders.
+- If a project uses Evergreen and Travis, results from both are shown
+whenever results from one are shown and results from both systems are
+presented in a similar fashion.
 
 ### Pull Request List
 
@@ -63,7 +71,7 @@ you'll need reasonably recent versions of both of these installed. Then:
 Edit `.env` file in project directory, and fill out:
 
 - Your Evergreen credentials - get them [here](https://evergreen.mongodb.com/settings).
-- Your GitHub credentials - create a personal access token [here](https://github.com/settings/tokens).
+- Your Github credentials - create a personal access token [here](https://github.com/settings/tokens).
 - Your Travis credentials - get it at https://travis-ci.org/profile/your-username/settings
 (go to Profile -> Settings).
 
