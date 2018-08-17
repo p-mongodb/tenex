@@ -48,6 +48,8 @@ of the branch being shown.
 
 Reinstates normal horizontal scrollbar in task logs.
 
+Adds a quick jump to first RSpec failure.
+
 ### Evergreen Spawn Hosts
 
 Adds a list of recently spawned distros for quickly spawning more of

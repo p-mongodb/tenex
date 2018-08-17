@@ -90,6 +90,16 @@ class App < Sinatra::Base
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     log = build.log
+    log.gsub!(%r,<i class="fa fa-link line-link" id='line-link-\d+'></i> ,, '')
+    lines = log.split("\n")
+    lines.each_with_index do |line, index|
+      if line =~ %r,Failure/Error:,
+        insert_point = [index-3, 0].max
+        lines.insert(insert_point, '<a name="first-failure"></a>')
+        log = lines.join("\n")
+        break
+      end
+    end
     style = %q,
       pre { overflow: initial; }
     ,

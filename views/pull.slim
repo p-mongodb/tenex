@@ -41,12 +41,17 @@ p
                   - status = @pull.take_status(label)
                   - prefix = {'all' => 'A', 'zlib' => 'Z', 'ruby-head' => 'H'}[flavor]
                   - if status
-                    div class="#{{'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]}"
+                    - mapped_status = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]
+                    div class=mapped_status
                       ' #{prefix}
                       a href=status['target_url'] Go
                       '
                       - if status.log_url
-                        a href=status.log_url Log
+                        - if mapped_status == 'failed'
+                          - target_url = "#{status.log_url}#first-failure"
+                        - else
+                          - target_url = status.log_url
+                        a href=target_url Log
                       '
                       - if status.restart_url
                         a href=status.restart_url Restart
