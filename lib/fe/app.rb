@@ -100,10 +100,12 @@ class App < Sinatra::Base
         break
       end
     end
+    pull = gh_repo(org_name, repo_name).pull(pull_id)
+    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch}]"
     style = %q,
       pre { overflow: initial; }
     ,
-    log.sub!(/<\/head>/, "<style>#{style}</style></head>")
+    log.sub!(/<\/head>/, "<style>#{style}</style><title>#{title}</title></head>")
     inject = %Q,<p style='margin:1em;font-size:150%'><a href="#{build.log_url}">Log @ Evergreen</a></p>,
     log.sub!(/<body(.*?)>/, "<body\\1>#{inject}")
   end
