@@ -37,12 +37,16 @@ PR status page adds:
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 
-### Evengreen Patch Status
+### Evergreen Patch Status
 
 Adds a link to jump to the patch status page for the newest version
 of the branch being shown.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/version.png) 
+
+### Evergreen Log
+
+Reinstates normal horizontal scrollbar in task logs.
 
 ### Evergreen Spawn Hosts
 

@@ -90,8 +90,12 @@ class App < Sinatra::Base
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     log = build.log
+    style = %q,
+      pre { overflow: initial; }
+    ,
+    log.sub!(/<\/head>/, "<style>#{style}</style></head>")
     inject = %Q,<p style='margin:1em;font-size:150%'><a href="#{build.log_url}">Log @ Evergreen</a></p>,
-    log.sub(/<body(.*?)>/, "<body\\1>#{inject}")
+    log.sub!(/<body(.*?)>/, "<body\\1>#{inject}")
   end
 
   get '/repos/:org/:repo/pulls/:id/restart/:build_id' do |org_name, repo_name, pull_id, build_id|
