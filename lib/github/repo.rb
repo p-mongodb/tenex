@@ -12,11 +12,18 @@ module Github
       "#{user_name}/#{repo_name}"
     end
 
-    def pulls
+    def pulls(options={})
       payload = client.get_json("repos/#{full_name}/pulls")
-      payload.map do |info|
+      pulls = payload.map do |info|
         Pull.new(client, full_name, info: info)
       end
+      # github's filtering options are nonexistent
+      if creator = options[:creator]
+        pulls.reject! do |pull|
+          pull.creator_name != creator
+        end
+      end
+      pulls
     end
 
     def pull(pull_id)

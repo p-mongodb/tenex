@@ -55,7 +55,9 @@ class App < Sinatra::Base
   get '/repos/:org/:repo' do |org_name, repo_name|
     system.hit_repo(org_name, repo_name)
     begin
-      @pulls = gh_repo(org_name, repo_name).pulls
+      @pulls = gh_repo(org_name, repo_name).pulls(
+        creator: params[:creator],
+      )
     rescue Github::Client::ApiError => e
       if e.status == 404
         project = system.evergreen_project_for_github_repo(org_name, repo_name)

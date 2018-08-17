@@ -19,6 +19,11 @@ module Github
       info['head']['sha']
     end
 
+    # Who opened the PR (could be different from author of PR's head)
+    def creator_name
+      info['user']['login']
+    end
+
     def request_review(*reviewers)
       r = client.connection.post("/repos/#{repo_full_name}/pulls/#{info['number']}/requested_reviewers",
         body: JSON.generate(reviewers))
