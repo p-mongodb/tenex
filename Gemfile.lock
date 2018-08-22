@@ -9,6 +9,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     addressable (2.4.0)
+    ansi-to-html (0.0.3)
     backports (3.11.3)
     bson (4.3.0)
     byebug (10.0.2)
@@ -97,6 +98,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  ansi-to-html
   byebug
   dotenv
   faraday

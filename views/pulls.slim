@@ -6,7 +6,9 @@
     '
     code= pull.head_branch
   p
-    a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR @ GH
+    a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR
+    '
+    a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}/files" Diff
     '
     span
       ' #{pull.success_count} successful builds,

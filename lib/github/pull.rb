@@ -134,8 +134,12 @@ module Github
         "https://travis-ci.org/#{info.repository.owner_name}/#{info.repository.name}/jobs/#{info.id}"
       end
 
-      def log_url
+      def raw_log_url
         "https://api.travis-ci.org/v3/job/#{info.id}/log.txt"
+      end
+
+      def html_log_url
+        "/travis/log/#{info.id}"
       end
 
       def restart_url

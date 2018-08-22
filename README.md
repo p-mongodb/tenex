@@ -32,7 +32,8 @@ Evergreen statuses are arranged in a matrix for supported projects
 
 PR status page adds:
 - A link to restart all failed Evergreen tasks.
-- One click jump to full task logs.
+- One click jump to full Evergreen task logs.
+- One click jump to full Travis logs.
 - One click to restart a task.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
@@ -49,6 +50,10 @@ of the branch being shown.
 Reinstates normal horizontal scrollbar in task logs.
 
 Adds a quick jump to first RSpec failure.
+
+### Travis Log
+
+Full build log with color.
 
 ### Evergreen Spawn Hosts
 

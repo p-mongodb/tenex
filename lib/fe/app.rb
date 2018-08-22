@@ -1,3 +1,5 @@
+require 'open-uri'
+require 'ansi/to/html'
 require 'forwardable'
 require 'evergreen'
 require 'github'
@@ -183,6 +185,12 @@ class App < Sinatra::Base
     @version.restart_failed_builds
 
     redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+  end
+
+  get '/travis/log/:job_id' do |job_id|
+    status = Github::Pull::TravisStatus.new(OpenStruct.new(id: job_id))
+    log = open(status.raw_log_url).read
+    html_log = Ansi::To::Html.new(log).to_html.gsub("\n", '<br>')
   end
 
   # spawn
