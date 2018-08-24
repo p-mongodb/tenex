@@ -52,8 +52,16 @@ module Evergreen
       %w(undispatched).include?(status)
     end
 
+    def completed?
+      %w(success failed).include?(status)
+    end
+
     def priority
       info['priority']
+    end
+
+    def set_priority(priority)
+      client.request_json(:patch, "tasks/#{id}", priority: priority)
     end
   end
 end

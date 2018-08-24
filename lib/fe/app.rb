@@ -188,6 +188,23 @@ class App < Sinatra::Base
     redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
   end
 
+  get '/projects/:project/versions/:version_id/bump' do |project_id, version_id|
+    @version = Evergreen::Version.new(eg_client, version_id)
+    priority = params[:priority].to_i
+    if priority == 0
+      raise "Bumping to 0?"
+    end
+    @version.builds.each do |build|
+      build.tasks.each do |task|
+        unless task.completed?
+          task.set_priority(priority)
+        end
+      end
+    end
+
+    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+  end
+
   get '/travis/log/:job_id' do |job_id|
     status = Github::Pull::TravisStatus.new(OpenStruct.new(id: job_id))
     log = open(status.raw_log_url).read
