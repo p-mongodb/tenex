@@ -11,6 +11,7 @@ require 'sinatra/reloader'
 require 'travis'
 require_relative './models'
 require_relative './system'
+require_relative './toolchain'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -269,5 +270,24 @@ class App < Sinatra::Base
       cache_state.save!
       keys
     end
+  end
+
+  get '/ruby-toolchain-urls' do
+    toolchain = Toolchain.new
+    toolchain_sha = toolchain.latest_sha
+    project = Evergreen::Project.new(eg_client, 'mongo-ruby-driver-toolchain')
+    eg_version = project.recent_versions.detect do |version|
+      version.revision == toolchain_sha
+    end
+    @builds = eg_version.builds
+    @urls = @builds.map do |build|
+      log = build.tasks.first.task_log
+      if log =~ %r,Putting mongo-ruby-toolchain/ruby-toolchain.tar.gz into (https://.*),
+        $1
+      else
+        nil
+      end
+    end
+    slim :ruby_toolchain_urls
   end
 end

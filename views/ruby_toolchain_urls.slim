@@ -1,0 +1,11 @@
+h1 Ruby Toolchain URLs
+
+table
+  - @builds.each_with_index do |build, index|
+    tr
+      td= build.build_variant
+      td= build.status
+      td
+        a href=build.tasks.first.task_log_html_url Log
+      td
+        a href=@urls[index] Toolchain archive

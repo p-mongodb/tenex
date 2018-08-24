@@ -20,6 +20,8 @@ table
       td= build.status
       td
         - if build.tasks.length == 1
+          a href="https://evergreen.mongodb.com/task/#{build.tasks.first.id}" Go
+          '
           a href=build.log_url Log
         - else
           ul
@@ -28,5 +30,7 @@ table
                 = task.display_name
                 '
                 = task.status
+                '
+                a href="https://evergreen.mongodb.com/task/#{task.id}" Go
                 '
                 a href=task.log_url Log

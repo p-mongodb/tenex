@@ -44,8 +44,9 @@ module Evergreen
       end
     end
 
+    # sha of the commit
     def revision
-      Revision.new(client, info['revision'])
+      info['revision']
     end
 
     def pr_info

@@ -55,6 +55,13 @@ Adds a quick jump to first RSpec failure.
 
 Full build log with color.
 
+### Toolchain Tarball Retrieval
+
+Allows quickly getting URLs of built toolchain tarballs for the most
+recent master commit of the toolchain.
+
+![Toolchain URLs](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/toolchain-urls.png) 
+
 ### Evergreen Spawn Hosts
 
 Adds a list of recently spawned distros for quickly spawning more of
