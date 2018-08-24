@@ -43,7 +43,12 @@ PR status page adds:
 Adds a link to jump to the patch status page for the newest version
 of the branch being shown.
 
+Adds ability to bulk bump task priorities for unfinished tasks in
+a version.
+
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/version.png) 
+
+![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/version-2.png) 
 
 ### Evergreen Log
 
