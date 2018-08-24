@@ -57,5 +57,9 @@ module Evergreen
     def status
       info['status']
     end
+
+    def completed?
+      %w(success failed).include?(status)
+    end
   end
 end

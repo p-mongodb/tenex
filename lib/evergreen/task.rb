@@ -47,5 +47,13 @@ module Evergreen
     def status
       info['status']
     end
+
+    def waiting?
+      %w(undispatched).include?(status)
+    end
+
+    def priority
+      info['priority']
+    end
   end
 end

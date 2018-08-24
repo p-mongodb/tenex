@@ -12,6 +12,14 @@ p
   - if @newest_version
     '
     a href="/projects/#{@project_id}/versions/#{@newest_version.id}" Newest version
+  - if @builds.any? { |build| !build.completed? }
+    '
+    ' Bump priority to:
+    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=70" 70
+    '
+    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=90" 90
+    '
+    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=99" 99
 
 table
   - @builds.each do |build|
@@ -20,9 +28,13 @@ table
       td= build.status
       td
         - if build.tasks.length == 1
-          a href="https://evergreen.mongodb.com/task/#{build.tasks.first.id}" Go
+          - task = build.tasks.first
+          a href="https://evergreen.mongodb.com/task/#{task.id}" Go
           '
-          a href=build.log_url Log
+          a href=task.task_log_html_url Log
+          - if task.waiting?
+            '
+            | (p=#{task.priority})
         - else
           ul
             - build.tasks.each do |task|
@@ -34,3 +46,6 @@ table
                 a href="https://evergreen.mongodb.com/task/#{task.id}" Go
                 '
                 a href=task.log_url Log
+                - if task.waiting?
+                  '
+                  | (p=#{task.priority})

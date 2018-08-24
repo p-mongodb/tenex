@@ -178,7 +178,7 @@ class App < Sinatra::Base
       end
     end
     @builds = @version.builds
-    slim :builds
+    slim :version
   end
 
   get '/projects/:project/versions/:version_id/restart-failed' do |project_id, version_id|
