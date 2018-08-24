@@ -63,5 +63,9 @@ module Evergreen
     def set_priority(priority)
       client.request_json(:patch, "tasks/#{id}", priority: priority)
     end
+
+    def artifacts
+      info['artifacts'].map { |artifact| Artifact.new(client, info: artifact) }
+    end
   end
 end

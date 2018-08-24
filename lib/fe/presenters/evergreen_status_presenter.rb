@@ -29,6 +29,18 @@ class EvergreenStatusPresenter
   end
 
   def evergreen_build
-    Evergreen::Build.new(eg_client, build_id)
+    @evergreen_build ||= Evergreen::Build.new(eg_client, build_id)
+  end
+
+  def junit_xml_url
+    unless @junit_xml_url_loaded
+      task = evergreen_build.tasks.first
+      rspec_xml_artifact = task.artifacts.detect do |artifact|
+        [' rspec.xml', 'rspec.xml'].include?(artifact.name)
+      end
+      @junit_xml_url = rspec_xml_artifact&.url
+      @junit_xml_url_loaded = true
+    end
+    @junit_xml_url
   end
 end

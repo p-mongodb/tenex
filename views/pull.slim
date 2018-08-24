@@ -53,6 +53,9 @@ p
                           - target_url = status.log_url
                         a href=target_url Log
                       '
+                      - if status.junit_xml_url
+                        '
+                        a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}" Results
                       - if status.restart_url
                         a href=status.restart_url Restart
 
