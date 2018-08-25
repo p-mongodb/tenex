@@ -1,3 +1,5 @@
+autoload :LinkHeader, 'link_header'
+
 module PaginatedGet
   def paginated_get(url)
     resp = connection.get(url)

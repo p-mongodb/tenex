@@ -1,6 +1,6 @@
 autoload :Nokogiri, 'nokogiri'
 require 'open-uri'
-require 'ansi/to/html'
+autoload :Ansi, 'ansi/to/html'
 require 'forwardable'
 require 'evergreen'
 require 'github'

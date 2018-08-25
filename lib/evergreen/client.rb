@@ -1,6 +1,5 @@
 require 'json'
 require 'faraday'
-require 'link_header'
 require_relative '../paginated_get'
 
 module Evergreen

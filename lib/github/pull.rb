@@ -1,5 +1,4 @@
 require 'forwardable'
-require "link_header"
 
 module Github
   class Pull
