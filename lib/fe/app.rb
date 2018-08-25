@@ -86,7 +86,7 @@ class App < Sinatra::Base
       'topology' => %w(standalone replicaset sharded-cluster),
       'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
-    @ruby_versions = %w(2.5.0 2.4 2.3 1.9 head)
+    @ruby_versions = %w(2.5 2.4 2.3 1.9 head jruby-9.2 jruby-9.1)
     slim :pull
   end
 

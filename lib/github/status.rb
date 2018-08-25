@@ -13,7 +13,7 @@ module Github
 
     attr_reader :client, :info
 
-    %w(context).each do |meth|
+    %w(context state).each do |meth|
       define_method(meth) do
         @info[meth]
       end

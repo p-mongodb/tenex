@@ -43,4 +43,8 @@ class EvergreenStatusPresenter
     end
     @junit_xml_url
   end
+
+  def failed?
+    status.state == 'failure'
+  end
 end
