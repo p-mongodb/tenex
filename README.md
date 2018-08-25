@@ -60,6 +60,11 @@ Adds a quick jump to first RSpec failure.
 
 Full build log with color.
 
+### Failure Reporting From JUnit XML Results
+
+If the test suite outputs its results in JUnit XML format, Tenex will
+provide a list of failed tests for each Evergreen task.
+
 ### Toolchain Tarball Retrieval
 
 Allows quickly getting URLs of built toolchain tarballs for the most

@@ -1,3 +1,4 @@
+autoload :Nokogiri, 'nokogiri'
 require 'open-uri'
 require 'ansi/to/html'
 require 'forwardable'
@@ -306,5 +307,55 @@ class App < Sinatra::Base
       end
     end
     slim :ruby_toolchain_urls
+  end
+
+  get '/junit-xml' do
+    url = params[:url]
+    contents = open(url).read
+
+    doc = Nokogiri::XML(contents)
+    results = doc.xpath('//testcase').map do |testcase_elt|
+      line = testcase_elt.attr('line')
+      if line
+        line = line.to_i
+      end
+      time = testcase_elt.attr('time')
+      if time
+        time = time.to_f
+      end
+      {
+        class_name: testcase_elt.attr('classname'),
+        name: testcase_elt.attr('name'),
+        file_path: testcase_elt.attr('file'),
+        line_number: line,
+        scoped_id: testcase_elt.attr('scoped-id'),
+        time: time,
+      }.tap do |result|
+        unless testcase_elt.xpath('./skipped').empty?
+          result[:skipped] = true
+        end
+        if failure = testcase_elt.xpath('./failure').first
+          result[:failure] = {
+            message: failure.attr('message'),
+            type: failure.attr('type'),
+            full_message: failure.text,
+          }
+        end
+      end
+    end
+
+    results.sort_by! do |result|
+      [result[:file_path], result[:scoped_id].split(':').map(&:to_i)]
+    end
+
+    @failures = results.select do |result|
+      result[:failure]
+    end
+
+    @ok = results.select do |result|
+      !result[:failure]
+    end
+
+    slim :junit_xml
   end
 end
