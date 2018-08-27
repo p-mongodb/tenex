@@ -54,6 +54,11 @@ class App < Sinatra::Base
     slim :landing
   end
 
+  get '/repos' do
+    @repos = Repo.all.sort_by(&:full_name)
+    slim :repos
+  end
+
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
     system.hit_repo(org_name, repo_name)

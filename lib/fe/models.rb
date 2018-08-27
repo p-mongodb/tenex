@@ -7,6 +7,10 @@ class Repo
   field :repo_name, type: String
   field :hit_count, type: Integer
   field :evergreen_project_id, type: String
+
+  def full_name
+    "#{owner_name}/#{repo_name}"
+  end
 end
 
 class RepoHit

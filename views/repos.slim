@@ -1,0 +1,7 @@
+h1 Repos
+
+ul
+  - @repos.each do |repo|
+    li
+      a href="/repos/#{repo.owner_name}/#{repo.repo_name}"
+        = repo.full_name
