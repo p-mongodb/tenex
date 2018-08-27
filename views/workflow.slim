@@ -1,7 +1,14 @@
 h1 Workflow
 
 - @repos.each do |repo|
-  h2= repo.full_name
+  h2
+    a href="/repos/#{repo.full_name}"
+      = repo.full_name
+      
+    '
+    | (
+    a href="https://github.com/#{repo.full_name}" GH
+    ' )
 
   ' Recent branches:
   ul
