@@ -45,20 +45,24 @@ p
                     - mapped_status = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]
                     div class=mapped_status
                       ' #{prefix}
-                      a href=status['target_url'] Go
+                      a href=status['target_url']
+                        i.fa.fa-space-shuttle title='Go'
                       '
                       - if status.log_url
                         - if mapped_status == 'failed'
                           - target_url = "#{status.log_url}#first-failure"
                         - else
                           - target_url = status.log_url
-                        a href=target_url Log
+                        a href=target_url
+                          i.fa.fa-file-text-o title='Log'
                       '
                       - if status.failed? && status.junit_xml_url
-                        a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}" Results
+                        a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}"
+                          i.fa.fa-puzzle-piece title='Results'
                         '
                       - if status.restart_url
-                        a href=status.restart_url Restart
+                        a href=status.restart_url
+                          i.fa.fa-repeat title='Restart'
 
 table
   - @pull.untaken_statuses.each do |status|
