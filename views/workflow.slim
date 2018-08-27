@@ -14,6 +14,6 @@ h1 Workflow
   ul
     - repo.repo_cache.recent_branches.each do |branch|
       li
-        = branch
+        a href="https://github.com/p-mongo/#{repo.repo_name}/tree/#{branch}"= branch
         '
         | (#{Taw.time_ago_in_words(repo.repo_cache.commitish_time("pp/#{branch}"), approx: 2)} ago)
