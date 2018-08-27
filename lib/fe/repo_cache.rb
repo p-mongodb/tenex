@@ -1,7 +1,7 @@
 require 'pathname'
 require 'time'
 
-class Repo
+class RepoCache
   def initialize(owner, name)
     @owner, @name = owner, name
   end
