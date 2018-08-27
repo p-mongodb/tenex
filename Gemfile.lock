@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/AlexMooney/taw
+  revision: 9094d9ddb31128fbdb6e39271bf860529b5bc10c
+  branch: approx_taaw_method
+  specs:
+    taw (1.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -115,6 +122,7 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   slim
+  taw!
   travis
 
 BUNDLED WITH

@@ -1,0 +1,12 @@
+h1 Workflow
+
+- @repos.each do |repo|
+  h2= repo.full_name
+
+  ' Recent branches:
+  ul
+    - repo.repo_cache.recent_branches.each do |branch|
+      li
+        = branch
+        '
+        | (#{Taw.time_ago_in_words(repo.repo_cache.commitish_time("pp/#{branch}"), approx: 2)} ago)

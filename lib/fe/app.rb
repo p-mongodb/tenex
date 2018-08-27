@@ -10,6 +10,7 @@ require 'slim'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
+require 'taw'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -368,5 +369,10 @@ class App < Sinatra::Base
     end
 
     slim :junit_xml
+  end
+
+  get '/workflow' do
+    @repos = Repo.where(workflow: true).sort_by(&:full_name)
+    slim :workflow
   end
 end

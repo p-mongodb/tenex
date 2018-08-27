@@ -96,4 +96,18 @@ class RepoCache
 
     branches
   end
+
+  def commitish_time(commitish)
+    output = Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_output(%W(
+        git show #{commitish}
+      ))
+    end
+    if output =~ /Date: \s+(.+)/
+      date = $1
+    else
+      raise "No date"
+    end
+    Time.parse(date)
+  end
 end

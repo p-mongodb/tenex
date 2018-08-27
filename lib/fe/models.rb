@@ -12,6 +12,10 @@ class Repo
   def full_name
     "#{owner_name}/#{repo_name}"
   end
+
+  def repo_cache
+    @repo_cache ||= RepoCache.new(owner_name, repo_name)
+  end
 end
 
 class RepoHit
