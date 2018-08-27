@@ -61,7 +61,7 @@ class App < Sinatra::Base
 
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
-    system.hit_repo(org_name, repo_name)
+    @repo = system.hit_repo(org_name, repo_name)
     begin
       @pulls = gh_repo(org_name, repo_name).pulls(
         creator: params[:creator],
@@ -77,6 +77,13 @@ class App < Sinatra::Base
       raise
     end
     slim :pulls
+  end
+
+  get '/repos/:org/:repo/workflow/:settting' do |org_name, repo_name, setting|
+    @repo = system.hit_repo(org_name, repo_name)
+    @repo.workflow = setting == 'on'
+    @repo.save!
+    redirect "/repos/#{@repo.full_name}"
   end
 
   # pull

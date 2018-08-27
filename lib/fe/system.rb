@@ -39,5 +39,6 @@ class System
     RepoHit.create!(repo: repo)
     repo.hit_count = RepoHit.where(repo: repo).count
     repo.save!
+    repo
   end
 end

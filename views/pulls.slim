@@ -15,3 +15,10 @@
       ' #{pull.failure_count} failed builds,
       ' #{pull.pending_count} pending builds.
     a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/restart-failed" Restart failed
+
+- if @repo.workflow
+  ' Workflow: on.
+  a href="/repos/#{@repo.full_name}/workflow/off" Turn off
+- else
+  ' Workflow: off.
+  a href="/repos/#{@repo.full_name}/workflow/on" Turn on
