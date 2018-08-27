@@ -144,6 +144,10 @@ module Github
       def restart_url
         "/repos/#{info.repository.owner_name}/#{info.repository.name}/restart-travis/#{info.id}"
       end
+
+      def junit_xml_url
+        nil
+      end
     end
   end
 end

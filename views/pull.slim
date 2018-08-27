@@ -79,6 +79,10 @@ table
       td
         - if status.restart_url
           a href=status.restart_url Restart
+      - if status.failed? && status.junit_xml_url
+        td
+          a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}"
+            | Results
     - if status['context'] == 'continuous-integration/travis-ci/pr'
       - @pull.travis_statuses.each do |status|
         tr class="#{status.state}"

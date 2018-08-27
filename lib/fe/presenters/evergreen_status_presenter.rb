@@ -33,6 +33,9 @@ class EvergreenStatusPresenter
   end
 
   def junit_xml_url
+    # top level build has no junit xml url
+    return nil if build_id.nil?
+
     unless @junit_xml_url_loaded
       task = evergreen_build.tasks.first
       rspec_xml_artifact = task.artifacts.detect do |artifact|
