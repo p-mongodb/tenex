@@ -4,3 +4,10 @@ development:
       database: tenex
       hosts:
         - localhost:27027
+
+production:
+  clients:
+    default:
+      database: tenex
+      hosts:
+        - localhost:27017

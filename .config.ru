@@ -1,6 +1,6 @@
-$: << 'lib'
+$: << File.join(File.dirname(__FILE__), 'lib')
 
-require 'fe/app'
 require 'fe/boot'
+require 'fe/app'
 
 run App

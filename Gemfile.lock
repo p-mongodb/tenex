@@ -54,6 +54,7 @@ GEM
     net-http-pipeline (1.0.1)
     nokogiri (1.8.3)
       mini_portile2 (~> 2.3.0)
+    puma (3.12.0)
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
@@ -109,6 +110,7 @@ DEPENDENCIES
   link_header
   mongoid
   nokogiri
+  puma
   shotgun
   sinatra
   sinatra-contrib
@@ -116,4 +118,4 @@ DEPENDENCIES
   travis
 
 BUNDLED WITH
-   1.16.2
+   1.16.4
