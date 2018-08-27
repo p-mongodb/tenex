@@ -83,7 +83,7 @@ class App < Sinatra::Base
     @statuses = @pull.statuses
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
-      'topology' => %w(standalone replicaset sharded-cluster),
+      'topology' => %w(standalone replica-set sharded-cluster),
       'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
     @ruby_versions = %w(2.5 2.4 2.3 1.9 head jruby-9.2 jruby-9.1)
