@@ -56,13 +56,13 @@ p
                         a href=target_url
                           i.fa.fa-file-text-o title='Log'
                       '
-                      - if status.failed? && status.junit_xml_url
-                        a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}"
-                          i.fa.fa-puzzle-piece title='Results'
-                        '
                       - if status.restart_url
                         a href=status.restart_url
                           i.fa.fa-repeat title='Restart'
+                      - if status.failed? && status.junit_xml_url
+                        '
+                        a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}"
+                          i.fa.fa-puzzle-piece title='Results'
 
 table
   - @pull.untaken_statuses.each do |status|
