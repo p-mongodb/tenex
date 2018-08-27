@@ -17,6 +17,8 @@ end
 
 Travis.access_token = ENV['TRAVIS_TOKEN']
 
+Slim::Engine.set_options pretty: true, sort_attrs: false
+
 class App < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
