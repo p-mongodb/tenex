@@ -1,4 +1,5 @@
 autoload :ChildProcess, 'childprocess'
+autoload :Tempfile, 'tempfile'
 
 module ChildProcessHelper
   module_function def call(cmd, env: nil)

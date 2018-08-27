@@ -10,10 +10,6 @@ require 'slim'
 require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
-require_relative './models'
-require_relative './system'
-require_relative './toolchain'
-require_relative './repo'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')

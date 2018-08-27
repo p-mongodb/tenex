@@ -1,3 +1,4 @@
+require_relative '../paginated_get'
 require 'faraday'
 
 module Github

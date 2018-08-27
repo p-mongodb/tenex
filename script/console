@@ -5,10 +5,7 @@ $: << 'lib'
 
 ENV['MONGOID_ENV'] = 'development'
 
-require 'evergreen'
 require 'fe/boot'
-require 'fe/models'
-require 'github'
 
 $eg_client ||= Evergreen::Client.new(
     username: ENV['EVERGREEN_AUTH_USERNAME'],
