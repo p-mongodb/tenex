@@ -118,6 +118,12 @@ This launches a self-reloading web server on port 9393.
 In production, use your favorite web server to run `.config.ru` (note the
 leading dot).
 
+In production:
+
+    puma .config.ru -b tcp://127.0.0.1:9393 -e production
+
+Tenex presently does not perform authentication itself, therefore it should be reverse-proxied to by a web server that has authentication configured.
+
 ## License
 
 MIT
