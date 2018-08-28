@@ -4,7 +4,7 @@
     '
     span by #{pull['user']['login']}
     '
-    code= pull.head_branch
+    code= pull.head_branch_name
   p
     a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR
     '

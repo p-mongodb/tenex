@@ -117,7 +117,7 @@ class App < Sinatra::Base
       end
     end
     pull = gh_repo(org_name, repo_name).pull(pull_id)
-    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch}]"
+    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
     style = %q,
       pre { overflow: initial; }
     ,

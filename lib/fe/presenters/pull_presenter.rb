@@ -10,7 +10,7 @@ class PullPresenter
   attr_reader :pull
   attr_reader :eg_client, :system
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
-    :evergreen_version_id, :head_branch
+    :evergreen_version_id, :head_branch_name
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
