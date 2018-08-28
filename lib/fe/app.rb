@@ -358,6 +358,7 @@ class App < Sinatra::Base
       !result[:failure]
     end
 
+    @branch_name = params[:branch]
     slim :results
   end
 

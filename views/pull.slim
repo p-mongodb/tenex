@@ -61,7 +61,7 @@ p
                           i.fa.fa-repeat title='Restart'
                       - if status.failed? && @pull.have_rspec_json? && !status.top_level?
                         '
-                        a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}"
+                        a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
                           i.fa.fa-puzzle-piece title='Results'
 
 table

@@ -2,6 +2,9 @@ doctype html
 html
   head
     link rel='stylesheet' href='/font-awesome/css/font-awesome.min.css'
+  title
+    - if @branch_name
+      | [#{@branch_name}]
 
   body
     ul#nav
