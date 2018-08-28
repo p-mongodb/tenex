@@ -18,7 +18,7 @@ module Github
     def initialize(username:, auth_token:)
       @connection ||= Faraday.new('https://api.github.com') do |f|
         f.request :url_encoded
-        #f.response :detailed_logger
+        f.response :detailed_logger
         f.adapter Faraday.default_adapter
         f.headers['user-agent'] = 'EvergreenRubyClient'
         f.basic_auth(username, auth_token)
@@ -28,9 +28,32 @@ module Github
     attr_reader :connection
 
     def get_json(url)
-      response = connection.get(url)
-      if response.status != 200
-        raise ApiError.new("Github GET #{url} failed: #{response.status}", status: response.status)
+      request_json(:get, url)
+    end
+
+    def post_json(url, params=nil)
+      request_json(:post, url, params)
+    end
+
+    def request_json(meth, url, params=nil)
+      response = connection.send(meth) do |req|
+        req.url(url)
+        if params
+          req.body = JSON.dump(params)
+          req.headers['content-type'] = 'application/json'
+        end
+      end
+      if response.status != 200 && response.status != 201
+        error = nil
+        begin
+          error = JSON.parse(response.body)['error']
+        rescue
+        end
+        msg = "Github #{meth.to_s.upcase} #{url} failed: #{response.status}"
+        if error
+          msg += ": #{error}"
+        end
+        raise ApiError.new(msg, status: response.status)
       end
       JSON.parse(response.body)
     end

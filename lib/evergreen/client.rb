@@ -41,11 +41,11 @@ module Evergreen
       response = connection.send(meth) do |req|
         req.url(url)
         if params
-        p params
           req.body = JSON.dump(params)
+          req.headers['content-type'] = 'application/json'
         end
       end
-      if response.status != 200
+      if response.status != 200 && response.status != 201
         error = nil
         begin
           error = JSON.parse(response.body)['error']
