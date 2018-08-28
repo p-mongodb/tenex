@@ -10,11 +10,14 @@
     '
     a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}/files" Diff
     '
-    span
-      ' #{pull.success_count} successful builds,
-      ' #{pull.failure_count} failed builds,
-      ' #{pull.pending_count} pending builds.
-    a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/restart-failed" Restart failed
+    - if pull.success_count > 0 && pull.failure_count == 0 && pull.pending_count == 0
+      span CI: green.
+    - else
+      span
+        ' #{pull.success_count} successful builds,
+        ' #{pull.failure_count} failed builds,
+        ' #{pull.pending_count} pending builds.
+      a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/restart-failed" Restart failed
 
 - if @repo.workflow
   ' Workflow: on.
