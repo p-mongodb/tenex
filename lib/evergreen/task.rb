@@ -56,6 +56,10 @@ module Evergreen
       %w(success failed).include?(status)
     end
 
+    def failed?
+      %w(failed).include?(status)
+    end
+
     def priority
       info['priority']
     end

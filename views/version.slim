@@ -34,6 +34,10 @@ table
           a href="https://evergreen.mongodb.com/task/#{task.id}" Go
           '
           a href=task.task_log_html_url Log
+          - if task.failed? && build.artifact?('rspec.json')
+            '
+            a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{build.id}"
+              i.fa.fa-puzzle-piece title='Results'
           - if task.waiting?
             '
             | (p=#{task.priority})
@@ -48,6 +52,10 @@ table
                 a href="https://evergreen.mongodb.com/task/#{task.id}" Go
                 '
                 a href=task.log_url Log
+                - if task.failed? && @version.have_rspec_json? && !task.top_level?
+                  '
+                  a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
+                    i.fa.fa-puzzle-piece title='Results'
                 - if task.waiting?
                   '
                   | (p=#{task.priority})

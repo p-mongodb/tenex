@@ -68,5 +68,13 @@ module Evergreen
         artifact.name == basename
       end
     end
+
+    def artifact?(basename)
+      task = tasks.first
+      artifact = task.artifacts.detect do |artifact|
+        artifact.name == basename
+      end
+      !!artifact
+    end
   end
 end

@@ -20,7 +20,7 @@ module Evergreen
           payload = [payload]
         end
         payload.map do |info|
-          Build.new(client, info['id'], info: info)
+          Build.new(client, info['id'] || info['_id'], info: info)
         end.sort_by do |build|
           build.build_variant
         end
