@@ -36,6 +36,9 @@ PR status page adds:
 - One click jump to full Evergreen task logs.
 - One click jump to full Travis logs.
 - One click to restart a task.
+- One click to restart all failed tasks for a PR.
+- One click jump to parsed test suite results (RSpec/JUnit XML) for
+each configuration tested.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 
