@@ -104,13 +104,18 @@ Edit `.env` file in project directory, and fill out:
 - Your Travis credentials - get it at https://travis-ci.org/profile/your-username/settings
 (go to Profile -> Settings).
 
+Note that the Github access token needs to have various scopes on it
+to access various bits of functionality, but Github api documentation
+does not specify which endpoints need which scopes. Checking the
+"repo" check box is sufficient to enable all tenex functionality.
+
 Edit `config/mongoid.yml` and change the host, port and database used for
 MongoDB (note the MongoDB port specified by tenex is 27027, default MongoDB
 port is 27017).
 
 ## Running
 
-In development:
+### In Development
 
     ./script/server
 
@@ -119,7 +124,7 @@ This launches a self-reloading web server on port 9393.
 In production, use your favorite web server to run `.config.ru` (note the
 leading dot).
 
-In production:
+### In Production
 
     puma .config.ru -b tcp://127.0.0.1:9393 -e production
 
