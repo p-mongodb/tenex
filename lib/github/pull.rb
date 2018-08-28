@@ -173,5 +173,27 @@ module Github
         nil
       end
     end
+
+    def approved?
+      !raw_reviews.empty? &&
+      raw_reviews.all? do |info|
+        info['state'].downcase == 'approved'
+      end &&
+      raw_requested_reviewers['users'].empty?
+    end
+
+    def review_requested?
+      !raw_requested_reviewers['users'].empty?
+    end
+
+    private def raw_reviews
+      @raw_reviews ||=
+        client.get_json("repos/#{repo_full_name}/pulls/#{number}/reviews")
+    end
+
+    private def raw_requested_reviewers
+      @raw_requested_reviewers ||=
+        client.get_json("repos/#{repo_full_name}/pulls/#{number}/requested_reviewers")
+    end
   end
 end

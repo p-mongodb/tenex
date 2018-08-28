@@ -20,6 +20,7 @@ presented in a similar fashion.
 ### Pull Request List
 
 - Shows Evergreen & Travis build stats for each PR.
+- Shows Github PR review approved/requested status.
 
 ![PR list](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr-list.png) 
 
