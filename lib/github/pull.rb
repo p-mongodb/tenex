@@ -69,8 +69,32 @@ module Github
       end
     end
 
-    def head_branch
+    def number
+      info['number']
+    end
+
+    def head_branch_name
       info['head']['ref']
+    end
+
+    def head_owner_name
+      if info['head']['repo']
+        info['head']['repo']['owner']['login']
+      else
+        nil
+      end
+    end
+
+    def head_repo_name
+      if info['head']['repo']
+        info['head']['repo']['name']
+      else
+        nil
+      end
+    end
+
+    def base_branch_name
+      info['base']['ref']
     end
 
     def status_by_name(name)
