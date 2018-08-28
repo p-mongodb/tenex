@@ -37,6 +37,7 @@ class Repo
       pull.head_repo_name = gh_pull.head_repo_name
       pull.head_branch_name = gh_pull.head_branch_name
       pull.base_branch_name = gh_pull.base_branch_name
+      pull.save!
     end
     self.most_recent_pull_number = first_number
     save!
