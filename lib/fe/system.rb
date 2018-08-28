@@ -1,5 +1,3 @@
-require_relative './models'
-
 class System
   def initialize(eg_client, gh_client)
     @eg_client, @gh_client = eg_client, gh_client

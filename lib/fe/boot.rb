@@ -9,7 +9,10 @@ Mongoid.load!(File.join(File.dirname(__FILE__), '..', '..', 'config', 'mongoid.y
 require 'github'
 require 'evergreen'
 
-require_relative './models'
+Dir['./lib/fe/models/**/*.rb'].each do |path|
+  require_relative path.sub('/lib/fe/', '/').sub('.rb', '')
+end
+
 require_relative './system'
 require_relative './toolchain'
 require_relative './repo_cache'
