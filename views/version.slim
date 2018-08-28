@@ -51,3 +51,5 @@ table
                 - if task.waiting?
                   '
                   | (p=#{task.priority})
+
+p Created: #{Taw.time_ago_in_words(@version.created_at, approx: 2)} ago

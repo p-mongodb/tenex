@@ -64,8 +64,15 @@ module Evergreen
       end
     end
 
-    def message
-      info['message']
+    %w(message).each do |m|
+      define_method(m) do
+        info[m]
+      end
+    end
+
+    def created_at
+      # iso8601
+      Time.parse(info['create_time'])
     end
   end
 end
