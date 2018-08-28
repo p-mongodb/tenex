@@ -1,0 +1,8 @@
+- @failures.each_with_index do |failure, index|
+  div
+    p
+      b= "#{index+1})"
+      '
+      b= failure[:id]
+    p= failure[:id]
+    pre #{failure[:failure][:class]}: #{failure[:failure][:message]}

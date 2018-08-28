@@ -34,7 +34,7 @@ class EvergreenStatusPresenter
 
   def rspec_json_url
     # top level build has no files hence no rspec json url
-    return nil if build_id.nil?
+    return nil if top_level?
 
     unless @rspec_json_url_loaded
       task = evergreen_build.tasks.first
@@ -49,5 +49,9 @@ class EvergreenStatusPresenter
 
   def failed?
     status.state == 'failure'
+  end
+
+  def top_level?
+    build_id.nil?
   end
 end

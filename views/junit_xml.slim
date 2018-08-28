@@ -1,8 +1,0 @@
-- @failures.each_with_index do |failure, index|
-  div
-    p
-      b= "#{index+1})"
-      '
-      b= "#{failure[:file_path]}:#{failure[:line_number]}[#{failure[:scoped_id]}]"
-    p= failure[:name]
-    pre= failure[:failure][:full_message]

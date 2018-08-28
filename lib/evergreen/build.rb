@@ -61,5 +61,12 @@ module Evergreen
     def completed?
       %w(success failed).include?(status)
     end
+
+    def artifact(basename)
+      task = tasks.first
+      artifact = task.artifacts.detect do |artifact|
+        artifact.name == basename
+      end
+    end
   end
 end

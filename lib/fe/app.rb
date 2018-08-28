@@ -322,43 +322,32 @@ class App < Sinatra::Base
     slim :ruby_toolchain_urls
   end
 
-  get '/results' do
-    url = params[:url]
+  get '/projects/:project/versions/:version/results/:build' do |project_id, version_id, build_id|
+    build = Evergreen::Build.new(eg_client, build_id)
+    artifact = build.artifact('rspec.json')
+    unless artifact
+      raise "No rspec.json here"
+    end
+    url = artifact.url
     contents = open(url).read
+    payload = JSON.parse(contents)
 
-    doc = Nokogiri::XML(contents)
-    results = doc.xpath('//testcase').map do |testcase_elt|
-      line = testcase_elt.attr('line')
-      if line
-        line = line.to_i
-      end
-      time = testcase_elt.attr('time')
-      if time
-        time = time.to_f
-      end
+    results = payload['examples'].map do |info|
       {
-        class_name: testcase_elt.attr('classname'),
-        name: testcase_elt.attr('name'),
-        file_path: testcase_elt.attr('file'),
-        line_number: line,
-        scoped_id: testcase_elt.attr('scoped-id'),
-        time: time,
+        id: info['id'],
+        description: info['full_description'],
+        file_path: info['file_path'],
+        line_number: info['line_number'],
+        time: info['run_time'],
       }.tap do |result|
-        unless testcase_elt.xpath('./skipped').empty?
-          result[:skipped] = true
-        end
-        if failure = testcase_elt.xpath('./failure').first
+        if info['status'] == 'failed'
           result[:failure] = {
-            message: failure.attr('message'),
-            type: failure.attr('type'),
-            full_message: failure.text,
+            message: info['exception']['message'],
+            class: info['exception']['class'],
+            backtrace: info['exception']['backtrace'],
           }
         end
       end
-    end
-
-    results.sort_by! do |result|
-      [result[:file_path], result[:scoped_id].split(':').map(&:to_i)]
     end
 
     @failures = results.select do |result|
@@ -369,7 +358,7 @@ class App < Sinatra::Base
       !result[:failure]
     end
 
-    slim :junit_xml
+    slim :results
   end
 
   get '/workflow' do
