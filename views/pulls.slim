@@ -10,6 +10,8 @@
     '
     a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}/files" Diff
     '
+    a href="/projects/#{URI.escape(pull.evergreen_project_id)}/versions/#{pull.evergreen_version_id}" EG
+    '
     - if pull.success_count > 0 && pull.failure_count == 0 && pull.pending_count == 0
       span CI: green.
     - else

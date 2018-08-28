@@ -77,6 +77,7 @@ class App < Sinatra::Base
       end
       raise
     end
+    @pulls.map! { |pull| PullPresenter.new(pull, eg_client, system) }
     slim :pulls
   end
 
