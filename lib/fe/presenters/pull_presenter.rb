@@ -49,4 +49,11 @@ class PullPresenter
   def evergreen_project_id
     system.evergreen_project_for_github_repo!(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
   end
+
+  def have_rspec_json?
+    return @have_rspec_json unless @have_rspec_json.nil?
+    @have_rspec_json = !!statuses.detect do |status|
+      status.failed? && status.rspec_json_url
+    end
+  end
 end

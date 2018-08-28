@@ -322,7 +322,7 @@ class App < Sinatra::Base
     slim :ruby_toolchain_urls
   end
 
-  get '/junit-xml' do
+  get '/results' do
     url = params[:url]
     contents = open(url).read
 

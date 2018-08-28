@@ -59,9 +59,9 @@ p
                       - if status.restart_url
                         a href=status.restart_url
                           i.fa.fa-repeat title='Restart'
-                      - if status.failed? && status.junit_xml_url
+                      - if status.failed? && @pull.have_rspec_json? && status.rspec_json_url
                         '
-                        a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}"
+                        a href="/results?url=#{URI.encode(status.rspec_json_url)}"
                           i.fa.fa-puzzle-piece title='Results'
 
 table
@@ -79,9 +79,9 @@ table
       td
         - if status.restart_url
           a href=status.restart_url Restart
-      - if status.failed? && status.junit_xml_url
+      - if status.failed? && status.rspec_json_url
         td
-          a href="/junit-xml?url=#{URI.encode(status.junit_xml_url)}"
+          a href="/junit-xml?url=#{URI.encode(status.rspec_json_url)}"
             | Results
     - if status['context'] == 'continuous-integration/travis-ci/pr'
       - @pull.travis_statuses.each do |status|
