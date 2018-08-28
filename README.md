@@ -39,6 +39,7 @@ PR status page adds:
 - One click to restart all failed tasks for a PR.
 - One click jump to parsed test suite results (RSpec/JUnit XML) for
 each configuration tested.
+- One click review request.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 
