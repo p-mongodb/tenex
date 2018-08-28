@@ -22,6 +22,9 @@ class Repo
     gh_repo = Github::Repo.new(gh_client, owner_name, repo_name)
     first_number = nil
     gh_repo.each_pull(state: 'all') do |gh_pull|
+      if self.most_recent_pull_number && gh_pull.number < self.most_recent_pull_number
+        break
+      end
       puts gh_pull.number
       first_number ||= gh_pull.number
       pull = Pull.where(repo: self, number: gh_pull.number).first
