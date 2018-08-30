@@ -6,3 +6,5 @@
       b= failure[:id]
     p= failure[:id]
     pre #{failure[:failure][:class]}: #{failure[:failure][:message]}
+    pre
+      = failure[:failure][:backtrace].join("\n")
