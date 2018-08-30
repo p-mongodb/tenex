@@ -49,7 +49,7 @@ Adds a link to jump to the patch status page for the newest version
 of the branch being shown.
 
 Adds ability to bulk bump task priorities for unfinished tasks in
-a version.
+a version, individually or in bulk for all unfinished tasks.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/version.png) 
 

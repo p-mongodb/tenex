@@ -40,6 +40,8 @@ table
               i.fa.fa-puzzle-piece title='Results'
           - if task.waiting?
             '
+            a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
+            '
             | (p=#{task.priority})
         - else
           ul
@@ -57,6 +59,8 @@ table
                   a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
                     i.fa.fa-puzzle-piece title='Results'
                 - if task.waiting?
+                  '
+                  a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
                   '
                   | (p=#{task.priority})
 

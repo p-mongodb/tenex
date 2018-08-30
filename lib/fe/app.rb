@@ -362,6 +362,11 @@ class App < Sinatra::Base
     slim :results
   end
 
+  get '/projects/:project/versions/:version/tasks/:task/bump' do |project_id, version_id, task_id|
+    Task = Evergreen::Task.new(eg_client, task_id).set_priority(99)
+    redirect "/projects/#{project_id}/versions/#{version_id}"
+  end
+
   get '/workflow' do
     @repos = Repo.where(workflow: true).sort_by(&:full_name)
     slim :workflow
