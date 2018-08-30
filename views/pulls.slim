@@ -27,9 +27,5 @@
       '
       span Review requested.
 
-- if @repo.workflow
-  ' Workflow: on.
-  a href="/repos/#{@repo.full_name}/workflow/off" Turn off
-- else
-  ' Workflow: off.
-  a href="/repos/#{@repo.full_name}/workflow/on" Turn on
+p
+  a href="/repos/#{@repo.full_name}/settings" Settings
