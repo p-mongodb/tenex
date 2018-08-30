@@ -11,6 +11,14 @@ class EvergreenStatusPresenter
   attr_reader :eg_client
   def_delegators :@status, :[], :context
 
+  def evergreen?
+    !!(@status.context =~ %r,evergreen\b,)
+  end
+
+  def travis?
+    @status.context == 'continuous-integration/travis-ci/pr'
+  end
+
   def build_id
     if @status.context =~ %r,evergreen/,
       File.basename(@status['target_url'])

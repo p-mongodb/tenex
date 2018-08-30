@@ -40,6 +40,9 @@ PR status page adds:
 - One click jump to parsed test suite results (RSpec/JUnit XML) for
 each configuration tested.
 - One click review request.
+- Smart failure counting: top level Evergreen build is not included in
+the number of the failing builds, and if Travis is ignored then Travis
+failures also are not included in the number of failures.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 

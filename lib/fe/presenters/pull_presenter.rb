@@ -16,10 +16,11 @@ class PullPresenter
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
-      if status.context == 'continuous-integration/travis-ci/pr' && !@repo.travis?
+      status = EvergreenStatusPresenter.new(status, @pull, eg_client)
+      if status.travis? && !@repo.travis?
         nil
       else
-        EvergreenStatusPresenter.new(status, @pull, eg_client)
+        status
       end
     end.compact
   end
@@ -69,6 +70,15 @@ class PullPresenter
   end
 
   def failure_count
+    statuses = self.statuses
+    non_tl = statuses.any? do |status|
+      status.evergreen? && !status.top_level?
+    end
+    if non_tl
+      statuses = statuses.reject do |status|
+        status.evergreen? && status.top_level?
+      end
+    end
     @failure_count ||= statuses.inject(0) do |sum, status|
       sum + (status['state'] == 'failure' ? 1 : 0)
     end
