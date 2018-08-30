@@ -48,24 +48,6 @@ module Github
       end
     end
 
-    def success_count
-      @success_count ||= statuses.inject(0) do |sum, status|
-        sum + (status['state'] == 'success' ? 1 : 0)
-      end
-    end
-
-    def failure_count
-      @failure_count ||= statuses.inject(0) do |sum, status|
-        sum + (status['state'] == 'failure' ? 1 : 0)
-      end
-    end
-
-    def pending_count
-      @pending_count ||= statuses.inject(0) do |sum, status|
-        sum + (%w(success failure).include?(status['state']) ? 0 : 1)
-      end
-    end
-
     def number
       info['number']
     end

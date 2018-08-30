@@ -11,8 +11,8 @@ class PullPresenter
   attr_reader :pull
   attr_reader :eg_client, :system
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
-    :evergreen_version_id, :head_branch_name, :success_count, :failure_count,
-    :pending_count, :approved?, :review_requested?
+    :evergreen_version_id, :head_branch_name,
+    :approved?, :review_requested?
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
@@ -59,6 +59,24 @@ class PullPresenter
     return @have_rspec_json unless @have_rspec_json.nil?
     @have_rspec_json = !!statuses.detect do |status|
       status.failed? && status.rspec_json_url
+    end
+  end
+
+  def success_count
+    @success_count ||= statuses.inject(0) do |sum, status|
+      sum + (status['state'] == 'success' ? 1 : 0)
+    end
+  end
+
+  def failure_count
+    @failure_count ||= statuses.inject(0) do |sum, status|
+      sum + (status['state'] == 'failure' ? 1 : 0)
+    end
+  end
+
+  def pending_count
+    @pending_count ||= statuses.inject(0) do |sum, status|
+      sum + (%w(success failure).include?(status['state']) ? 0 : 1)
     end
   end
 end
