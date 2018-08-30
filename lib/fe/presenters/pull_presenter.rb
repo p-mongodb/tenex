@@ -1,10 +1,11 @@
 class PullPresenter
   extend Forwardable
 
-  def initialize(pull, eg_client, system)
+  def initialize(pull, eg_client, system, repo)
     @pull = pull
     @eg_client = eg_client
     @system = system
+    @repo = repo
   end
 
   attr_reader :pull
@@ -15,8 +16,12 @@ class PullPresenter
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
-      EvergreenStatusPresenter.new(status, @pull, eg_client)
-    end
+      if status.context == 'continuous-integration/travis-ci/pr' && !@repo.travis?
+        nil
+      else
+        EvergreenStatusPresenter.new(status, @pull, eg_client)
+      end
+    end.compact
   end
 
   def take_status(label)

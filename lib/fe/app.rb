@@ -77,7 +77,7 @@ class App < Sinatra::Base
       end
       raise
     end
-    @pulls.map! { |pull| PullPresenter.new(pull, eg_client, system) }
+    @pulls.map! { |pull| PullPresenter.new(pull, eg_client, system, @repo) }
     slim :pulls
   end
 
@@ -104,9 +104,9 @@ class App < Sinatra::Base
 
   # pull
   get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
-    system.hit_repo(org_name, repo_name)
+    @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
-    @pull = PullPresenter.new(pull, eg_client, system)
+    @pull = PullPresenter.new(pull, eg_client, system, @repo)
     @statuses = @pull.statuses
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
