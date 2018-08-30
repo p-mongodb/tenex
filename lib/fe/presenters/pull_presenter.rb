@@ -63,13 +63,7 @@ class PullPresenter
     end
   end
 
-  def success_count
-    @success_count ||= statuses.inject(0) do |sum, status|
-      sum + (status['state'] == 'success' ? 1 : 0)
-    end
-  end
-
-  def failure_count
+  private def non_top_level_statuses
     statuses = self.statuses
     non_tl = statuses.any? do |status|
       status.evergreen? && !status.top_level?
@@ -79,13 +73,23 @@ class PullPresenter
         status.evergreen? && status.top_level?
       end
     end
-    @failure_count ||= statuses.inject(0) do |sum, status|
+    statuses
+  end
+
+  def success_count
+    @success_count ||= non_top_level_statuses.inject(0) do |sum, status|
+      sum + (status['state'] == 'success' ? 1 : 0)
+    end
+  end
+
+  def failure_count
+    @failure_count ||= non_top_level_statuses.inject(0) do |sum, status|
       sum + (status['state'] == 'failure' ? 1 : 0)
     end
   end
 
   def pending_count
-    @pending_count ||= statuses.inject(0) do |sum, status|
+    @pending_count ||= non_top_level_statuses.inject(0) do |sum, status|
       sum + (%w(success failure).include?(status['state']) ? 0 : 1)
     end
   end
