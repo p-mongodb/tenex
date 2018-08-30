@@ -66,7 +66,7 @@ p
 
 table
   - @pull.untaken_statuses.each do |status|
-    tr class="#{{'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}[status['state']]}"
+    tr class=status.normalized_state
       td
         = status['context']
         - if status['description']

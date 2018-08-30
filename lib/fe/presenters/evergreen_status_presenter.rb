@@ -54,4 +54,13 @@ class EvergreenStatusPresenter
   def top_level?
     build_id.nil?
   end
+
+  def normalized_state
+    map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}
+    map[status['state']].tap do |v|
+      if v.nil?
+        raise "No map entry for #{status['state']}"
+      end
+    end
+  end
 end
