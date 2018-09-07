@@ -12,7 +12,7 @@
     '
     a href="/projects/#{URI.escape(pull.evergreen_project_id)}/versions/#{pull.evergreen_version_id}" EG
     '
-    - if pull.success_count > 0 && pull.failure_count == 0 && pull.pending_count == 0
+    - if pull.green?
       span CI: green.
     - else
       span

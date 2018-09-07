@@ -55,6 +55,10 @@ class EvergreenStatusPresenter
     @rspec_json_url
   end
 
+  def passed?
+    normalized_state == 'passed'
+  end
+
   def failed?
     status.state == 'failure'
   end
