@@ -75,4 +75,25 @@ class EvergreenStatusPresenter
       end
     end
   end
+
+  def attrs
+    label, rest = @status.context.split('__')
+    map = {}
+    return map if rest.nil?
+    rest.split('_').each do |bit|
+      k, v = bit.split('~')
+      map[k] = v
+    end
+    map
+  end
+
+  def prefix
+    if attrs['compressor'] == 'zlib'
+      'Z'
+    elsif attrs['ruby'] == 'ruby-head'
+      'H'
+    else
+      '*'
+    end
+  end
 end

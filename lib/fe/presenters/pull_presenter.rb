@@ -34,6 +34,17 @@ class PullPresenter
     status
   end
 
+  def take_statuses(attrs)
+    untaken_statuses.select do |status|
+      (status.attrs.slice(*attrs.keys) == attrs).tap do |v|
+        if v
+          @taken_statuses ||= {}
+          @taken_statuses[status.context] = true
+        end
+      end
+    end
+  end
+
   def untaken_statuses
     statuses.reject do |status|
       @taken_statuses && @taken_statuses[status['context']]
