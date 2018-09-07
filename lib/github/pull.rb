@@ -170,5 +170,9 @@ module Github
       @raw_requested_reviewers ||=
         client.get_json("repos/#{repo_full_name}/pulls/#{number}/requested_reviewers")
     end
+
+    def update(attrs)
+      client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", attrs)
+    end
   end
 end

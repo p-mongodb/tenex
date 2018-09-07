@@ -39,6 +39,7 @@ class RepoCache
       end
       true
     end
+    self
   end
 
   def master_sha
@@ -109,5 +110,16 @@ class RepoCache
       raise "No date"
     end
     Time.parse(date)
+  end
+
+  def commitish_message(commitish)
+    output = Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_output(%W(
+        git show -q #{commitish}
+      ))
+    end
+    output.sub!(/\A.*\n.*\n.*\n\n/, '')
+    output.gsub!(/^    /, '')
+    output.split("\n", 2)
   end
 end
