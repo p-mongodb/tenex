@@ -8,7 +8,10 @@
         '
         b= failure[:id]
       p= failure[:id]
-      pre #{failure[:failure][:class]}: #{failure[:failure][:message]}
+      pre
+        = failure[:failure][:class]
+        ' :
+        == Ansi::To::Html.new(failure[:failure][:message]).to_html.gsub("\n", '<br>')
       - if failure[:failure][:backtrace]
         pre
           = failure[:failure][:backtrace].join("\n")
