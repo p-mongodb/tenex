@@ -28,13 +28,13 @@ class RepoCache
           ChildProcessHelper.check_call(%w(git reset --hard))
           ChildProcessHelper.check_call(%w(git checkout master))
           ChildProcessHelper.check_call(%w(git fetch origin))
-          ChildProcessHelper.check_call(%w(git fetch pp))
+          ChildProcessHelper.check_call(%w(git fetch p))
           ChildProcessHelper.check_call(%w(git reset --hard origin/master))
         end
       else
         ChildProcessHelper.check_call(%W(git clone git@github.com:#{full_name}) + [cached_repo_path.to_s])
         Dir.chdir(cached_repo_path) do
-          ChildProcessHelper.check_call(%W(git remote add pp git@github.com:p-mongo/#{name} -f))
+          ChildProcessHelper.check_call(%W(git remote add p git@github.com:p-mongo/#{name} -f))
         end
       end
       true
@@ -61,7 +61,7 @@ class RepoCache
     end
 
     lines = output.split(/\n/).map(&:strip).select do |line|
-      line !~ /->/ && line =~ /^pp\//
+      line !~ /->/ && line =~ /^p\//
     end
 
     lines.map do |line|
@@ -75,7 +75,7 @@ class RepoCache
     branches.each do |branch|
       output = Dir.chdir(cached_repo_path) do
         ChildProcessHelper.check_output(%W(
-          git show pp/#{branch}
+          git show p/#{branch}
         ))
       end
       sha = output.split(/\s+/)[1]
@@ -121,5 +121,17 @@ class RepoCache
     output.sub!(/\A.*\n.*\n.*\n\n/, '')
     output.gsub!(/^    /, '')
     output.split("\n", 2)
+  end
+
+  def reword(pull)
+    branch_name = pull.head_branch_name
+    Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
+        git checkout master &&
+        (git branch -D #{branch_name} || true) &&
+        git checkout -b #{branch_name} --track p/#{branch_name} &&
+        $HOME/apps/dev/script/reword
+CMD
+    end
   end
 end

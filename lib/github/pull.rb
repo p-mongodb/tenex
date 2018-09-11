@@ -72,6 +72,14 @@ module Github
       end
     end
 
+    def base_owner_name
+      if info['base']['repo']
+        info['base']['repo']['owner']['login']
+      else
+        nil
+      end
+    end
+
     def base_branch_name
       info['base']['ref']
     end
