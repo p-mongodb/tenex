@@ -107,6 +107,6 @@ class PullPresenter
 
   def green?
     #success_count > 0 && failure_count == 0 && pending_count == 0
-    top_evergreen_status.passed?
+    top_evergreen_status&.passed?
   end
 end
