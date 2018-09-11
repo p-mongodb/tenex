@@ -385,6 +385,9 @@ class App < Sinatra::Base
       end
     end
 
+    @messages = payload['messages']
+    @summary = payload['summary']
+
     @failures = results.select do |result|
       result[:failure]
     end

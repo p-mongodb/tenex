@@ -1,16 +1,28 @@
-- @failures.each_with_index do |failure, index|
-  div
-    p
-      b= "#{index+1})"
-      '
-      b= failure[:id]
-    p= failure[:id]
-    pre #{failure[:failure][:class]}: #{failure[:failure][:message]}
-    - if failure[:failure][:backtrace]
-      pre
-        = failure[:failure][:backtrace].join("\n")
-    - else
-      p No backtrace for this failure.
+- if @summary['failure_count'] > 0
+  h2 #{@summary['failure_count']} failures
+  
+  - @failures.each_with_index do |failure, index|
+    div
+      p
+        b= "#{index+1})"
+        '
+        b= failure[:id]
+      p= failure[:id]
+      pre #{failure[:failure][:class]}: #{failure[:failure][:message]}
+      - if failure[:failure][:backtrace]
+        pre
+          = failure[:failure][:backtrace].join("\n")
+      - else
+        p No backtrace for this failure.
+
+- if @summary['errors_outside_of_examples_count'] > 0
+  h2 #{@summary['errors_outside_of_examples_count']} errors outside of examples
+  
+  - @messages.each_with_index do |message, index|
+    div
+      p
+        b= "#{index+1})"
+      pre== Ansi::To::Html.new(message).to_html.gsub("\n", '<br>')
 
 p
   a href=@raw_artifact_url Raw JSON
