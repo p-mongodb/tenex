@@ -363,7 +363,7 @@ class App < Sinatra::Base
     unless artifact
       raise "No rspec.json here"
     end
-    url = artifact.url
+    @raw_artifact_url = url = artifact.url
     contents = open(url).read
     payload = JSON.parse(contents)
 
