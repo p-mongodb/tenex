@@ -40,6 +40,7 @@ PR status page adds:
 - One click jump to parsed test suite results (RSpec/JUnit XML) for
 each configuration tested.
 - One click review request.
+- Button to rebase branch on master.
 - Button to squash commits in a branch and replace commit messsages with
 the respective ticket title.
 - One click PR retitle to match subject & message of the head commit.

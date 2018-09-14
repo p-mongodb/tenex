@@ -123,6 +123,20 @@ class RepoCache
     output.split("\n", 2)
   end
 
+  def rebase(pull)
+    branch_name = pull.head_branch_name
+    Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
+        (git rebase --abort || true) &&
+        git checkout master &&
+        (git branch -D #{branch_name} || true) &&
+        git checkout -b #{branch_name} --track p/#{branch_name} &&
+        git rebase master &&
+        git push -f
+CMD
+    end
+  end
+
   def reword(pull)
     branch_name = pull.head_branch_name
     Dir.chdir(cached_repo_path) do
