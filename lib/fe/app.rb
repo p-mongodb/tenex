@@ -135,8 +135,20 @@ class App < Sinatra::Base
     slim :pull_perf
   end
 
+  # eg project log
+  get "/projects/:project/versions/:version/evergreen-log/:build" do |project_id, version_id, build_id|
+    title = 'Evergreen log'
+    do_evergreen_log(build_id, title)
+  end
+
   # pr log
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
+    pull = gh_repo(org_name, repo_name).pull(pull_id)
+    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
+    do_evergreen_log(build_id, title)
+  end
+
+  private def do_evergreen_log(build_id, title)
     build = Evergreen::Build.new(eg_client, build_id)
     pull = gh_repo(org_name, repo_name).pull(pull_id)
     title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
@@ -442,7 +454,8 @@ class App < Sinatra::Base
     @build = Evergreen::Build.new(eg_client, build_id)
     artifact = @build.artifact('rspec.json')
     unless artifact
-      raise "No rspec.json here"
+      redirect "/projects/#{project_id}/versions/#{version_id}/evergreen-log/#{build_id}"
+      return
     end
     @raw_artifact_url = url = artifact.url
     contents = open(url).read
