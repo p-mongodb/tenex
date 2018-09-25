@@ -405,6 +405,18 @@ class App < Sinatra::Base
       !result[:failure]
     end
 
+    failed_files = {}
+    @failures.each do |failure|
+      failed_files[failure[:file_path]] ||= 0
+      failed_files[failure[:file_path]] += 1
+    end
+    @failed_files = []
+    failed_files.keys.each do |key|
+      @failed_files << {
+        file_path: key, failure_count: failed_files[key],
+      }
+    end
+
     @branch_name = params[:branch]
     slim :results
   end

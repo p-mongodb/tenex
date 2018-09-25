@@ -1,7 +1,18 @@
 - if @summary['failure_count'] > 0
   h2 #{@summary['failure_count']} failures
   
+  ul
+    - @failed_files.each do |file|
+      li
+        a href="##{file[:file_path].gsub(/\W/, '-')}" #{file[:file_path]}
+        '
+        | (#{file[:failure_count]})
+  
+  - prev_path = nil
   - @failures.each_with_index do |failure, index|
+    - if prev_path != failure[:file_path]
+      a name=failure[:file_path].gsub(/\W/, '-')
+      - prev_path = failure[:file_path]
     div
       p
         b= "#{index+1})"
@@ -11,7 +22,7 @@
       pre
         = failure[:failure][:class]
         ' :
-        == Ansi::To::Html.new(failure[:failure][:message]).to_html.gsub("\n", '<br>')
+        == Ansi::To::Html.new(CGI.escapeHTML(failure[:failure][:message])).to_html.gsub("\n", '<br>')
       - if failure[:failure][:backtrace]
         pre
           = failure[:failure][:backtrace].join("\n")
@@ -25,7 +36,7 @@
     div
       p
         b= "#{index+1})"
-      pre== Ansi::To::Html.new(message).to_html.gsub("\n", '<br>')
+      pre== Ansi::To::Html.new(CGI.escapeHTML(message)).to_html.gsub("\n", '<br>')
 
 p
   a href=@raw_artifact_url Raw JSON
