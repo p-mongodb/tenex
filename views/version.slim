@@ -15,6 +15,8 @@ p
   - if @builds.any? { |build| !build.completed? }
     '
     ' Bump priority to:
+    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=40" 40
+    '
     a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=70" 70
     '
     a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=90" 90
