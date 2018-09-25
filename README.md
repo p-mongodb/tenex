@@ -47,6 +47,8 @@ the respective ticket title.
 - Smart failure counting: top level Evergreen build is not included in
 the number of the failing builds, and if Travis is ignored then Travis
 failures also are not included in the number of failures.
+- Ability to bulk bump task priorities for unfinished tasks for all evergreen
+builds started by the PR.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 

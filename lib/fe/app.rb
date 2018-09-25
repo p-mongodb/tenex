@@ -211,6 +211,14 @@ class App < Sinatra::Base
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
+  # pull bump
+  get '/repos/:org/:repo/pulls/:id/bump' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    version = Evergreen::Version.new(eg_client, @pull.evergreen_version_id)
+    do_bump(version, params[:priority].to_i)
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
+  end
+
   # eg projects list
   get '/projects' do
     @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
@@ -246,21 +254,25 @@ class App < Sinatra::Base
     redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
   end
 
+  # eg version bump
   get '/projects/:project/versions/:version_id/bump' do |project_id, version_id|
-    @version = Evergreen::Version.new(eg_client, version_id)
-    priority = params[:priority].to_i
+    version = Evergreen::Version.new(eg_client, version_id)
+    do_bump(version, params[:priority].to_i)
+
+    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+  end
+
+  private def do_bump(version, priority)
     if priority == 0
       raise "Bumping to 0?"
     end
-    @version.builds.each do |build|
+    version.builds.each do |build|
       build.tasks.each do |task|
         unless task.completed?
           task.set_priority(priority)
         end
       end
     end
-
-    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
   end
 
   get '/travis/log/:job_id' do |job_id|

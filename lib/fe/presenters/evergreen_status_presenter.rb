@@ -60,7 +60,11 @@ class EvergreenStatusPresenter
   end
 
   def failed?
-    status.state == 'failure'
+    normalized_state == 'failed'
+  end
+
+  def pending?
+    normalized_state == 'pending'
   end
 
   def top_level?
