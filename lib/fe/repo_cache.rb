@@ -140,15 +140,15 @@ CMD
   def reword(pull)
     branch_name = pull.head_branch_name
     Dir.chdir(cached_repo_path) do
-    if cached_repo_path.to_s =~ /mongoid/
-      project = 'mongoid'
-else
-project = 'ruby'
-end
+      if cached_repo_path.to_s =~ /mongoid/
+        project = 'mongoid'
+      else
+        project = 'ruby'
+      end
 
-unless branch_name =~ /#{project}/
-ticket = "#{project}-#{branch_name}"
-end
+      unless branch_name =~ /#{project}/
+        ticket = "#{project}-#{branch_name}"
+      end
 
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
         git checkout master &&
