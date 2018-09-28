@@ -21,6 +21,18 @@ module Evergreen
       end
     end
 
+    def host_url
+      if value = info['host_url']
+        if value == ''
+          nil
+        else
+          value
+        end
+      else
+        nil
+      end
+    end
+
     # these fields are only returned by the server once the underlying
     # AWS host is provisioned for user spawned hosts.
     # host_type is AWS instance type like c3.8xlarge.
