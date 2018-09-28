@@ -117,9 +117,15 @@ class App < Sinatra::Base
     slim :pull
   end
 
-  # log
+  # pr log
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
+    pull = gh_repo(org_name, repo_name).pull(pull_id)
+    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
+    do_log(build, title)
+  end
+
+  private def do_log(build, title)
     log = build.log
     log.gsub!(%r,<i class="fa fa-link line-link" id='line-link-\d+'></i> ,, '')
     lines = log.split("\n")
@@ -131,8 +137,6 @@ class App < Sinatra::Base
         break
       end
     end
-    pull = gh_repo(org_name, repo_name).pull(pull_id)
-    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
     style = %q,
       pre { overflow: initial; }
     ,
@@ -273,6 +277,13 @@ class App < Sinatra::Base
         end
       end
     end
+  end
+
+  # eg log
+  get '/projects/:project/versions/:version/builds/:build/log' do |project_id, version_id, build_id|
+    build = Evergreen::Build.new(eg_client, build_id)
+    title = "EG log"
+    do_log(build, title)
   end
 
   get '/travis/log/:job_id' do |job_id|

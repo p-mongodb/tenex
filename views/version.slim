@@ -1,7 +1,11 @@
 style
-  | .passed { background: #cfc; }
-  | .failed { background: #fcc; }
-  | .pending { background: #ffc; }
+  |
+    td { padding: 5px; margin: 0; border: 1px soid #eee; }
+    tr { padding: 0; }
+    tr:nth-child(even) { background: #eee; }
+    .passed { background: #cfc; }
+    .failed { background: #fcc; }
+    .pending { background: #ffc; }
 
 p
   a href="/projects/#{@project_id}" #{@project_id}
@@ -35,7 +39,7 @@ table
           - task = build.tasks.first
           a href="https://evergreen.mongodb.com/task/#{task.id}" Go
           '
-          a href=task.task_log_html_url Log
+          a href="/projects/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/log" Log
           - if task.failed? && build.artifact?('rspec.json')
             '
             a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{build.id}"
@@ -55,7 +59,7 @@ table
                 '
                 a href="https://evergreen.mongodb.com/task/#{task.id}" Go
                 '
-                a href=task.log_url Log
+                a href="/projects/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/tasks/#{task.id}/log" Log
                 - if task.failed? && @version.have_rspec_json? && !task.top_level?
                   '
                   a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
