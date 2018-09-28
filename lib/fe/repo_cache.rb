@@ -146,8 +146,24 @@ CMD
         project = 'ruby'
       end
 
-      unless branch_name =~ /#{project}/
-        ticket = "#{project}-#{branch_name}"
+      ticket = nil
+      if branch_name =~ /#{project}/
+        ticket = branch_name
+      elsif branch_name =~ /^(\d+)($|-)/
+        ticket = "#{project}-#{$1}"
+      else
+        pull.comments.each do |comment|
+          if comment.body =~ /#{project}-(\d+)/i
+            if ticket
+              raise "Confusing ticket situation"
+            end
+            ticket = "#{project}-#{$1}"
+          end
+        end
+      end
+
+      unless ticket
+        raise "Could not figure out the ticket"
       end
 
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])

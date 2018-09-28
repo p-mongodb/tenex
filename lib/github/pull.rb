@@ -182,5 +182,11 @@ module Github
     def update(attrs)
       client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", attrs)
     end
+
+    def comments
+      @comments ||= client.get_json(info['comments_url']).map do |info|
+        Comment.new(client, info: info)
+      end
+    end
   end
 end

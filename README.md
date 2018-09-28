@@ -24,7 +24,7 @@ presented in a similar fashion.
 
 ![PR list](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr-list.png) 
 
-### Pull Request CI Status
+### Pull Request Status
 
 Tenex merges Evergreen and Travis CI statuses on a single page.
 Travis statuses are expanded to job level.
