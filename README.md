@@ -31,24 +31,33 @@ Travis statuses are expanded to job level.
 Evergreen statuses are arranged in a matrix for supported projects
 (Ruby driver).
 
-PR status page adds:
-- A link to restart all failed Evergreen tasks.
-- One click jump to full Evergreen task logs.
-- One click jump to full Travis logs.
-- One click to restart a task.
-- One click to restart all failed tasks for a PR.
-- One click jump to parsed test suite results (RSpec/JUnit XML) for
-each configuration tested.
-- One click review request.
-- Button to rebase branch on master.
-- Button to squash commits in a branch and replace commit messsages with
-the respective ticket title.
-- One click PR retitle to match subject & message of the head commit.
+PR status page features:
+
+#### General CI Operations
+
+- Bulk restart all failed CI builds.
+- Restart individual CI builds (in any state).
+- View CI logs for each build (task log for Evergreen, build log for Travis).
 - Smart failure counting: top level Evergreen build is not included in
 the number of the failing builds, and if Travis is ignored then Travis
 failures also are not included in the number of failures.
-- Ability to bulk bump task priorities for unfinished tasks for all evergreen
-builds started by the PR.
+
+#### Evergreen Operations
+
+- Jump to Evergreen version view for the PR
+(which has individual task priorities, for instance).
+- Bulk bump Evergreen task priority for all pending builds.
+- Jump to parsed test suite results (RSpec/JUnit XML) for each build.
+
+#### Github Operations
+
+- Request PR review.
+- Rebase branch on top of master.
+- Reword branch - squash all commits in a branch ino a single commit and
+replace commit messsages with the respective ticket title.
+Ticket is automatically detected/inferred from branch name, PR
+description and PR comments.
+- Replace title and description of the PR with that of the head commit.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 
