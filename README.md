@@ -53,7 +53,7 @@ failures also are not included in the number of failures.
 
 - Request PR review.
 - Rebase branch on top of master.
-- Reword branch - squash all commits in a branch ino a single commit and
+- Reword branch - squash all commits in the branch ino a single commit and
 replace commit messsages with the respective ticket title.
 Ticket is automatically detected/inferred from branch name, PR
 description and PR comments.
