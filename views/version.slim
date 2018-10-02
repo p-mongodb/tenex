@@ -3,9 +3,9 @@ style
     td { padding: 5px; margin: 0; border: 1px soid #eee; }
     tr { padding: 0; }
     tr:nth-child(even) { background: #eee; }
-    .passed { background: #cfc; }
-    .failed { background: #fcc; }
-    .pending { background: #ffc; }
+    tr.passed { background: #cfc; }
+    tr.failed { background: #fcc; }
+    tr.pending { background: #ffc; }
 
 p
   a href="/projects/#{@project_id}" #{@project_id}
