@@ -25,7 +25,7 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/reword" Reword
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle" Retitle
-  - if @pull.top_evergreen_status.pending?
+  - if @pull.top_evergreen_status&.pending?
     '
     ' Bump priority to:
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/bump?priority=40" 40
