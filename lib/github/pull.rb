@@ -140,7 +140,7 @@ module Github
       number = nil
       comments.each do |comment|
         if comment.body =~ /#{jira_project}-(\d+)/i
-          if ticket
+          if number
             raise "Confusing ticket situation"
           end
           number = $1.to_i
