@@ -22,11 +22,20 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle" Retitle
 
 p
-  - if @pull.top_evergreen_status
+  - if eg_status = @pull.top_evergreen_status
     a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}" Evergreen build
     '
+    - if eg_status.pending_build_count > 0
+      - if eg_status.failed_build_count > 0
+        | (#{eg_status.failed_build_count} failed, #{eg_status.pending_build_count}/#{eg_status.build_count} pending)
+      - else
+        | (#{eg_status.pending_build_count}/#{eg_status.build_count} pending)
+      '
+    - elsif eg_status.failed_build_count > 0
+      | (#{eg_status.failed_build_count}/#{eg_status.build_count} failed)
+      '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-failed" Restart failed
-  - if @pull.top_evergreen_status.pending?
+  - if eg_status&.pending?
     '
     ' Bump priority to:
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/bump?priority=40" 40

@@ -100,4 +100,46 @@ class EvergreenStatusPresenter
       '*'
     end
   end
+
+  def evergreen_version_id
+    if status['target_url'] =~ %r,version/([\da-fA-F]+),
+      $1
+    else
+      nil
+    end
+  end
+
+  def evergreen_version
+    @evergreen_version ||= begin
+      evergreen_version_id = self.evergreen_version_id
+      if evergreen_version_id.nil?
+        raise "No evergreen version"
+      end
+      Evergreen::Version.new(eg_client, evergreen_version_id)
+    end
+  end
+
+  def build_count
+    if evergreen_version.nil?
+      return 0
+    end
+
+    evergreen_version.builds.length
+  end
+
+  def pending_build_count
+    if evergreen_version.nil?
+      return 0
+    end
+
+    evergreen_version.builds.select { |build| !build.completed? }.length
+  end
+
+  def failed_build_count
+    if evergreen_version.nil?
+      return 0
+    end
+
+    evergreen_version.builds.select { |build| build.failed? }.length
+  end
 end
