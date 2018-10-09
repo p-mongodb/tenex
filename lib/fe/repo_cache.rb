@@ -152,14 +152,7 @@ CMD
       elsif branch_name =~ /^(\d+)($|-)/
         ticket = "#{project}-#{$1}"
       else
-        pull.comments.each do |comment|
-          if comment.body =~ /#{project}-(\d+)/i
-            if ticket
-              raise "Confusing ticket situation"
-            end
-            ticket = "#{project}-#{$1}"
-          end
-        end
+        ticket = pull.jira_ticket!
       end
 
       unless ticket
