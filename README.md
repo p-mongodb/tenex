@@ -136,8 +136,9 @@ blobs.
 
 ## Installation
 
-Tenex uses MongoDB for persistence and is implemented in Ruby, therefore
-you'll need reasonably recent versions of both of these installed. Then:
+Tenex uses MongoDB for persistence, Redis for background job storage
+and is implemented in Ruby, therefore you'll need reasonably recent versions
+of these dependencies installed. Then:
 
     git clone https://github.com/p-mongo/tenex
     cd tenex
@@ -161,6 +162,8 @@ does not specify which endpoints need which scopes. Checking the
 Edit `config/mongoid.yml` and change the host, port and database used for
 MongoDB (note the MongoDB port specified by tenex is 27027, default MongoDB
 port is 27017).
+
+Redis address is currently not configurable (the default 127.0.0.1:6379 is used).
 
 ## Running
 

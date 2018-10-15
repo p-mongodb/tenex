@@ -1,0 +1,3 @@
+eg_bump:
+  cron: "* * * * *"
+  class: EgBumper
