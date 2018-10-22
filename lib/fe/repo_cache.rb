@@ -42,6 +42,19 @@ class RepoCache
     self
   end
 
+  def add_remote(owner_name, repo_name)
+    @remotes_updated ||= {}
+    @remotes_updated["#{owner_name}/#{repo_name}"] ||= begin
+      Dir.chdir(cached_repo_path) do
+        begin
+          ChildProcessHelper.check_call(%W(git remote rm #{owner_name}))
+        rescue
+        end
+        ChildProcessHelper.check_call(%W(git remote add #{owner_name} https://github.com/#{owner_name}/#{repo_name} -f))
+      end
+    end
+  end
+
   def master_sha
     update_cache
 
@@ -121,6 +134,14 @@ class RepoCache
     output.sub!(/\A.*\n.*\n.*\n\n/, '')
     output.gsub!(/^    /, '')
     output.split("\n", 2)
+  end
+
+  def diff_to_master(head)
+    output = Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_output(%W(
+        git diff master #{head}
+      ))
+    end
   end
 
   def rebase(pull)

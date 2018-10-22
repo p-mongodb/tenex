@@ -17,7 +17,7 @@ module Evergreen
 
     def initialize(username:, api_key:)
       @user_id = username
-      @connection ||= Faraday.new('https://evergreen.mongodb.com/api/rest/v2') do |f|
+      @connection ||= Faraday.new('https://evergreen.mongodb.com/api') do |f|
         #f.request :url_encoded
         #f.response :detailed_logger
         f.adapter Faraday.default_adapter
@@ -37,11 +37,22 @@ module Evergreen
       request_json(:post, url, params)
     end
 
+    def put_json(url, params=nil)
+      request_json(:put, url, params)
+    end
+
     def patch_json(url, params=nil)
       request_json(:patch, url, params)
     end
 
-    def request_json(meth, url, params=nil)
+    def request_json(meth, url, params=nil, options={})
+      case options[:version]
+      when 1
+      when nil, 2
+        url = "rest/v2/#{url}"
+      else
+        raise ArgumentError, "Unknown version #{options[:version]}"
+      end
       response = connection.send(meth) do |req|
         req.url(url)
         if params
@@ -119,6 +130,21 @@ module Evergreen
     def spawn_host(distro_name:, key_name:)
       payload = post_json('hosts', distro: distro_name, keyname: key_name)
       Host.new(self, payload['host_id'], info: payload)
+    end
+
+    def create_patch(project_id:, description: nil,
+      diff_text:, base_sha:, variant_ids: [], task_ids: [],
+      finalize: nil
+    )
+      request_json(:put, 'patches/', {
+        project: project_id,
+        desc: description,
+        patch: diff_text,
+        githash: base_sha,
+        buildvariants: variant_ids.join(','),
+        tasks: task_ids,
+        finalize: finalize,
+      }, version: 1)
     end
   end
 end

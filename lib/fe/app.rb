@@ -216,6 +216,30 @@ class App < Sinatra::Base
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
+  get '/repos/:org/:repo/pulls/:id/submit-patch' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
+    rc.update_cache
+    rc.add_remote(@pull.head_owner_name, @pull.head_repo_name)
+    diff = rc.diff_to_master(@pull.head_sha)
+    repo = system.hit_repo(org_name, repo_name)
+    rv = eg_client.create_patch(
+      project_id: repo.evergreen_project_id,
+      diff_text: diff,
+      base_sha: rc.master_sha,
+      description: 'foo',
+      variant_ids: ['all'],
+      task_ids: ['all'],
+      finalize: true,
+    )
+
+    patch_id = rv['patch']['Id']
+
+    # TODO record patch internally and link it to the PR
+
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
+  end
+
   # pull bump
   get '/repos/:org/:repo/pulls/:id/bump' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
