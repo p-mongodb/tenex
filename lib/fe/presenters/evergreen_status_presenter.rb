@@ -109,6 +109,10 @@ class EvergreenStatusPresenter
     end
   end
 
+  def evergreen_version?
+    !!evergreen_version_id
+  end
+
   def evergreen_version
     @evergreen_version ||= begin
       evergreen_version_id = self.evergreen_version_id
@@ -128,7 +132,7 @@ class EvergreenStatusPresenter
   end
 
   def pending_build_count
-    if evergreen_version.nil?
+    unless evergreen_version?
       return 0
     end
 
@@ -136,7 +140,7 @@ class EvergreenStatusPresenter
   end
 
   def failed_build_count
-    if evergreen_version.nil?
+    unless evergreen_version?
       return 0
     end
 
