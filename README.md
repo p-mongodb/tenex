@@ -48,6 +48,7 @@ failures also are not included in the number of failures.
 (which has individual task priorities, for instance).
 - Bulk bump Evergreen task priority for all pending builds.
 - Jump to parsed test suite results (RSpec/JUnit XML) for each build.
+- Authorize patch build for externally submitted PRs.
 
 #### Github Operations
 

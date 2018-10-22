@@ -146,4 +146,20 @@ class EvergreenStatusPresenter
 
     evergreen_version.builds.select { |build| build.failed? }.length
   end
+
+  def eg_unauthorized?
+    status['description'] == 'patch must be manually authorized'
+  end
+
+  def eg_authorize_url
+    "/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/authorize/#{evergreen_patch_id}"
+  end
+
+  def evergreen_patch_id
+    if evergreen_version?
+      raise NotImplemented
+    else
+      File.basename(status['target_url'])
+    end
+  end
 end

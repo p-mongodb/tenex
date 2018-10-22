@@ -37,6 +37,10 @@ module Evergreen
       request_json(:post, url, params)
     end
 
+    def patch_json(url, params=nil)
+      request_json(:patch, url, params)
+    end
+
     def request_json(meth, url, params=nil)
       response = connection.send(meth) do |req|
         req.url(url)

@@ -19,5 +19,9 @@ module Evergreen
     def version
       info['version']
     end
+
+    def authorize!
+      client.patch_json("patches/#{id}", activated: true)
+    end
   end
 end

@@ -224,6 +224,13 @@ class App < Sinatra::Base
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
+  # eg authorize pr
+  get '/repos/:org/:repo/pulls/:id/authorize/:patch' do |org_name, repo_name, pull_id, patch_id|
+    patch = Evergreen::Patch.new(eg_client, patch_id)
+    patch.authorize!
+    redirect return_path || "/repos/#{org_name}/#{repo_name}/pulls/#{pull_id}"
+  end
+
   # eg projects list
   get '/projects' do
     @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
