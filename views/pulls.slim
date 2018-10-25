@@ -9,8 +9,9 @@
     a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR
     '
     a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}/files" Diff
-    '
-    a href="/projects/#{URI.escape(pull.evergreen_project_id)}/versions/#{pull.evergreen_version_id}" EG
+    - if pull.evergreen_project_id
+      '
+      a href="/projects/#{URI.escape(pull.evergreen_project_id)}/versions/#{pull.evergreen_version_id}" EG
     '
     - if pull.green?
       span CI: green.
