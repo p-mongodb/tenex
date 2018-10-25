@@ -21,7 +21,7 @@ class System
       if project
         repo.evergreen_project_id = project.id
       end
-      repo.evergreen_project_queried = true
+      repo.evergreen_project_queried = Time.now
       repo.save!
     end
     Evergreen::Project.new(eg_client, repo.evergreen_project_id)
