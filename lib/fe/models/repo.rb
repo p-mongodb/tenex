@@ -5,7 +5,7 @@ class Repo
   field :repo_name, type: String
   field :hit_count, type: Integer
   field :evergreen_project_id, type: String
-  field :evergreen_project_queried, type: Time
+  field :evergreen_project_queried_at, type: Time
   field :workflow, type: Boolean
   field :evergreen, type: Boolean
   field :travis, type: Boolean
