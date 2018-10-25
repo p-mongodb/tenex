@@ -16,12 +16,13 @@ class System
 
   def evergreen_project_for_github_repo(owner_name, repo_name)
     repo = Repo.find_or_create_by(owner_name: owner_name, repo_name: repo_name)
-    if repo.evergreen_project_id.nil?
+    if repo.evergreen_project_id.nil? && !repo.evergreen_project_queried?
       project = eg_client.project_for_github_repo(owner_name, repo_name)
       if project
         repo.evergreen_project_id = project.id
-        repo.save!
       end
+      repo.evergreen_project_queried = true
+      repo.save!
     end
     Evergreen::Project.new(eg_client, repo.evergreen_project_id)
   end
