@@ -472,6 +472,10 @@ class App < Sinatra::Base
       }
     end
 
+    @results_by_time = results.sort_by do |result|
+      -(result[:time] || 0)
+    end
+
     @branch_name = params[:branch]
     slim :results
   end

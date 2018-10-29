@@ -38,5 +38,11 @@
         b= "#{index+1})"
       pre== Ansi::To::Html.new(CGI.escapeHTML(message)).to_html.gsub("\n", '<br>')
 
+h2 Slowest 20 examples
+ul
+  - @results_by_time[0..19].each do |result|
+    li
+      | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
+
 p
   a href=@raw_artifact_url Raw JSON
