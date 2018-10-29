@@ -138,8 +138,9 @@ module Github
 
     def jira_ticket_number
       number = nil
-      comments.each do |comment|
-        if comment.body =~ /#{jira_project}-(\d+)/i
+      sources = [info['body']] + comments.map(&:body)
+      sources.each do |body|
+        if body =~ /#{jira_project}-(\d+)/i
           if number
             raise "Confusing ticket situation"
           end
