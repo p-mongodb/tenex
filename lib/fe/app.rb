@@ -123,7 +123,14 @@ class App < Sinatra::Base
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
-    @statuses = @pull.statuses
+    @statuses = @pull.statuses.sort_by do |status|
+      if status.build_id.nil?
+        # top level build
+        -1000000
+      else
+        -status.time_taken
+      end
+    end
     @branch_name = @pull.head_branch_name
     slim :pull_perf
   end

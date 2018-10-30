@@ -13,6 +13,8 @@ module Evergreen
       attr_reader :status
     end
 
+    class NotFound < ApiError; end
+
     include PaginatedGet
 
     def initialize(username:, api_key:)
@@ -70,7 +72,12 @@ module Evergreen
         if error
           msg += ": #{error}"
         end
-        raise ApiError.new(msg, status: response.status)
+        cls = if response.status == 404
+          NotFound
+        else
+          ApiError
+        end
+        raise cls.new(msg, status: response.status)
       end
       JSON.parse(response.body)
     end

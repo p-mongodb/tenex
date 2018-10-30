@@ -1,5 +1,5 @@
 table.status-table
-  - @pull.statuses.each do |status|
+  - @statuses.each do |status|
     tr class=status.normalized_state
       td
         = status['context']

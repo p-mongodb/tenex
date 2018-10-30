@@ -1,6 +1,9 @@
 module Evergreen
   class Build
     def initialize(client, id, info: nil)
+      if id.nil?
+        raise ArgumentError, 'nil build id'
+      end
       @client = client
       @id = id
       @info = info
