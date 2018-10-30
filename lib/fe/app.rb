@@ -439,14 +439,18 @@ class App < Sinatra::Base
   end
 
   get '/projects/:project/versions/:version/results/:build' do |project_id, version_id, build_id|
-    build = Evergreen::Build.new(eg_client, build_id)
-    artifact = build.artifact('rspec.json')
+    @build = Evergreen::Build.new(eg_client, build_id)
+    artifact = @build.artifact('rspec.json')
     unless artifact
       raise "No rspec.json here"
     end
     @raw_artifact_url = url = artifact.url
     contents = open(url).read
     payload = JSON.parse(contents)
+    @summary = {}
+    payload['summary'].each do |k, v|
+      @summary[k.to_sym] = v
+    end
 
     results = payload['examples'].map do |info|
       {
@@ -467,7 +471,6 @@ class App < Sinatra::Base
     end
 
     @messages = payload['messages']
-    @summary = payload['summary']
 
     @failures = results.select do |result|
       result[:failure]
@@ -489,8 +492,12 @@ class App < Sinatra::Base
       }
     end
 
-    @results_by_time = results.sort_by do |result|
+    results_by_time = results.sort_by do |result|
       -(result[:time] || 0)
+    end
+    @slowest_results = results_by_time[0..19]
+    @slowest_total_time = @slowest_results.inject(0) do |sum, result|
+      sum + result[:time]
     end
 
     @branch_name = params[:branch]

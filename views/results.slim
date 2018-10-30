@@ -1,5 +1,5 @@
-- if @summary['failure_count'] > 0
-  h2 #{@summary['failure_count']} failures
+- if @summary[:failure_count] > 0
+  h2 #{@summary[:failure_count]} failures
   
   ul
     - @failed_files.each do |file|
@@ -29,8 +29,8 @@
       - else
         p No backtrace for this failure.
 
-- if @summary['errors_outside_of_examples_count'] > 0
-  h2 #{@summary['errors_outside_of_examples_count']} errors outside of examples
+- if @summary[:errors_outside_of_examples_count] > 0
+  h2 #{@summary[:errors_outside_of_examples_count]} errors outside of examples
   
   - @messages.each_with_index do |message, index|
     div
@@ -38,9 +38,14 @@
         b= "#{index+1})"
       pre== Ansi::To::Html.new(CGI.escapeHTML(message)).to_html.gsub("\n", '<br>')
 
-h2 Slowest 20 examples
+h2
+  ' Slowest #{@slowest_results.length} examples
+  small
+    '(#{Taw.time_ago_in_words(Time.now - @slowest_total_time, approx: 2)}
+    ' out of
+    ' #{Taw.time_ago_in_words(Time.now - @summary[:duration], approx: 2)})
 ul
-  - @results_by_time[0..19].each do |result|
+  - @slowest_results[0..19].each do |result|
     li
       | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
 
