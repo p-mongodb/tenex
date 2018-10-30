@@ -19,7 +19,7 @@ table.status-table
             a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
               | Results
         td
-          = status.time_taken
+          = Taw.time_ago_in_words(Time.now - status.time_taken, approx: 2)
     - if status['context'] == 'continuous-integration/travis-ci/pr'
       - @pull.travis_statuses.each do |status|
         tr class="#{status.state}"
