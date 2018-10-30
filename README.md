@@ -52,6 +52,7 @@ failures also are not included in the number of failures.
 
 #### Github Operations
 
+- Jump to PR diff.
 - Request PR review.
 - Rebase branch on top of master.
 - Reword branch - squash all commits in the branch ino a single commit and
@@ -59,6 +60,12 @@ replace commit messsages with the respective ticket title.
 Ticket is automatically detected/inferred from branch name, PR
 description and PR comments.
 - Replace title and description of the PR with that of the head commit.
+
+#### Performance Information
+
+- Time taken for each build to run.
+- Builds ordered from slowest to fastest.
+- Slowest 20 RSpec examples for each build.
 
 ![PR](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr.png) 
 
