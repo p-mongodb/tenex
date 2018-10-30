@@ -1,0 +1,35 @@
+table.status-table
+  - @pull.statuses.each do |status|
+    tr class=status.normalized_state
+      td
+        = status['context']
+        - if status['description']
+          div= status['description']
+      td
+        a href=status['target_url'] Go
+      - if status.build_id
+        td
+          - if status.log_url
+            a href=status.log_url Log
+        td
+          - if status.restart_url
+            a href=status.restart_url Restart
+        - if @pull.have_rspec_json? && !status.top_level?
+          td
+            a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
+              | Results
+        td
+          = status.time_taken
+    - if status['context'] == 'continuous-integration/travis-ci/pr'
+      - @pull.travis_statuses.each do |status|
+        tr class="#{status.state}"
+          td
+            = status.context
+          td
+            a href=status.target_url Go
+          td
+            - if status.html_log_url
+              a href=status.html_log_url Log
+          td
+            - if status.restart_url
+              a href=status.restart_url Restart

@@ -76,5 +76,10 @@ module Evergreen
       end
       !!artifact
     end
+
+    # in seconds
+    def time_taken
+      info['time_taken_ms'] / 1000.0
+    end
   end
 end

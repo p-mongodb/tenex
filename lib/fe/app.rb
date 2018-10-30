@@ -118,6 +118,16 @@ class App < Sinatra::Base
     slim :pull
   end
 
+  # pull perf
+  get '/repos/:org/:repo/pulls/:id/perf' do |org_name, repo_name, id|
+    @repo = system.hit_repo(org_name, repo_name)
+    pull = gh_repo(org_name, repo_name).pull(id)
+    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @statuses = @pull.statuses
+    @branch_name = @pull.head_branch_name
+    slim :pull_perf
+  end
+
   # pr log
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)

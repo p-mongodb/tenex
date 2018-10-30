@@ -162,4 +162,8 @@ class EvergreenStatusPresenter
       File.basename(status['target_url'])
     end
   end
+
+  def time_taken
+    evergreen_build.time_taken
+  end
 end
