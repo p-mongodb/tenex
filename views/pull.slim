@@ -1,8 +1,3 @@
-style
-  | .passed { background: #cfc; }
-  | .failed { background: #fcc; }
-  | .pending { background: #ffc; }
-
 h2
   a href=@pull['html_url'] ##{@pull['number']}: #{@pull['title']}
   '
@@ -51,7 +46,7 @@ p
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/bump?priority=100" 100
 
 - if @pull.repo_full_name == 'mongodb/mongo-ruby-driver'
-  table
+  table.status-table
     tr
       td Server
       td Topology
@@ -92,7 +87,7 @@ p
                       a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
                         i.fa.fa-puzzle-piece title='Results'
 
-table
+table.status-table
   - @pull.untaken_statuses.each do |status|
     tr class=status.normalized_state
       td

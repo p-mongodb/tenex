@@ -2,6 +2,11 @@ doctype html
 html
   head
     link rel='stylesheet' href='/font-awesome/css/font-awesome.min.css'
+    
+    style
+      | .status-table .passed { background: #cfc; }
+        .status-table .failed { background: #fcc; }
+        .status-table .pending { background: #ffc; }
   title
     - if @branch_name
       | [#{@branch_name}]
