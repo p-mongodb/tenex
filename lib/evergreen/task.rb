@@ -71,5 +71,9 @@ module Evergreen
     def artifacts
       (info['artifacts'] || []).map { |artifact| Artifact.new(client, info: artifact) }
     end
+
+    def restart
+      resp = client.post_json("tasks/#{id}/restart")
+    end
   end
 end

@@ -43,10 +43,7 @@ module Evergreen
     end
 
     def restart
-      info['tasks'].each do |task_id|
-        resp = client.connection.post("tasks/#{task_id}/restart")
-        puts resp.status
-      end
+      resp = client.post_json("builds/#{id}/restart")
     end
 
     def failed?
