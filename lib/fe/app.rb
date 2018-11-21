@@ -11,6 +11,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
 require 'taw'
+autoload :ReviewTimeAnalyzer, 'fe/review_time_analyzer'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -84,6 +85,13 @@ class App < Sinatra::Base
   get '/repos/:org/:repo/settings' do |org_name, repo_name|
     @repo = system.hit_repo(org_name, repo_name)
     slim :settings
+  end
+
+  get '/repos/:org/:repo/review-time' do |org_name, repo_name|
+    @repo = system.hit_repo(org_name, repo_name)
+    @analyzer = ReviewTimeAnalyzer.new(@repo, gh_client)
+    @analyzer.run
+    slim :review_time
   end
 
   post '/repos/:org/:repo/settings' do |org_name, repo_name|
