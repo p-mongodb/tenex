@@ -150,8 +150,6 @@ class App < Sinatra::Base
 
   private def do_evergreen_log(build_id, title)
     build = Evergreen::Build.new(eg_client, build_id)
-    pull = gh_repo(org_name, repo_name).pull(pull_id)
-    title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
     do_log(build, title)
   end
 
