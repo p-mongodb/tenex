@@ -1,5 +1,6 @@
 require_relative '../paginated_get'
 require 'faraday'
+require 'faraday/detailed_logger'
 
 module Github
   class Client
