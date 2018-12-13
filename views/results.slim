@@ -29,6 +29,12 @@
       - else
         p No backtrace for this failure.
 
+      - if failure[:sdam_log_entries] && !failure[:sdam_log_entries].empty?
+        p SDAM log:
+        pre
+          - failure[:sdam_log_entries].each do |entry|
+            = entry + "\n"
+
 - if @summary[:errors_outside_of_examples_count] > 0
   h2 #{@summary[:errors_outside_of_examples_count]} errors outside of examples
   
@@ -48,6 +54,10 @@ ul
   - @slowest_results[0..19].each do |result|
     li
       | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
+      - if result[:sdam_log_entries] && !result[:sdam_log_entries].empty?
+        pre
+          - result[:sdam_log_entries].each do |entry|
+            = entry + "\n"
 
 p
   a href=@raw_artifact_url Raw JSON

@@ -470,6 +470,7 @@ class App < Sinatra::Base
         file_path: info['file_path'],
         line_number: info['line_number'],
         time: info['run_time'],
+        sdam_log_entries: info['sdam_log_entries'],
       }.tap do |result|
         if info['status'] == 'failed'
           result[:failure] = {
