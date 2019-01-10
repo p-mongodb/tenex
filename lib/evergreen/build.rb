@@ -23,7 +23,7 @@ module Evergreen
       end
     end
 
-    def log_url
+    def task_log_url
       if info['tasks'].length != 1
         raise "Have #{info['tasks'].length} tasks, expecting 1"
       end
@@ -34,8 +34,8 @@ module Evergreen
       task_info['logs']['task_log']
     end
 
-    def log
-      resp = client.connection.get(log_url)
+    def task_log
+      resp = client.connection.get(task_log_url)
       if resp.status != 200
         fail resp.status
       end

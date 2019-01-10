@@ -150,12 +150,11 @@ class App < Sinatra::Base
 
   private def do_evergreen_log(build_id, title)
     build = Evergreen::Build.new(eg_client, build_id)
-    do_log(build, title)
+    do_log(build.task_log, build.task_log_url, title)
   end
 
-  private def do_log(build, title)
-    log = build.log
-    log.gsub!(%r,<i class="fa fa-link line-link" id='line-link-\d+'></i> ,, '')
+  private def do_log(log, log_url, title)
+    log = log.gsub(%r,<i class="fa fa-link line-link" id='line-link-\d+'></i> ,, '')
     lines = log.split("\n")
     lines.each_with_index do |line, index|
       if line =~ %r,Failure/Error:,
@@ -169,8 +168,9 @@ class App < Sinatra::Base
       pre { overflow: initial; }
     ,
     log.sub!(/<\/head>/, "<style>#{style}</style><title>#{title}</title></head>")
-    inject = %Q,<p style='margin:1em;font-size:150%'><a href="#{build.log_url}">Log @ Evergreen</a></p>,
+    inject = %Q,<p style='margin:1em;font-size:150%'><a href="#{log_url}">Log @ Evergreen</a></p>,
     log.sub!(/<body(.*?)>/, "<body\\1>#{inject}")
+    log
   end
 
   get '/repos/:org/:repo/pulls/:id/restart/:build_id' do |org_name, repo_name, pull_id, build_id|
@@ -339,10 +339,18 @@ class App < Sinatra::Base
   end
 
   # eg log
+  #get %r,/projects/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
   get '/projects/:project/versions/:version/builds/:build/log' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     title = "EG log"
-    do_log(build, title)
+    do_log(build.task_log, build.task_log_url, title)
+  end
+
+  # eg task log
+  get '/projects/:project/versions/:version/builds/:build/tasks/:task/log' do |project_id, version_id, build_id, task_id|
+    task = Evergreen::Task.new(eg_client, task_id)
+    title = "EG task log"
+    do_log(task.task_log, task.task_log_url, title)
   end
 
   get '/travis/log/:job_id' do |job_id|
