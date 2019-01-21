@@ -53,44 +53,44 @@ p
       td Server
       td Topology
       td Auth
-      - @ruby_versions.each do |ruby_version|
+      - @category_values['ruby'].each do |ruby_version|
         td= ruby_version
-    - @configs['mongodb-version'].each do |mongodb_version|
-      - @configs['topology'].each do |topology|
-        - @configs['auth-and-ssl'].each do |auth|
-          tr
-            td= mongodb_version
-            td= topology
-            td= auth
-            - @ruby_versions.each do |ruby_version|
-              td
-                - unless ruby_version =~ /ruby/
-                  - ruby_version = "ruby-#{ruby_version}"
-                - statuses = @pull.take_statuses('mongodb-version' => mongodb_version, 'ruby' => ruby_version, 'topology' => topology, 'auth-and-ssl' => auth)
-                - statuses.each do |status|
-                  div class=status.normalized_state
-                    ' #{status.prefix}
-                    a href=status['target_url']
-                      i.fa.fa-space-shuttle title='Go'
-                    '
-                    - if status.log_url
-                      - if status.failed?
-                        - target_url = "#{status.log_url}#first-failure"
-                      - else
-                        - target_url = status.log_url
-                      a href=target_url
-                        i.fa.fa-file-text-o title='Log'
-                    '
-                    - if status.restart_url
-                      a href=status.restart_url
-                        i.fa.fa-repeat title='Restart'
-                    - if status.failed? && @pull.have_rspec_json? && !status.top_level?
-                      '
-                      a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
-                        i.fa.fa-puzzle-piece title='Results'
+    - @category_values['mongodb-version'].each do |mongodb_version|
+      - @category_values['topology'].each do |topology|
+        - @category_values['auth-and-ssl'].each do |auth|
+          - if map2 = @table[mongodb_version]&.[](topology)&.[](auth)
+            tr
+              td= mongodb_version
+              td= topology
+              td= auth
+              - @ruby_versions.each do |ruby_version|
+                td
+                  - statuses = map2[ruby_version]
+                  - if statuses
+                    - statuses.each do |label, status|
+                      div class=status.normalized_state
+                        ' #{label}
+                        a href=status['target_url']
+                          i.fa.fa-space-shuttle title='Go'
+                        '
+                        - if status.log_url
+                          - if status.failed?
+                            - target_url = "#{status.log_url}#first-failure"
+                          - else
+                            - target_url = status.log_url
+                          a href=target_url
+                            i.fa.fa-file-text-o title='Log'
+                        '
+                        - if status.restart_url
+                          a href=status.restart_url
+                            i.fa.fa-repeat title='Restart'
+                        - if status.failed? && @pull.have_rspec_json? && !status.top_level?
+                          '
+                          a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
+                            i.fa.fa-puzzle-piece title='Results'
 
 table.status-table
-  - @pull.untaken_statuses.each do |status|
+  - @untaken_statuses.each do |status|
     tr class=status.normalized_state
       td
         = status['context']

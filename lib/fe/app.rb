@@ -113,8 +113,101 @@ class App < Sinatra::Base
       'topology' => %w(standalone replica-set sharded-cluster),
       'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
-    @ruby_versions = %w(2.5 2.4 2.3 2.2 1.9 head jruby-9.2 jruby-9.1)
+    @ruby_versions = %w(2.6 2.5 2.4 2.3 2.2 1.9 head jruby-9.2 jruby-9.1)
+    @table_keys = %w(mongodb-version topology auth-and-ssl ruby)
+    @category_values = {}
+    @table = {}
+    @untaken_statuses = []
+    @pull.statuses.each do |status|
+      if repo_name == 'mongo-ruby-driver' && status.status.context =~ %r,evergreen/,
+        id = status.status.context.split('/')[1]
+        label, rest = id.split('__')
+        meta = {}
+        rest.split('_').each do |pair|
+          key, value = pair.split('~')
+          case key
+          when 'ruby'
+            meta[key] = value.sub(/^ruby-/, '')
+          else
+            meta[key] = value
+          end
+        end
+        if label =~ /enterprise-auth-tests-ubuntu/
+          meta['mongodb-version'] = 'EA'
+          meta['topology'] = 'ubuntu'
+        elsif label =~ /enterprise-auth-tests-rhel/
+          meta['mongodb-version'] = 'EA'
+          meta['topology'] = 'rhel'
+        else
+          meta['auth-and-ssl'] ||= 'noauth-and-nossl'
+        end
+        @table_keys.each do |key|
+          value = meta[key]
+          if value.nil?
+            raise "Missing #{key} in #{meta}"
+          end
+          @category_values[key] ||= []
+          (@category_values[key] << value).uniq!
+        end
+        meta_for_label = meta.dup
+        map = @table_keys.inject(@table) do |map, key|
+          (map[meta[key]] ||= {}).tap do
+            meta_for_label.delete(key)
+          end
+        end
+        short_label = ''
+        if meta_for_label.delete('as')
+          short_label << 'AS'
+        end
+        if meta_for_label.delete('lint')
+          short_label << 'L'
+        end
+        if meta_for_label.delete('retry-writes')
+          short_label << 'RW'
+        end
+        if compressor = meta_for_label.delete('compressor')
+          short_label << compressor[0].upcase
+        end
+        if meta_for_label.empty?
+          if short_label.empty?
+            short_label = '*'
+          end
+        else
+          extra = meta_for_label.map { |k, v| "#{k}=#{v}" }.join(',')
+          if short_label.empty?
+            short_label = extra
+          else
+            short_label += '; ' + extra
+          end
+        end
+        if map[short_label]
+          raise "overwrite for #{short_label} #{meta.inspect}"
+        end
+        map[short_label] = status
+      else
+        @untaken_statuses << status
+      end
+    end
     @branch_name = @pull.head_branch_name
+    if repo_name == 'mongo-ruby-driver' &&
+      @category_values['ruby'].sort! do |a, b|
+        if a =~ /^[0-9]/ && b =~ /^[0-9]/ || a =~ /^j/ && b =~ /^j/
+          b <=> a
+        else
+          a <=> b
+        end
+      end
+      @category_values['mongodb-version'].sort! do |a, b|
+        if a =~ /^[0-9]/ && b =~ /^[0-9]/
+          b <=> a
+        else
+          a <=> b
+        end
+      end
+      @category_values['mongodb-version'].delete('EA')
+      @category_values['mongodb-version'].push('EA')
+      @category_values['topology'] = %w(standalone replica-set sharded-cluster rhel ubuntu)
+    end
     slim :pull
   end
 
