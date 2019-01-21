@@ -189,7 +189,7 @@ class App < Sinatra::Base
       end
     end
     @branch_name = @pull.head_branch_name
-    if repo_name == 'mongo-ruby-driver' &&
+    if repo_name == 'mongo-ruby-driver' && @category_values
       @category_values['ruby'].sort! do |a, b|
         if a =~ /^[0-9]/ && b =~ /^[0-9]/ || a =~ /^j/ && b =~ /^j/
           b <=> a
