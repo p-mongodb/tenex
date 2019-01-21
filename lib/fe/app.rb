@@ -190,23 +190,28 @@ class App < Sinatra::Base
     end
     @branch_name = @pull.head_branch_name
     if repo_name == 'mongo-ruby-driver' && @category_values
-      @category_values['ruby'].sort! do |a, b|
+      @category_values['ruby']&.sort! do |a, b|
         if a =~ /^[0-9]/ && b =~ /^[0-9]/ || a =~ /^j/ && b =~ /^j/
           b <=> a
         else
           a <=> b
         end
       end
-      @category_values['mongodb-version'].sort! do |a, b|
+      @category_values['mongodb-version']&.sort! do |a, b|
         if a =~ /^[0-9]/ && b =~ /^[0-9]/
           b <=> a
         else
           a <=> b
         end
       end
-      @category_values['mongodb-version'].delete('EA')
-      @category_values['mongodb-version'].push('EA')
-      @category_values['topology'] = %w(standalone replica-set sharded-cluster rhel ubuntu)
+      @category_values['mongodb-version']&.delete('EA')
+      @category_values['mongodb-version']&.push('EA')
+      if @category_values['topology']
+        @category_values['topology'] = %w(standalone replica-set sharded-cluster rhel ubuntu)
+      end
+    end
+    if @category_values.empty?
+      @category_values = nil
     end
     slim :pull
   end

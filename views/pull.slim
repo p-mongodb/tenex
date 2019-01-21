@@ -47,7 +47,7 @@ p
     '
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/bump?priority=100" 100
 
-- if @pull.repo_full_name == 'mongodb/mongo-ruby-driver'
+- if @pull.repo_full_name == 'mongodb/mongo-ruby-driver' && @category_values
   table.status-table
     tr
       td Server
