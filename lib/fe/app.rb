@@ -1,3 +1,4 @@
+autoload :JIRA, 'jira-ruby'
 autoload :Nokogiri, 'nokogiri'
 require 'open-uri'
 autoload :Ansi, 'ansi/to/html'
@@ -630,5 +631,27 @@ class App < Sinatra::Base
   get '/workflow' do
     @repos = Repo.where(workflow: true).sort_by(&:full_name)
     slim :workflow
+  end
+
+  get '/jira/fixed/:project/:version' do |project_name, version|
+    project_name = project_name.upcase
+    @issues = JIRA::Resource::Issue.jql(jira_client,
+      "project=#{project_name} and fixversion=#{version} order by type, priority desc, key",
+      max_results: 500)
+    slim :fixed_issues
+  end
+
+  private def jira_client
+    @jira_client ||= begin
+      options = {
+        :username     => ENV['JIRA_USERNAME'],
+        :password     => ENV['JIRA_PASSWORD'],
+        :site         => ENV['JIRA_SITE'],
+        :context_path => '',
+        :auth_type    => :basic
+      }
+
+      JIRA::Client.new(options)
+    end
   end
 end
