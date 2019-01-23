@@ -633,12 +633,20 @@ class App < Sinatra::Base
     slim :workflow
   end
 
-  get '/jira/fixed/:project/:version' do |project_name, version|
+  get '/jira/:project/fixed/:version' do |project_name, version|
     project_name = project_name.upcase
     @issues = JIRA::Resource::Issue.jql(jira_client,
       "project=#{project_name} and fixversion=#{version} order by type, priority desc, key",
       max_results: 500)
     slim :fixed_issues
+  end
+
+  get '/jira/:project/epics' do |project_name|
+    project_name = project_name.upcase
+    @issues = JIRA::Resource::Issue.jql(jira_client,
+      "project=#{project_name} and type=epic order by resolution desc, updated desc",
+      max_results: 50)
+    slim :epics
   end
 
   private def jira_client
