@@ -1,8 +1,10 @@
 source 'https://rubygems.org'
 
-# Dogfoodg
-gem 'mongo', git: 'https://github.com/mongodb/mongo-ruby-driver'
-gem 'mongoid', git: 'https://github.com/mongodb/mongoid'
+# Dogfood
+#gem 'mongo', git: 'https://github.com/mongodb/mongo-ruby-driver'
+#gem 'mongoid', git: 'https://github.com/mongodb/mongoid'
+gem 'mongo'
+gem 'mongoid'
 
 gem 'faraday'
 gem 'nokogiri'
