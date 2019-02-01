@@ -1,3 +1,4 @@
+autoload :JSON, 'json'
 require_relative '../paginated_get'
 require 'faraday'
 require 'faraday/detailed_logger'

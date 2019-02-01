@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+$: << 'lib'
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'fe/boot_lite'
+
+num = ARGV.shift
+num = num.to_i
+unless num > 0
+  raise 'Expected a ticket number'
+end
+
+class PrMaker
+  def initialize(num)
+    @num = num
+
+    @config = if num > 2000
+      @repo_name = 'mongoid'
+      @jira_project = 'mongoid'
+    else
+      @repo_name = 'mongo-ruby-driver'
+      @jira_project = 'ruby'
+    end
+  end
+
+  attr_reader :num, :repo_name, :jira_project
+
+  def make_pr
+    gh_client.post_json("/repos/mongodb/#{repo_name}/pulls", title: num.to_s, head: "p-mongo:#{num}", base: 'master', body: "pr #{num}")
+  end
+
+  private def gh_client
+    @gh_client ||= Github::Client.new(
+        username: ENV['GITHUB_USERNAME'],
+        auth_token: ENV['GITHUB_TOKEN'],
+      )
+  end
+
+  private def jira_client
+    @jira_client ||= begin
+      options = {
+        :username     => ENV['JIRA_USERNAME'],
+        :password     => ENV['JIRA_PASSWORD'],
+        :site         => ENV['JIRA_SITE'],
+        :context_path => '',
+        :auth_type    => :basic
+      }
+
+      JIRA::Client.new(options)
+    end
+  end
+end
+
+PrMaker.new(num).make_pr
