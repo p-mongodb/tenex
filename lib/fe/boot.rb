@@ -6,13 +6,13 @@ Dotenv.load
 
 Mongoid.load!(File.join(File.dirname(__FILE__), '..', '..', 'config', 'mongoid.yml'))
 
-require 'github'
-require 'evergreen'
+autoload :Github, 'github'
+autoload :Evergreen, 'evergreen'
 
 Dir['./lib/fe/models/**/*.rb'].each do |path|
   require_relative path.sub('/lib/fe/', '/').sub('.rb', '')
 end
 
-require_relative './system'
-require_relative './toolchain'
-require_relative './repo_cache'
+autoload :System, 'fe/system'
+autoload :Toolchain, 'fe/toolchain'
+autoload :RepoCache, 'fe/repo_cache'

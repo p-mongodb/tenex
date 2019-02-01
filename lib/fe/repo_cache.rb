@@ -1,5 +1,7 @@
 require 'pathname'
 require 'time'
+autoload :FileUtils, 'fileutils'
+autoload :ChildProcessHelper, 'fe/child_process_helper'
 
 class RepoCache
   def initialize(owner, name)
