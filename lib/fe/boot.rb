@@ -1,13 +1,8 @@
-require 'dotenv'
-require 'byebug'
+require 'fe/boot_lite'
+
 require 'mongoid'
 
-Dotenv.load
-
 Mongoid.load!(File.join(File.dirname(__FILE__), '..', '..', 'config', 'mongoid.yml'))
-
-autoload :Github, 'github'
-autoload :Evergreen, 'evergreen'
 
 Dir['./lib/fe/models/**/*.rb'].each do |path|
   sym = File.basename(path).sub('.rb', '').camelize
