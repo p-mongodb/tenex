@@ -14,8 +14,16 @@ module Github
 
     def_delegators :@info, :[], :[]=
 
+    def number
+      info['number']
+    end
+
     def head_sha
       info['head']['sha']
+    end
+
+    def head_label
+      info['head']['label']
     end
 
     # Who opened the PR (could be different from author of PR's head)

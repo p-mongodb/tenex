@@ -7,12 +7,13 @@ module Github
   class Client
 
     class ApiError < StandardError
-      def initialize(message, status: nil)
+      def initialize(message, status: nil, body: nil)
         super(message)
         @status = status
+        @body = body
       end
 
-      attr_reader :status
+      attr_reader :status, :body
     end
 
     include PaginatedGet
@@ -55,7 +56,7 @@ module Github
         if error
           msg += ": #{error}"
         end
-        raise ApiError.new(msg, status: response.status)
+        raise ApiError.new(msg, status: response.status, body: response.body)
       end
       JSON.parse(response.body)
     end
