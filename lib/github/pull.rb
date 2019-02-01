@@ -145,6 +145,9 @@ module Github
     end
 
     def jira_ticket_number
+      if @jira_ticket_number_looked_up
+        return @jira_ticket_number
+      end
       number = nil
       sources = [info['body']] + comments.map(&:body)
       sources.each do |body|
@@ -160,7 +163,8 @@ module Github
           number = info['head']['ref'].to_i
         end
       end
-      number
+      @jira_ticket_number_looked_up = true
+      @jira_ticket_number = number
     end
 
     def jira_ticket!

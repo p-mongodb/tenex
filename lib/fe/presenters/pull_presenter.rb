@@ -12,7 +12,7 @@ class PullPresenter
   attr_reader :eg_client, :system
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
     :evergreen_version_id, :head_branch_name,
-    :approved?, :review_requested?
+    :approved?, :review_requested?, :jira_ticket_number, :jira_ticket!
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
