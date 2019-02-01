@@ -10,7 +10,8 @@ autoload :Github, 'github'
 autoload :Evergreen, 'evergreen'
 
 Dir['./lib/fe/models/**/*.rb'].each do |path|
-  require_relative path.sub('/lib/fe/', '/').sub('.rb', '')
+  sym = File.basename(path).sub('.rb', '').camelize
+  autoload sym, path.sub(%r,^./lib/,, '').sub('.rb', '')
 end
 
 autoload :System, 'fe/system'
