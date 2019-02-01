@@ -4,6 +4,8 @@ development:
       database: tenex
       hosts:
         - localhost:27027
+      options:
+        server_selection_timeout: 1
 
 production:
   clients:
@@ -11,3 +13,5 @@ production:
       database: tenex
       hosts:
         - localhost:27017
+      options:
+        server_selection_timeout: 5

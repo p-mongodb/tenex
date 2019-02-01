@@ -42,7 +42,10 @@ module Jirra
           req.headers['content-type'] = 'application/json'
         end
       end
-      if response.status != 200 && response.status != 201
+      if response.status == 204
+        return nil
+      end
+      unless [200, 201].include?(response.status)
         error = nil
         begin
           error = JSON.parse(response.body)['error']

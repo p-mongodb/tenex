@@ -310,6 +310,28 @@ class App < Sinatra::Base
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @statuses = @pull.request_review('saghm')
 
+    jira_ticket = @pull.jira_ticket!
+    transitions = jirra_client.get_json("issue/#{jira_ticket}/transitions")
+    byebug
+    transition = transitions['transitions'].detect do |tr|
+      tr['name'] == 'In Code Review'
+    end
+    if transition
+      transition_id = transition['id']
+
+      payload = {
+        fields: {
+          assignee: {
+            name: 'oleg.pudeyev',
+          },
+        },
+        transition: {
+          id: transition_id,
+        },
+      }
+      jirra_client.post_json("issue/#{jira_ticket}/transitions", payload)
+    end
+
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
@@ -651,7 +673,20 @@ class App < Sinatra::Base
   end
 
   get '/jira/editmeta' do
+    @heading = 'Edit Meta'
     @payload = jirra_client.get_json('issue/RUBY-1690/editmeta')
+    slim :editmeta
+  end
+
+  get '/jira/transitions' do
+    @heading = 'Transitions'
+    @payload = jirra_client.get_json('issue/RUBY-1690/transitions')
+    slim :editmeta
+  end
+
+  get '/jira/statuses' do
+    @heading = 'Statuses'
+    @payload = jirra_client.get_json('project/RUBY/statuses')
     slim :editmeta
   end
 

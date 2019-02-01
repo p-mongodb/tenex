@@ -155,6 +155,11 @@ module Github
           number = $1.to_i
         end
       end
+      if number.nil?
+        if info['head']['ref'].to_i.to_s == info['head']['ref']
+          number = info['head']['ref'].to_i
+        end
+      end
       number
     end
 
