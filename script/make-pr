@@ -6,6 +6,8 @@ ENV['MONGOID_ENV'] = 'development'
 
 require 'fe/boot_lite'
 
+autoload :Jira, 'jira/client'
+
 num = ARGV.shift
 num = num.to_i
 unless num > 0
@@ -28,7 +30,26 @@ class PrMaker
   attr_reader :num, :repo_name, :jira_project
 
   def make_pr
-    gh_client.post_json("/repos/mongodb/#{repo_name}/pulls", title: num.to_s, head: "p-mongo:#{num}", base: 'master', body: "pr #{num}")
+    #pr_info = gh_client.post_json("/repos/mongodb/#{repo_name}/pulls", title: num.to_s, head: "p-mongo:#{num}", base: 'master', body: "pr #{num}")
+
+    pr_num = 4597
+    pr_url = "https://github.com/mongodb/#{repo_name}/pull/#{pr_num}"
+
+    # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
+    payload = {
+      globalId: "#{jira_project}-#{num}-pr",
+      object: {
+        url: pr_url,
+        title: "Fix - PR ##{pr_num}",
+        icon: {"url16x16":"https://github.com/favicon.ico"},
+        status: {
+          icon: {},
+        },
+      },
+    }
+    jira_client.post_json("issue/#{@jira_project.upcase}-#{@num}/remotelink", payload)
+    #byebug
+    1
   end
 
   private def gh_client
@@ -44,11 +65,9 @@ class PrMaker
         :username     => ENV['JIRA_USERNAME'],
         :password     => ENV['JIRA_PASSWORD'],
         :site         => ENV['JIRA_SITE'],
-        :context_path => '',
-        :auth_type    => :basic
       }
 
-      JIRA::Client.new(options)
+      Jira::Client.new(options)
     end
   end
 end
