@@ -12,6 +12,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
 require 'taw'
+autoload :Jirra, 'jirra/client'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -649,6 +650,11 @@ class App < Sinatra::Base
     slim :epics
   end
 
+  get '/jira/editmeta' do
+    @payload = jirra_client.get_json('issue/RUBY-1690/editmeta')
+    slim :editmeta
+  end
+
   private def jira_client
     @jira_client ||= begin
       options = {
@@ -660,6 +666,18 @@ class App < Sinatra::Base
       }
 
       JIRA::Client.new(options)
+    end
+  end
+
+  private def jirra_client
+    @jira_client ||= begin
+      options = {
+        :username     => ENV['JIRA_USERNAME'],
+        :password     => ENV['JIRA_PASSWORD'],
+        :site         => ENV['JIRA_SITE'],
+      }
+
+      ::Jirra::Client.new(options)
     end
   end
 end

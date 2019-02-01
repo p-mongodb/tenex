@@ -2,7 +2,7 @@ autoload :JSON, 'json'
 require 'faraday'
 require 'faraday/detailed_logger'
 
-module Jira
+module Jirra
   class Client
 
     class ApiError < StandardError
