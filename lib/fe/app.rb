@@ -327,6 +327,8 @@ class App < Sinatra::Base
       }
       jirra_client.post_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/remotelink", payload)
 
+      # https://stackoverflow.com/questions/21738782/does-the-jira-rest-api-require-submitting-a-transition-id-when-transitioning-an
+      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-edit-issues-6291632/
       transitions = jirra_client.get_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/transitions")
       transition = transitions['transitions'].detect do |tr|
         tr['name'] == 'In Code Review'
