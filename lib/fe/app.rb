@@ -310,26 +310,42 @@ class App < Sinatra::Base
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @statuses = @pull.request_review('saghm')
 
-    jira_ticket = @pull.jira_ticket!
-    transitions = jirra_client.get_json("issue/#{jira_ticket}/transitions")
-    byebug
-    transition = transitions['transitions'].detect do |tr|
-      tr['name'] == 'In Code Review'
-    end
-    if transition
-      transition_id = transition['id']
-
+    jira_ticket = @pull.jira_ticket_number
+    if jira_ticket
+      pr_url = "https://github.com/#{org_name}/#{repo_name}/pull/#{pull_id}"
+      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
       payload = {
-        fields: {
-          assignee: {
-            name: 'oleg.pudeyev',
+        globalId: "#{@pull.jira_project}-#{jira_ticket}-pr-#{pull_id}",
+        object: {
+          url: pr_url,
+          title: "Fix - PR ##{pull_id}",
+          icon: {"url16x16":"https://github.com/favicon.ico"},
+          status: {
+            icon: {},
           },
         },
-        transition: {
-          id: transition_id,
-        },
       }
-      jirra_client.post_json("issue/#{jira_ticket}/transitions", payload)
+      jirra_client.post_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/remotelink", payload)
+
+      transitions = jirra_client.get_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/transitions")
+      transition = transitions['transitions'].detect do |tr|
+        tr['name'] == 'In Code Review'
+      end
+      if transition
+        transition_id = transition['id']
+
+        payload = {
+          fields: {
+            assignee: {
+              name: 'oleg.pudeyev',
+            },
+          },
+          transition: {
+            id: transition_id,
+          },
+        }
+        jirra_client.post_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/transitions", payload)
+      end
     end
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
