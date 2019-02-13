@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$: << 'lib'
+$: << File.join(File.dirname(__FILE__), '../lib')
 
 ENV['MONGOID_ENV'] = 'development'
 

@@ -27,6 +27,7 @@ class RepoCache
       FileUtils.mkdir_p(repos_path)
       if File.exist?(cached_repo_path)
         Dir.chdir(cached_repo_path) do
+          ChildProcessHelper.call(%w(git rebase --abort))
           ChildProcessHelper.check_call(%w(git reset --hard))
           ChildProcessHelper.check_call(%w(git checkout master))
           ChildProcessHelper.check_call(%w(git fetch origin))
