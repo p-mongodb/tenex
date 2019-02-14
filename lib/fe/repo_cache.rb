@@ -1,6 +1,7 @@
 require 'pathname'
 require 'time'
 autoload :FileUtils, 'fileutils'
+require 'fe/child_process_helper'
 autoload :ChildProcessHelper, 'fe/child_process_helper'
 
 class RepoCache
