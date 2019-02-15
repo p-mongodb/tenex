@@ -27,7 +27,7 @@ module Evergreen
     def task_log_url
       uri = URI.parse(info['logs']['task_log'])
       query = CGI.parse(uri.query)
-      query['text'] = 'true'
+      #query['text'] = 'true'
       uri.query = URI.encode_www_form(query)
       uri.to_s
     end
