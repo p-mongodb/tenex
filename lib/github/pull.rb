@@ -148,14 +148,18 @@ module Github
       if @jira_ticket_number_looked_up
         return @jira_ticket_number
       end
-      number = nil
-      sources = [info['body']] + comments.map(&:body)
-      sources.each do |body|
-        if body =~ /#{jira_project}-(\d+)/i
-          if number
-            raise "Confusing ticket situation"
+      if info['title'] =~ /\A((ruby|mongoid)-(\d+)) /i
+        number = $3.to_i
+      else
+        number = nil
+        sources = [info['body']] + comments.map(&:body)
+        sources.each do |body|
+          if body =~ /#{jira_project}-(\d+)/i
+            if number
+              raise "Confusing ticket situation"
+            end
+            number = $1.to_i
           end
-          number = $1.to_i
         end
       end
       if number.nil?
