@@ -5,33 +5,19 @@ $: << File.join(File.dirname(__FILE__), '../lib')
 ENV['MONGOID_ENV'] = 'development'
 
 require 'fe/boot_lite'
+require 'fe/child_process_helper'
 
 autoload :Jirra, 'jirra/client'
 
-num = ARGV.shift
-num = num.to_i
-unless num > 0
-  raise 'Expected a ticket number'
-end
-
 class PrMaker
-  def initialize(num)
-    @num = num
-
-    @config = if num > 2000
-      @repo_name = 'mongoid'
-      @jira_project = 'mongoid'
-    else
-      @repo_name = 'mongo-ruby-driver'
-      @jira_project = 'ruby'
-    end
-  end
 
   attr_reader :num, :repo_name, :jira_project
 
   def make_pr
     begin
-      pr_info = gh_client.post_json("/repos/mongodb/#{repo_name}/pulls", title: num.to_s, head: "p-mongo:#{num}", base: 'master', body: "pr #{num}")
+      pr_info = gh_client.post_json("/repos/mongodb/#{repo_name}/pulls",
+        title: @branch_name, head: "p-mongo:#{@branch_name}", base: 'master',
+        body: "pr for #{@branch_name}")
       pr_num = pr_info['number']
     rescue Github::Client::ApiError => e
       if e.status == 422
@@ -39,7 +25,7 @@ class PrMaker
           pulls = gh_client.repo('mongodb', repo_name).pulls
           pr_num = nil
           pulls.each do |pull|
-            if pull.head_label == "p-mongo:#{num}"
+            if pull.head_label == "p-mongo:#{@branch_name}"
               pr_num = pull.number
               break
             end
@@ -55,23 +41,23 @@ class PrMaker
       end
     end
 
-    pr_url = "https://github.com/mongodb/#{repo_name}/pull/#{pr_num}"
+    if jira_project
+      pr_url = "https://github.com/mongodb/#{repo_name}/pull/#{pr_num}"
 
-    # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
-    payload = {
-      globalId: "#{jira_project}-#{num}-pr-#{pr_num}",
-      object: {
-        url: pr_url,
-        title: "Fix - PR ##{pr_num}",
-        icon: {"url16x16":"https://github.com/favicon.ico"},
-        status: {
-          icon: {},
+      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
+      payload = {
+        globalId: "#{jira_project}-#{num}-pr-#{pr_num}",
+        object: {
+          url: pr_url,
+          title: "Fix - PR ##{pr_num}",
+          icon: {"url16x16":"https://github.com/favicon.ico"},
+          status: {
+            icon: {},
+          },
         },
-      },
-    }
-    jira_client.post_json("issue/#{@jira_project.upcase}-#{@num}/remotelink", payload)
-    #byebug
-    1
+      }
+      jira_client.post_json("issue/#{@jira_project.upcase}-#{@num}/remotelink", payload)
+    end
   end
 
   private def gh_client
@@ -94,4 +80,61 @@ class PrMaker
   end
 end
 
-PrMaker.new(num).make_pr
+class TicketedPrMaker < PrMaker
+  def initialize(num)
+    @num = num
+
+    @config = if num > 2000
+      @repo_name = 'mongoid'
+      @jira_project = 'mongoid'
+    else
+      @repo_name = 'mongo-ruby-driver'
+      @jira_project = 'ruby'
+    end
+
+    @branch_name = num.to_s
+  end
+end
+
+class CurrentPrMaker < PrMaker
+  def initialize
+    dir = Dir.pwd
+    until %w(. /).include?(dir)
+      case File.basename(dir)
+      when 'ruby-driver'
+        @repo_name = 'mongo-ruby-driver'
+        break
+      when 'mongoid'
+        @repo_name = 'mongoid'
+        break
+      end
+      dir = File.dirname(dir)
+    end
+    if @repo_name.nil?
+      raise ArgumentError, "Cannot figure out the project"
+    end
+    @num = nil
+    @jira_project = nil
+
+    branch_output = ChildProcessHelper.check_output(%w(git status))
+    @branch_name = branch_output.split("\n").first.split(' ').last
+    if @branch_name.strip.empty?
+      raise ArgumentError, "Cannot figure out branch name"
+    end
+
+    ChildProcessHelper.check_call(['git', 'pp', @branch_name])
+  end
+end
+
+what = ARGV.shift
+if what.nil?
+  pr_maker = CurrentPrMaker.new
+else
+  num = what.to_i
+  if num > 0
+    pr_maker = TicketedPrMaker.new(num)
+  else
+    pr_maker = BranchPrMaker.new(what)
+  end
+end
+pr_maker.make_pr
