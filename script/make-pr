@@ -93,6 +93,10 @@ class TicketedPrMaker < PrMaker
     end
 
     @branch_name = num.to_s
+
+    info = jira_client.get_json("issue/#{@jira_project.upcase}-#{@num}")
+    @title = "#{@jira_project.upcase}-#{@num} #{info['fields']['summary']}"
+    @body = "https://jira.mongodb.com/browse/#{@jira_project.upcase}-#{@num}"
   end
 end
 
