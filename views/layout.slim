@@ -17,5 +17,8 @@ html
         a href='/' Home
       li
         a href='/workflow' Workflow
+      - if @current_eg_project_id
+        li
+          a href="/projects/#{@current_eg_project_id}" EG Project
         
     == yield

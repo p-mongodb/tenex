@@ -215,6 +215,7 @@ class App < Sinatra::Base
     if @category_values.empty?
       @category_values = nil
     end
+    @current_eg_project_id = @pull.evergreen_project_id
     slim :pull
   end
 
