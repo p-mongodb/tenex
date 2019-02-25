@@ -27,15 +27,8 @@ p
   - if eg_status = @pull.top_evergreen_status
     a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}" Evergreen build
     '
-    - if eg_status.pending_build_count > 0
-      - if eg_status.failed_build_count > 0
-        | (#{eg_status.failed_build_count} failed, #{eg_status.pending_build_count}/#{eg_status.build_count} pending)
-      - else
-        | (#{eg_status.pending_build_count}/#{eg_status.build_count} pending)
-      '
-    - elsif eg_status.failed_build_count > 0
-      | (#{eg_status.failed_build_count}/#{eg_status.build_count} failed)
-      '
+    - if str = eg_status.build_count_str
+      = "(#{str}) "
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-failed" Restart failed
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-all" Restart all

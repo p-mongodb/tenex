@@ -139,12 +139,53 @@ class EvergreenStatusPresenter
     evergreen_version.builds.select { |build| !build.completed? }.length
   end
 
+  def running_build_count
+    unless evergreen_version?
+      return 0
+    end
+
+    evergreen_version.builds.select { |build| build.running? }.length
+  end
+
+  def waiting_build_count
+    unless evergreen_version?
+      return 0
+    end
+
+    evergreen_version.builds.select { |build| build.waiting? }.length
+  end
+
   def failed_build_count
     unless evergreen_version?
       return 0
     end
 
     evergreen_version.builds.select { |build| build.failed? }.length
+  end
+
+  def build_count_str
+    counts = []
+    if failed_build_count > 0
+      counts << [failed_build_count, 'failed']
+    end
+    if running_build_count > 0
+      counts << [running_build_count, 'running']
+    end
+    if waiting_build_count > 0
+      counts << [waiting_build_count, 'waiting']
+    end
+    unaccounted = pending_build_count - running_build_count - waiting_build_count
+    if unaccounted > 0
+      counts << [unaccounted, 'unaccounted']
+    end
+
+    if counts.any?
+      counts[0][0] = "#{counts[0][0]}/#{build_count}"
+    end
+
+    counts.map do |count, status|
+      "#{count} #{status}"
+    end.join(', ')
   end
 
   def eg_unauthorized?

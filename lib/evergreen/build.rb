@@ -50,6 +50,14 @@ module Evergreen
       info['status'] == 'failed'
     end
 
+    def running?
+      info['status'] == 'started'
+    end
+
+    def waiting?
+      info['status'] == 'created'
+    end
+
     def build_variant
       info['build_variant']
     end
