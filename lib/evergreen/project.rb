@@ -17,7 +17,14 @@ module Evergreen
     end
 
     def recent_patches
-      payload = client.get_json("projects/#{id}/patches?start_at=\"2020-01-01T00:00:00.000Z\"")
+      begin
+        payload = client.get_json("projects/#{id}/patches?start_at=\"2020-01-01T00:00:00.000Z\"")
+      rescue Client::NotFound => e
+        unless e.message =~ /no patches found/
+          raise
+        end
+        payload = []
+      end
       payload.map do |info|
         Patch.new(client, info['patch_id'], info: info)
       end
