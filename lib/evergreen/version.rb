@@ -35,6 +35,12 @@ module Evergreen
       end
     end
 
+    def restart_all_builds
+      self.builds.each do |build|
+        build.restart
+      end
+    end
+
     def tasks
       @tasks ||= begin
         payload = client.get_json("versions/#{id}/tasks")

@@ -307,6 +307,24 @@ class App < Sinatra::Base
     redirect return_path || "/pulls/#{pull_id}"
   end
 
+  get '/repos/:org/:repo/pulls/:id/restart-all' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+
+    status = @pull.top_evergreen_status
+    if status
+      version_id = File.basename(status['target_url'])
+      version = Evergreen::Version.new(eg_client, version_id)
+      version.restart_all_builds
+      restarted = true
+    end
+
+    unless restarted
+      return 'Could not find anything to restart'
+    end
+
+    redirect return_path || "/pulls/#{pull_id}"
+  end
+
   get '/repos/:org/:repo/pulls/:id/request-review' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @statuses = @pull.request_review('saghm')
@@ -454,6 +472,13 @@ class App < Sinatra::Base
   get '/projects/:project/versions/:version_id/restart-failed' do |project_id, version_id|
     @version = Evergreen::Version.new(eg_client, version_id)
     @version.restart_failed_builds
+
+    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+  end
+
+  get '/projects/:project/versions/:version_id/restart-all' do |project_id, version_id|
+    @version = Evergreen::Version.new(eg_client, version_id)
+    @version.restart_all_builds
 
     redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
   end
