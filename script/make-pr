@@ -78,6 +78,24 @@ class PrMaker
       Jirra::Client.new(options)
     end
   end
+
+  private def repo_from_cwd
+    dir = Dir.pwd
+    until %w(. /).include?(dir)
+      case File.basename(dir)
+      when 'ruby-driver'
+        @repo_name = 'mongo-ruby-driver'
+        break
+      when 'mongoid'
+        @repo_name = 'mongoid'
+        break
+      end
+      dir = File.dirname(dir)
+    end
+    if @repo_name.nil?
+      raise ArgumentError, "Cannot figure out the project"
+    end
+  end
 end
 
 class TicketedPrMaker < PrMaker
@@ -100,23 +118,14 @@ class TicketedPrMaker < PrMaker
   end
 end
 
-class CurrentPrMaker < PrMaker
+class BranchPrMaker < PrMaker
+  def initialize(branch_name)
+  end
+end
+
+class CurrentPrMaker < BranchPrMaker
   def initialize
-    dir = Dir.pwd
-    until %w(. /).include?(dir)
-      case File.basename(dir)
-      when 'ruby-driver'
-        @repo_name = 'mongo-ruby-driver'
-        break
-      when 'mongoid'
-        @repo_name = 'mongoid'
-        break
-      end
-      dir = File.dirname(dir)
-    end
-    if @repo_name.nil?
-      raise ArgumentError, "Cannot figure out the project"
-    end
+    repo_from_cwd
     @num = nil
     @jira_project = nil
 
