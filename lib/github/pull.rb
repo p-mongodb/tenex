@@ -88,6 +88,10 @@ module Github
       end
     end
 
+    def title
+      info['title']
+    end
+
     def base_branch_name
       info['base']['ref']
     end

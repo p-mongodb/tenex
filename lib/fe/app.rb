@@ -413,7 +413,7 @@ class App < Sinatra::Base
       project_id: repo.evergreen_project_id,
       diff_text: diff,
       base_sha: rc.master_sha,
-      description: 'foo',
+      description: "PR ##{pull_id}: #{@pull.title}",
       variant_ids: ['all'],
       task_ids: ['all'],
       finalize: true,
