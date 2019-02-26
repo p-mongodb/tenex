@@ -181,6 +181,8 @@ class EvergreenStatusPresenter
 
     if counts.any?
       counts[0][0] = "#{counts[0][0]}/#{build_count}"
+    else
+      counts << [build_count, 'total']
     end
 
     counts.map do |count, status|
