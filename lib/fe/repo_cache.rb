@@ -2,7 +2,7 @@ require 'pathname'
 require 'time'
 autoload :FileUtils, 'fileutils'
 require 'fe/child_process_helper'
-autoload :ChildProcessHelper, 'fe/child_process_helper'
+require 'fe/mappings'
 
 class RepoCache
   def initialize(owner, name)
@@ -165,16 +165,10 @@ CMD
   def reword(pull)
     branch_name = pull.head_branch_name
     Dir.chdir(cached_repo_path) do
-      if cached_repo_path.to_s =~ /mongoid/
-        project = 'mongoid'
-      elsif cached_repo_path.to_s =~ /specifications/
-        project = 'spec'
-      else
-        project = 'ruby'
-      end
+      project = Mappings.repo_path_to_jira_project(cached_repo_path)
 
       ticket = nil
-      if branch_name =~ /#{project}/
+      if branch_name =~ /#{project}/i
         ticket = branch_name
       elsif branch_name =~ /^(\d+)($|-)/
         ticket = "#{project}-#{$1}"
