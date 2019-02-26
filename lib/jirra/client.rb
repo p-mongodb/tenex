@@ -59,5 +59,11 @@ module Jirra
       end
       JSON.parse(response.body)
     end
+
+    # endpoints
+
+    def get_issue_fields(issue_key)
+      get_json("issue/#{issue_key.upcase}")['fields']
+    end
   end
 end

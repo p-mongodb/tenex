@@ -162,13 +162,13 @@ CMD
     end
   end
 
-  def reword(pull)
+  def reword(pull, jirra_client)
     branch_name = pull.head_branch_name
     Dir.chdir(cached_repo_path) do
       project = Mappings.repo_path_to_jira_project(cached_repo_path)
 
       ticket = nil
-      if branch_name =~ /#{project}/i
+      if branch_name =~ /#{project}-/i
         ticket = branch_name
       elsif branch_name =~ /^(\d+)($|-)/
         ticket = "#{project}-#{$1}"
@@ -180,11 +180,31 @@ CMD
         raise "Could not figure out the ticket"
       end
 
+      unless ticket =~ /^[A-Z]+-\d+$/
+        raise "Weird ticket #{ticket} (project must be uppercased)"
+      end
+
+      issue_fields = jirra_client.get_issue_fields(ticket)
+      summary = issue_fields['summary']
+      type = issue_fields['issuetype']['name']
+      subject = "#{ticket} #{summary}"
+      if type == 'Bug'
+        subject = "Fix #{subject}"
+      end
+
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
         git checkout master &&
+        git pull &&
+        if ! git remote |grep -qx p; then
+          get remote add p git@github.com:p-mongo/#{name}
+        fi &&
+        git fetch p &&
         (git branch -D #{branch_name} || true) &&
         git checkout -b #{branch_name} --track p/#{branch_name} &&
-        $HOME/apps/dev/script/reword #{ticket}
+        git reset --soft $(git merge-base master #{branch_name}) &&
+        git commit -am "#{subject}" &&
+        git rebase master &&
+        git push p #{branch_name} -f
 CMD
     end
   end

@@ -385,7 +385,7 @@ class App < Sinatra::Base
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
     rc.update_cache
-    rc.reword(@pull)
+    rc.reword(@pull, jirra_client)
     subject, message = rc.commitish_message(@pull.head_branch_name)
     @pull.update(title: subject, body: message)
 
