@@ -143,6 +143,8 @@ module Github
         'mongoid'
       when 'mongodb/mongo-ruby-driver'
         'ruby'
+      when 'mongodb/specifications'
+        'spec'
       else
         raise "Bogus repo name: #{repo_full_name}"
       end

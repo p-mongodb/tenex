@@ -167,6 +167,8 @@ CMD
     Dir.chdir(cached_repo_path) do
       if cached_repo_path.to_s =~ /mongoid/
         project = 'mongoid'
+      elsif cached_repo_path.to_s =~ /specifications/
+        project = 'spec'
       else
         project = 'ruby'
       end
