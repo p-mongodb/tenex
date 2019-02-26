@@ -33,7 +33,11 @@ table
   - @builds.each do |build|
     tr class="#{{'failure' => 'failed', 'failed' => 'failed', 'success' => 'passed', 'started' => 'pending'}[build.status]}"
       td= build.build_variant
-      td= build.status
+      td
+        = build.status
+        - if build.running?
+          '
+          = "(for #{Taw.time_ago_in_words(build.started_at, approx: 2)})"
       td
         - if build.tasks.length == 1
           - task = build.tasks.first

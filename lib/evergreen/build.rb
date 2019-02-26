@@ -89,5 +89,9 @@ module Evergreen
     def time_taken
       info['time_taken_ms'] / 1000.0
     end
+
+    def started_at
+      Time.parse(info['start_time'])
+    end
   end
 end
