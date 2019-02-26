@@ -2,10 +2,11 @@
 
 Tenex is a mashup application built on top of
 [Evergreen](https://github.com/evergreen-ci/evergreen/wiki),
-[Travis](https://travis-ci.org/) and Github APIs.
+[Travis](https://travis-ci.org/), Github and Jira APIs.
 Its goal is to increase developer productivity by presenting
-commonly needed data in an effective fashion as well as providing
-shortcuts for commonly used operations.
+commonly needed data in an effective fashion, integrating the various
+services used during development and providing shortcuts for commonly used
+operations.
 
 ## Features
 
@@ -55,7 +56,7 @@ failures also are not included in the number of failures.
 - Jump to PR diff.
 - Request PR review.
 - Rebase branch on top of master.
-- Reword branch - squash all commits in the branch ino a single commit and
+- Reword branch - squash all commits in the branch into a single commit and
 replace commit messsages with the respective ticket title.
 Ticket is automatically detected/inferred from branch name, PR
 description and PR comments.
