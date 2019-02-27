@@ -1,0 +1,10 @@
+h1= @project_name
+
+table
+  - @unreleased_versions.each do |version|
+    tr
+      td= version['name']
+      td
+        a href="/jira/#{@project_name}/fixed/#{version['name']}" Fixed issues
+      td
+        a href="/jira/#{@project_name}/fixed/#{version['name']}?exclusive=1" Exclusive

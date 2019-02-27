@@ -65,5 +65,11 @@ module Jirra
     def get_issue_fields(issue_key)
       get_json("issue/#{issue_key.upcase}")['fields']
     end
+
+    def project_versions(project_name)
+      get_json("project/#{project_name}/versions").sort_by do |version|
+        version['name']
+      end
+    end
   end
 end

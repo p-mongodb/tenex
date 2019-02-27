@@ -4,6 +4,15 @@ module Jira
 
   included do
 
+    get '/jira/:project' do |project_name|
+      @project_name = project_name.upcase
+      @versions = jirra_client.project_versions(@project_name)
+      @unreleased_versions = @versions.select do |version|
+        !version['released']
+      end
+      slim :jira_project
+    end
+
     get '/jira/:project/fixed/:version' do |project_name, version|
       project_name = project_name.upcase
       @issues = JIRA::Resource::Issue.jql(jira_client,
