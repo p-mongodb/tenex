@@ -18,6 +18,10 @@ module Github
       info['number']
     end
 
+    def head_ref
+      info['head']['ref']
+    end
+
     def head_sha
       info['head']['sha']
     end
@@ -92,6 +96,10 @@ module Github
       info['title']
     end
 
+    def body
+      info['body']
+    end
+
     def base_branch_name
       info['base']['ref']
     end
@@ -135,54 +143,6 @@ module Github
           []
         end
       end
-    end
-
-    def jira_project
-      case repo_full_name
-      when 'mongodb/mongoid'
-        'mongoid'
-      when 'mongodb/mongo-ruby-driver'
-        'ruby'
-      when 'mongodb/specifications'
-        'spec'
-      else
-        raise "Bogus repo name: #{repo_full_name}"
-      end
-    end
-
-    def jira_ticket_number
-      if @jira_ticket_number_looked_up
-        return @jira_ticket_number
-      end
-      if info['title'] =~ /\A((ruby|mongoid)-(\d+)) /i
-        number = $3.to_i
-      else
-        number = nil
-        sources = [info['body']] + comments.map(&:body)
-        sources.each do |body|
-          if body =~ /#{jira_project}-(\d+)/i
-            if number
-              raise "Confusing ticket situation"
-            end
-            number = $1.to_i
-          end
-        end
-      end
-      if number.nil?
-        if info['head']['ref'].to_i.to_s == info['head']['ref']
-          number = info['head']['ref'].to_i
-        end
-      end
-      @jira_ticket_number_looked_up = true
-      @jira_ticket_number = number
-    end
-
-    def jira_ticket!
-      number = jira_ticket_number
-      if number.nil?
-        raise "Could not figure out jira ticket number"
-      end
-      "#{jira_project.upcase}-#{number}"
     end
 
     class TravisStatus

@@ -16,4 +16,17 @@ module Mappings
       raise MappingMissing, "No mapping for #{path}"
     end.upcase
   end
+
+  module_function def repo_full_name_to_jira_project(repo_full_name)
+    case repo_full_name
+    when 'mongodb/mongoid'
+      'mongoid'
+    when 'mongodb/mongo-ruby-driver', 'mongodb/bson-ruby'
+      'ruby'
+    when 'mongodb/specifications'
+      'spec'
+    else
+      raise "Bogus repo name: #{repo_full_name}"
+    end.upcase
+  end
 end

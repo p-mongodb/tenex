@@ -1,3 +1,5 @@
+require 'fe/mappings'
+
 class PullPresenter
   extend Forwardable
 
@@ -12,7 +14,7 @@ class PullPresenter
   attr_reader :eg_client, :system
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
     :evergreen_version_id, :head_branch_name,
-    :approved?, :review_requested?, :jira_ticket_number, :jira_ticket!
+    :approved?, :review_requested?
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
@@ -112,5 +114,44 @@ class PullPresenter
   def green?
     #success_count > 0 && failure_count == 0 && pending_count == 0
     top_evergreen_status&.passed?
+  end
+
+  def jira_project
+    ::Mappings.repo_full_name_to_jira_project(repo_full_name)
+  end
+
+  def jira_ticket_number
+    if @jira_ticket_number_looked_up
+      return @jira_ticket_number
+    end
+    if @pull.title =~ /\A((ruby|mongoid)-(\d+)) /i
+      number = $3.to_i
+    else
+      number = nil
+      sources = [@pull.body] + @pull.comments.map(&:body)
+      sources.each do |body|
+        if body =~ /#{jira_project}-(\d+)/i
+          if number
+            raise "Confusing ticket situation"
+          end
+          number = $1.to_i
+        end
+      end
+    end
+    if number.nil?
+      if @pull.head_ref.to_i.to_s == @pull.head_ref
+        number = @pull.head_ref.to_i
+      end
+    end
+    @jira_ticket_number_looked_up = true
+    @jira_ticket_number = number
+  end
+
+  def jira_ticket!
+    number = jira_ticket_number
+    if number.nil?
+      raise "Could not figure out jira ticket number"
+    end
+    "#{jira_project.upcase}-#{number}"
   end
 end
