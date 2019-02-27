@@ -11,3 +11,8 @@ table
 textarea rows='40' cols='100'
   - @issues.each do |issue|
     = "- [#{issue.key} #{issue.summary}](https://jira.mongodb.org/browse/#{issue.key})\n"
+
+- if @excluded_versions
+  p
+    ' Versions excluded:
+    = @excluded_versions.map { |version| version['name'] }.join(', ')

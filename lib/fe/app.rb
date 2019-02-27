@@ -154,7 +154,7 @@ class App < Sinatra::Base
   end
 
   private def jirra_client
-    @jira_client ||= begin
+    @jirra_client ||= begin
       options = {
         :username     => ENV['JIRA_USERNAME'],
         :password     => ENV['JIRA_PASSWORD'],
