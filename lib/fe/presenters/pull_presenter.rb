@@ -147,7 +147,7 @@ class PullPresenter
     @jira_ticket_number = number
   end
 
-  def jira_ticket!
+  def jira_issue_key!
     number = jira_ticket_number
     if number.nil?
       raise "Could not figure out jira ticket number"

@@ -196,14 +196,16 @@ module Pull
 
     get '/repos/:org/:repo/pulls/:id/request-review' do |org_name, repo_name, pull_id|
       @pull = gh_repo(org_name, repo_name).pull(pull_id)
+      @repo = system.hit_repo(org_name, repo_name)
       @statuses = @pull.request_review('saghm')
 
-      jira_ticket = @pull.jira_ticket_number
+      pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+      jira_ticket = pull_p.jira_ticket_number
       if jira_ticket
         pr_url = "https://github.com/#{org_name}/#{repo_name}/pull/#{pull_id}"
         # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
         payload = {
-          globalId: "#{@pull.jira_project}-#{jira_ticket}-pr-#{pull_id}",
+          globalId: "#{pull_p.jira_issue_key!}-pr-#{pull_id}",
           object: {
             url: pr_url,
             title: "Fix - PR ##{pull_id}",
@@ -213,11 +215,11 @@ module Pull
             },
           },
         }
-        jirra_client.post_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/remotelink", payload)
+        jirra_client.post_json("issue/#{pull_p.jira_issue_key!}/remotelink", payload)
 
         # https://stackoverflow.com/questions/21738782/does-the-jira-rest-api-require-submitting-a-transition-id-when-transitioning-an
         # https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-edit-issues-6291632/
-        transitions = jirra_client.get_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/transitions")
+        transitions = jirra_client.get_json("issue/#{pull_p.jira_issue_key!}/transitions")
         transition = transitions['transitions'].detect do |tr|
           tr['name'] == 'In Code Review'
         end
@@ -234,7 +236,7 @@ module Pull
               id: transition_id,
             },
           }
-          jirra_client.post_json("issue/#{@pull.jira_project.upcase}-#{jira_ticket}/transitions", payload)
+          jirra_client.post_json("issue/#{pull_p.jira_issue_key!}/transitions", payload)
         end
       end
 
