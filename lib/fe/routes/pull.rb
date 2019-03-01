@@ -7,8 +7,8 @@ Routes.included do
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
     @statuses = @pull.statuses
 
-    @pull.fetch_results
-    @pull.aggregate_results
+    #@pull.fetch_results
+    #@pull.aggregate_results
 
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
@@ -311,5 +311,14 @@ Routes.included do
     patch = Evergreen::Patch.new(eg_client, patch_id)
     patch.authorize!
     redirect return_path || "/repos/#{org_name}/#{repo_name}/pulls/#{pull_id}"
+  end
+
+  get '/repos/:org/:repo/pulls/:id/results' do |org_name, repo_name, pull_id|
+    @repo = system.hit_repo(org_name, repo_name)
+    pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull.fetch_results
+    @results = @pull.aggregate_results
+    slim :results
   end
 end

@@ -1,15 +1,15 @@
-- if @summary[:failure_count] > 0
-  h2 #{@summary[:failure_count]} failures
+- if @results.summary[:failure_count] > 0
+  h2 #{@results.summary[:failure_count]} failures
   
   ul
-    - @failed_files.each do |file|
+    - @results.failed_files.each do |file|
       li
         a href="##{file[:file_path].gsub(/\W/, '-')}" #{file[:file_path]}
         '
         | (#{file[:failure_count]})
   
   - prev_path = nil
-  - @failures.each_with_index do |failure, index|
+  - @results.failed_results.each_with_index do |failure, index|
     - if prev_path != failure[:file_path]
       a name=failure[:file_path].gsub(/\W/, '-')
       - prev_path = failure[:file_path]
@@ -35,23 +35,23 @@
           - failure[:sdam_log_entries].each do |entry|
             = entry + "\n"
 
-- if @summary[:errors_outside_of_examples_count] > 0
-  h2 #{@summary[:errors_outside_of_examples_count]} errors outside of examples
+- if @results.summary[:errors_outside_of_examples_count] > 0
+  h2 #{@results.summary[:errors_outside_of_examples_count]} errors outside of examples
   
-  - @messages.each_with_index do |message, index|
+  - @results.messages.each_with_index do |message, index|
     div
       p
         b= "#{index+1})"
       pre== Ansi::To::Html.new(CGI.escapeHTML(message)).to_html.gsub("\n", '<br>')
 
 h2
-  ' Slowest #{@slowest_results.length} examples
+  ' Slowest #{@results.slowest_examples.length} examples
   small
-    '(#{Taw.time_ago_in_words(Time.now - @slowest_total_time, approx: 2)}
+    '(#{Taw.time_ago_in_words(Time.now - @results.slowest_total_time, approx: 2)}
     ' out of
-    ' #{Taw.time_ago_in_words(Time.now - @summary[:duration], approx: 2)})
+    ' #{Taw.time_ago_in_words(Time.now - @results.summary[:duration], approx: 2)})
 ul
-  - @slowest_results[0..19].each do |result|
+  - @results.slowest_examples[0..19].each do |result|
     li
       | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
       - if result[:sdam_log_entries] && !result[:sdam_log_entries].empty?
@@ -59,5 +59,6 @@ ul
           - result[:sdam_log_entries].each do |entry|
             = entry + "\n"
 
-p
-  a href=@raw_artifact_url Raw JSON
+- if @raw_artifact_url
+  p
+    a href=@raw_artifact_url Raw JSON

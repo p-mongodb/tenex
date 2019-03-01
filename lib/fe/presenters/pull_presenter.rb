@@ -1,4 +1,5 @@
 require 'fe/artifact_cache'
+require 'fe/aggregate_rspec_results'
 require 'fe/mappings'
 
 class PullPresenter
@@ -164,27 +165,26 @@ class PullPresenter
 
     version = EgVersion.where(id: api_version.id).first
     version ||= EgVersion.new(id: api_version.id)
-    basenames = version.rspec_json_basenames || Set.new
+    urls = version.rspec_json_urls || Set.new
 
     api_version.builds.each do |build|
       build.tasks.each do |task|
         task.artifacts.each do |artifact|
           if artifact.name == 'rspec.json'
             ArtifactCache.instance.fetch_artifact(artifact.url)
-            basenames << basename
+            urls << artifact.url
           end
         end
       end
     end
 
     # must write the field due to mongoid limitation
-    version.rspec_json_basenames = basenames
+    version.rspec_json_urls = urls
     version.save!
   end
 
   def aggregate_results
     version = EgVersion.find(top_evergreen_status.evergreen_version_id)
-    version.rspec_json_basenames.each do |basename|
-    end
+    AggregateRspecResults.new(version.rspec_json_urls)
   end
 end

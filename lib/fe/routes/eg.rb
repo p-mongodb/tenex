@@ -82,7 +82,9 @@ Routes.included do
     end
     @raw_artifact_url = url = artifact.url
     local_path = ArtifactCache.instance.fetch_artifact(url)
-    rr = RspecResults.new(File.open(local_path).read)
+    @results = RspecResults.new(File.open(local_path).read)
+
+=begin
     @summary = rr.summary
     results = rr.results
     @messages = rr.messages
@@ -92,6 +94,7 @@ Routes.included do
     @failed_files = rr.failed_files
     @slowest_results = rr.slowest_examples
     @slowest_total_time = rr.slowest_total_time
+=end
 
     @branch_name = params[:branch]
     slim :results
