@@ -1,3 +1,5 @@
+require 'fe/rspec_results'
+
 Routes.included do
 
   # eg project log
@@ -80,61 +82,16 @@ Routes.included do
     end
     @raw_artifact_url = url = artifact.url
     local_path = ArtifactCache.instance.fetch_artifact(url)
-    contents = open(local_path).read
-    payload = JSON.parse(contents)
-    @summary = {}
-    payload['summary'].each do |k, v|
-      @summary[k.to_sym] = v
-    end
+    rr = RspecResults.new(File.open(local_path).read)
+    @summary = rr.summary
+    results = rr.results
+    @messages = rr.messages
 
-    results = payload['examples'].map do |info|
-      {
-        id: info['id'],
-        description: info['full_description'],
-        file_path: info['file_path'],
-        line_number: info['line_number'],
-        time: info['run_time'],
-        sdam_log_entries: info['sdam_log_entries'],
-      }.tap do |result|
-        if info['status'] == 'failed'
-          result[:failure] = {
-            message: info['exception']['message'],
-            class: info['exception']['class'],
-            backtrace: info['exception']['backtrace'],
-          }
-        end
-      end
-    end
+    @failures = rr.failed_results
 
-    @messages = payload['messages']
-
-    @failures = results.select do |result|
-      result[:failure]
-    end
-
-    @ok = results.select do |result|
-      !result[:failure]
-    end
-
-    failed_files = {}
-    @failures.each do |failure|
-      failed_files[failure[:file_path]] ||= 0
-      failed_files[failure[:file_path]] += 1
-    end
-    @failed_files = []
-    failed_files.keys.each do |key|
-      @failed_files << {
-        file_path: key, failure_count: failed_files[key],
-      }
-    end
-
-    results_by_time = results.sort_by do |result|
-      -(result[:time] || 0)
-    end
-    @slowest_results = results_by_time[0..19]
-    @slowest_total_time = @slowest_results.inject(0) do |sum, result|
-      sum + result[:time]
-    end
+    @failed_files = rr.failed_files
+    @slowest_results = rr.slowest_examples
+    @slowest_total_time = rr.slowest_total_time
 
     @branch_name = params[:branch]
     slim :results
