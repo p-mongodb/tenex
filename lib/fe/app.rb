@@ -23,6 +23,9 @@ Travis.access_token = ENV['TRAVIS_TOKEN']
 
 Slim::Engine.set_options pretty: true, sort_attrs: false
 
+ARTIFACTS_LOCAL_PATH = Pathname.new(__FILE__).dirname.join('../../.artifacts')
+FileUtils.mkdir_p(ARTIFACTS_LOCAL_PATH)
+
 class App < Sinatra::Base
   configure :development do
     register Sinatra::Reloader

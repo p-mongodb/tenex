@@ -5,7 +5,9 @@ Routes.included do
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull.fetch_results
     @statuses = @pull.statuses
+
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
       'topology' => %w(standalone replica-set sharded-cluster),
@@ -86,7 +88,6 @@ Routes.included do
         @untaken_statuses << status
       end
     end
-    @branch_name = @pull.head_branch_name
     if repo_name == 'mongo-ruby-driver' && @category_values
       @category_values['ruby']&.sort! do |a, b|
         if a =~ /^[0-9]/ && b =~ /^[0-9]/ || a =~ /^j/ && b =~ /^j/
@@ -111,6 +112,8 @@ Routes.included do
     if @category_values.empty?
       @category_values = nil
     end
+
+    @branch_name = @pull.head_branch_name
     @current_eg_project_id = @pull.evergreen_project_id
     slim :pull
   end

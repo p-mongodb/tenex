@@ -154,4 +154,28 @@ class PullPresenter
     end
     "#{jira_project.upcase}-#{number}"
   end
+
+  def fetch_results
+    status = top_evergreen_status
+    return unless status
+
+    version = status.evergreen_version
+    version.builds.each do |build|
+      build.tasks.each do |task|
+        task.artifacts.each do |artifact|
+          if artifact.name == 'rspec.json'
+            local_path = ARTIFACTS_LOCAL_PATH.join(File.basename(artifact.url))
+            unless File.exist?(local_path)
+              puts "Fetching #{artifact.url}"
+              content = open(artifact.url).read
+              File.open(local_path.to_s + '.tmp', 'w') do |f|
+                f << content
+              end
+              FileUtils.mv(local_path.to_s + '.tmp', local_path)
+            end
+          end
+        end
+      end
+    end
+  end
 end
