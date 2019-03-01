@@ -1,3 +1,4 @@
+require 'multi_concern'
 autoload :JIRA, 'jira-ruby'
 autoload :Nokogiri, 'nokogiri'
 require 'open-uri'
@@ -13,12 +14,6 @@ require 'sinatra/reloader'
 require 'travis'
 require 'taw'
 autoload :Jirra, 'jirra/client'
-require 'fe/routes/pull'
-require 'fe/routes/eg'
-require 'fe/routes/spawn'
-require 'fe/routes/travis'
-require 'fe/routes/jira'
-require 'fe/routes/global'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -164,11 +159,19 @@ class App < Sinatra::Base
       ::Jirra::Client.new(options)
     end
   end
+end
 
-  include Routes::Pull
-  include Routes::Eg
-  include Routes::Spawn
-  include Routes::Travis
-  include Routes::Jira
-  include Routes::Global
+module Routes
+  extend MultiConcern
+end
+
+require 'fe/routes/pull'
+require 'fe/routes/eg'
+require 'fe/routes/spawn'
+require 'fe/routes/travis'
+require 'fe/routes/jira'
+require 'fe/routes/global'
+
+class App
+  include Routes
 end
