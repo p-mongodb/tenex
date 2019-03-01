@@ -5,8 +5,10 @@ Routes.included do
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
-    @pull.fetch_results
     @statuses = @pull.statuses
+
+    @pull.fetch_results
+    @pull.aggregate_results
 
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),

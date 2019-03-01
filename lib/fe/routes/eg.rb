@@ -79,7 +79,8 @@ Routes.included do
       return
     end
     @raw_artifact_url = url = artifact.url
-    contents = open(url).read
+    local_path = ArtifactCache.instance.fetch_artifact(url)
+    contents = open(local_path).read
     payload = JSON.parse(contents)
     @summary = {}
     payload['summary'].each do |k, v|
