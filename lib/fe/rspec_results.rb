@@ -20,6 +20,8 @@ class RspecResults
         line_number: info['line_number'],
         time: info['run_time'],
         sdam_log_entries: info['sdam_log_entries'],
+        status: info['status'],
+        pending_message: info['pending_message'],
       }.tap do |result|
         if info['status'] == 'failed'
           result[:failure] = {

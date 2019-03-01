@@ -59,6 +59,12 @@ ul
           - result[:sdam_log_entries].each do |entry|
             = entry + "\n"
 
+- if @results.respond_to?(:always_skipped_examples) && (results = @results.always_skipped_examples) && !results.empty?
+  h2 Always skipped
+  ul
+    - @results.always_skipped_examples.each do |result|
+      li= "#{result[:id]}: #{result[:pending_messages]}"
+
 - if @raw_artifact_url
   p
     a href=@raw_artifact_url Raw JSON

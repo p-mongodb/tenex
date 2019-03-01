@@ -313,12 +313,14 @@ Routes.included do
     redirect return_path || "/repos/#{org_name}/#{repo_name}/pulls/#{pull_id}"
   end
 
+  # aggregated results
   get '/repos/:org/:repo/pulls/:id/results' do |org_name, repo_name, pull_id|
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(pull_id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
     @pull.fetch_results
     @results = @pull.aggregate_results
+    #@results.always_skipped_examples
     slim :results
   end
 end

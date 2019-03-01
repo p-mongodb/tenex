@@ -89,4 +89,30 @@ class AggregateRspecResults
   def inspect
     "#<AggregateRspecResults:#{object_id}>"
   end
+
+  def always_skipped_examples
+    @always_skipped_examples ||= begin
+        example_ids = results.map do |result|
+        result[:id]
+      end.uniq
+      not_pending_example_ids = results.select do |result|
+        result[:status] != 'pending'
+      end.map do |result|
+        result[:id]
+      end.uniq
+      pending_ids = example_ids - not_pending_example_ids
+      pending_ids.map do |id|
+        pending_messages = @components.map do |results|
+          result = results.results.detect do |result|
+            result[:id] == id
+          end
+          unless result
+            raise "Failed to find result for #{id}"
+          end
+          result[:pending_message]
+        end.uniq.join('; ')
+        {id: id, status: 'pending', pending_messages: pending_messages}
+      end
+    end
+  end
 end
