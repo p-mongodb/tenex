@@ -1,5 +1,5 @@
 - if @result.summary[:failure_count] > 0
-  h2 #{@result.summary[:failure_count]} failures
+  h2= @result.render_failure_count
   
   ul
     - @result.failed_files.each do |file|

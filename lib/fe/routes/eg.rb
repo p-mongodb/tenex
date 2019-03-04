@@ -1,4 +1,4 @@
-require 'fe/rspec_results'
+require 'fe/rspec_result'
 
 Routes.included do
 

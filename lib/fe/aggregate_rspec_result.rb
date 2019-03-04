@@ -9,7 +9,7 @@ class AggregateRspecResult
         # too.
         nil
       else
-        RspecResult.new(content)
+        RspecResult.new(url, content)
       end
     end.compact
   end
@@ -20,6 +20,13 @@ class AggregateRspecResult
         component.summary.each do |k, v|
           summary[k] ||= 0
           summary[k] += v
+          if component.jruby?
+            summary[:"jruby_#{k}"] ||= 0
+            summary[:"jruby_#{k}"] += v
+          else
+            summary[:"mri_#{k}"] ||= 0
+            summary[:"mri_#{k}"] += v
+          end
         end
       end
     end
@@ -114,5 +121,16 @@ class AggregateRspecResult
         {id: id, status: 'pending', pending_messages: pending_messages}
       end
     end
+  end
+
+  def render_failure_count
+    [
+      [summary[:mri_failure_count], 'MRI failures'],
+      [summary[:jruby_failure_count], 'JRuby failures'],
+    ].select do |item|
+      item.first
+    end.map do |item|
+      item.join(' ')
+    end.join(', ')
   end
 end

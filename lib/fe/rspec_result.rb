@@ -1,6 +1,11 @@
 class RspecResult
-  def initialize(content)
+  def initialize(url, content)
+    @url = url
     @payload = JSON.parse(content)
+  end
+
+  def jruby?
+    !!(@url =~ /jruby/)
   end
 
   def summary
@@ -85,5 +90,9 @@ class RspecResult
     @slowest_total_time = @slowest_examples.inject(0) do |sum, result|
       sum + result[:time]
     end
+  end
+
+  def render_failure_count
+    "#{summary[:failure_count]} failures"
   end
 end
