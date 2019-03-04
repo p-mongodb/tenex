@@ -183,8 +183,8 @@ class PullPresenter
     version.save!
   end
 
-  def aggregate_result
+  def aggregate_result(&block)
     version = EgVersion.find(top_evergreen_status.evergreen_version_id)
-    AggregateRspecResult.new(version.rspec_json_urls)
+    AggregateRspecResult.new(version.rspec_json_urls, &block)
   end
 end

@@ -9,7 +9,16 @@ class AggregateRspecResult
         # too.
         nil
       else
-        RspecResult.new(url, content)
+        result = RspecResult.new(url, content)
+        if block_given?
+          if yield result
+            result
+          else
+            nil
+          end
+        else
+          result
+        end
       end
     end.compact
   end

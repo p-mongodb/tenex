@@ -313,14 +313,23 @@ Routes.included do
     redirect return_path || "/repos/#{org_name}/#{repo_name}/pulls/#{pull_id}"
   end
 
-  # aggregated results
-  get '/repos/:org/:repo/pulls/:id/results' do |org_name, repo_name, pull_id|
+  # aggregated results - mri
+  get '/repos/:org/:repo/pulls/:id/mri-results' do |org_name, repo_name, pull_id|
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(pull_id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
     @pull.fetch_results
-    @result = @pull.aggregate_result
-    #@results.always_skipped_examples
+    @result = @pull.aggregate_result { |result| !result.jruby? }
+    slim :results
+  end
+
+  # aggregated results - jruby
+  get '/repos/:org/:repo/pulls/:id/jruby-results' do |org_name, repo_name, pull_id|
+    @repo = system.hit_repo(org_name, repo_name)
+    pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull.fetch_results
+    @result = @pull.aggregate_result { |result| result.jruby? }
     slim :results
   end
 end

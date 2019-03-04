@@ -20,7 +20,9 @@ p
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/perf" Perf
   '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/results" Agg results
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results" MRI results
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/jruby-results" JRuby results
   - if @pull.jira_ticket_number
     '
     a href="https://jira.mongodb.org/browse/#{@pull.jira_issue_key!}" Jira

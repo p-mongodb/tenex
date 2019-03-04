@@ -92,10 +92,23 @@ Adds a quick jump to first RSpec failure.
 
 Full build log with color.
 
-### Failure Reporting From JUnit XML Results
+### Test Suite Result Reporting
 
-If the test suite outputs its results in JUnit XML format, Tenex will
-provide a list of failed tests for each Evergreen task.
+Tenex parses RSpec results produced by the test suites and displays the
+following information:
+
+- Failure count per build
+- Failed examples with stack traces
+- 20 slowest examples per build
+- SDAM logging output for failed and slow examples
+
+Additionally, Tenex can aggregate RSpec results across all builds for a
+given PR or Evergreen version, and display summary information. The summaries
+are computed separately for MRI and JRuby builds. The following summary
+information is displayed:
+
+- Failure count per PR/version
+- Failed examples with stack traces and SDAM logging output
 
 ### Toolchain Tarball Retrieval
 
