@@ -116,6 +116,11 @@ spawned host.
 
 ![Spawn page](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/spawn.png) 
 
+### Paste
+
+Tenex offers a non-intrusive frontend to Gist allowing quick pasting of
+blobs.
+
 ## Installation
 
 Tenex uses MongoDB for persistence and is implemented in Ruby, therefore
