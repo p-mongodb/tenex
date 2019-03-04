@@ -175,6 +175,7 @@ require 'fe/routes/travis'
 require 'fe/routes/jira'
 require 'fe/routes/global'
 require 'fe/routes/paste'
+require 'fe/routes/commits'
 
 class App
   include Routes
