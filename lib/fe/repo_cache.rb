@@ -1,3 +1,4 @@
+require 'tempfile'
 require 'pathname'
 require 'time'
 autoload :FileUtils, 'fileutils'
@@ -206,6 +207,30 @@ CMD
         git rebase master &&
         git push p #{branch_name} -f
 CMD
+    end
+  end
+
+  def set_commit_message(pull, message)
+    Tempfile.create do |tempfile|
+      tempfile << message
+      tempfile.flush
+
+      branch_name = pull.head_branch_name
+      Dir.chdir(cached_repo_path) do
+
+        ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
+          git checkout master &&
+          git pull &&
+          if ! git remote |grep -qx p; then
+            get remote add p git@github.com:p-mongo/#{name}
+          fi &&
+          git fetch p &&
+          (git branch -D #{branch_name} || true) &&
+          git checkout -b #{branch_name} --track p/#{branch_name} &&
+          git commit --amend -F "#{tempfile.path}" &&
+          git push p #{branch_name} -f
+CMD
+      end
     end
   end
 end

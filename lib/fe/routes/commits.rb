@@ -29,4 +29,24 @@ Routes.included do
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
+
+  get '/repos/:org/:repo/pulls/:id/edit-msg' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
+    rc.update_cache
+    subject, message = rc.commitish_message(@pull.head_sha)
+    @message = "#{subject}\n\n#{message}"
+
+    slim :edit_msg
+  end
+
+  post '/repos/:org/:repo/pulls/:id/edit-msg' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
+    rc.update_cache
+    new_message = params[:message]
+    rc.set_commit_message(@pull, new_message)
+
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
+  end
 end
