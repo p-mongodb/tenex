@@ -1,15 +1,15 @@
-- if @results.summary[:failure_count] > 0
-  h2 #{@results.summary[:failure_count]} failures
+- if @result.summary[:failure_count] > 0
+  h2 #{@result.summary[:failure_count]} failures
   
   ul
-    - @results.failed_files.each do |file|
+    - @result.failed_files.each do |file|
       li
         a href="##{file[:file_path].gsub(/\W/, '-')}" #{file[:file_path]}
         '
         | (#{file[:failure_count]})
   
   - prev_path = nil
-  - @results.failed_results.each_with_index do |failure, index|
+  - @result.failed_results.each_with_index do |failure, index|
     - if prev_path != failure[:file_path]
       a name=failure[:file_path].gsub(/\W/, '-')
       - prev_path = failure[:file_path]
@@ -35,23 +35,23 @@
           - failure[:sdam_log_entries].each do |entry|
             = entry + "\n"
 
-- if @results.summary[:errors_outside_of_examples_count] > 0
-  h2 #{@results.summary[:errors_outside_of_examples_count]} errors outside of examples
+- if @result.summary[:errors_outside_of_examples_count] > 0
+  h2 #{@result.summary[:errors_outside_of_examples_count]} errors outside of examples
   
-  - @results.messages.each_with_index do |message, index|
+  - @result.messages.each_with_index do |message, index|
     div
       p
         b= "#{index+1})"
       pre== Ansi::To::Html.new(CGI.escapeHTML(message)).to_html.gsub("\n", '<br>')
 
 h2
-  ' Slowest #{@results.slowest_examples.length} examples
+  ' Slowest #{@result.slowest_examples.length} examples
   small
-    '(#{Taw.time_ago_in_words(Time.now - @results.slowest_total_time, approx: 2)}
+    '(#{Taw.time_ago_in_words(Time.now - @result.slowest_total_time, approx: 2)}
     ' out of
-    ' #{Taw.time_ago_in_words(Time.now - @results.summary[:duration], approx: 2)})
+    ' #{Taw.time_ago_in_words(Time.now - @result.summary[:duration], approx: 2)})
 ul
-  - @results.slowest_examples[0..19].each do |result|
+  - @result.slowest_examples[0..19].each do |result|
     li
       | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
       - if result[:sdam_log_entries] && !result[:sdam_log_entries].empty?
@@ -59,10 +59,10 @@ ul
           - result[:sdam_log_entries].each do |entry|
             = entry + "\n"
 
-- if @results.respond_to?(:always_skipped_examples) && (results = @results.always_skipped_examples) && !results.empty?
+- if @result.respond_to?(:always_skipped_examples) && (results = @result.always_skipped_examples) && !results.empty?
   h2 Always skipped
   ul
-    - @results.always_skipped_examples.each do |result|
+    - @result.always_skipped_examples.each do |result|
       li= "#{result[:id]}: #{result[:pending_messages]}"
 
 - if @raw_artifact_url

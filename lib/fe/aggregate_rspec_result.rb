@@ -1,4 +1,4 @@
-class AggregateRspecResults
+class AggregateRspecResult
   def initialize(urls)
     @components = urls.map do |url|
       local_path = ArtifactCache.instance.fetch_artifact(url)
@@ -9,7 +9,7 @@ class AggregateRspecResults
         # too.
         nil
       else
-        RspecResults.new(content)
+        RspecResult.new(content)
       end
     end.compact
   end
@@ -87,7 +87,7 @@ class AggregateRspecResults
   end
 
   def inspect
-    "#<AggregateRspecResults:#{object_id}>"
+    "#<AggregateRspecResult:#{object_id}>"
   end
 
   def always_skipped_examples

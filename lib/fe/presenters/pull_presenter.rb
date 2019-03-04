@@ -1,5 +1,5 @@
 require 'fe/artifact_cache'
-require 'fe/aggregate_rspec_results'
+require 'fe/aggregate_rspec_result'
 require 'fe/mappings'
 
 class PullPresenter
@@ -183,8 +183,8 @@ class PullPresenter
     version.save!
   end
 
-  def aggregate_results
+  def aggregate_result
     version = EgVersion.find(top_evergreen_status.evergreen_version_id)
-    AggregateRspecResults.new(version.rspec_json_urls)
+    AggregateRspecResult.new(version.rspec_json_urls)
   end
 end

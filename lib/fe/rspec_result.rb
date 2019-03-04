@@ -1,4 +1,4 @@
-class RspecResults
+class RspecResult
   def initialize(content)
     @payload = JSON.parse(content)
   end

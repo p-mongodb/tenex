@@ -8,7 +8,7 @@ Routes.included do
     @statuses = @pull.statuses
 
     #@pull.fetch_results
-    #@pull.aggregate_results
+    #@pull.aggregate_result
 
     @configs = {
       'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
@@ -319,7 +319,7 @@ Routes.included do
     pull = gh_repo(org_name, repo_name).pull(pull_id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
     @pull.fetch_results
-    @results = @pull.aggregate_results
+    @result = @pull.aggregate_result
     #@results.always_skipped_examples
     slim :results
   end
