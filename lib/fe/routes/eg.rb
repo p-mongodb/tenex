@@ -82,7 +82,7 @@ Routes.included do
     end
     @raw_artifact_url = url = artifact.url
     local_path = ArtifactCache.instance.fetch_artifact(url)
-    @result = RspecResult.new(File.open(local_path).read)
+    @result = RspecResult.new(url, File.open(local_path).read)
 
     @branch_name = params[:branch]
     slim :results
