@@ -20,7 +20,7 @@ class PullPresenter
 
   def statuses
     @statuses ||= @pull.statuses.map do |status|
-      status = EvergreenStatusPresenter.new(status, @pull, eg_client)
+      status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
       if status.travis? && !@repo.travis?
         nil
       else
@@ -58,7 +58,7 @@ class PullPresenter
   def top_evergreen_status
     status = @pull.top_evergreen_status
     if status
-      status = EvergreenStatusPresenter.new(status, @pull, eg_client)
+      status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
     end
     status
   end

@@ -92,6 +92,14 @@ module Github
       end
     end
 
+    def base_repo_name
+      if info['base']['repo']
+        info['base']['repo']['name']
+      else
+        nil
+      end
+    end
+
     def title
       info['title']
     end
