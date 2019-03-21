@@ -62,7 +62,7 @@ class PrMaker
       status_name = fields['status']['name']
       if ['Needs Triage'].include?(status_name)
         jira_client.transition_issue(jira_issue_key, 'In Progress',
-          assignee: {name: 'oleg.pudeyev'})
+          assignee: {name: ENV['JIRA_USERNAME']})
       end
     end
   end

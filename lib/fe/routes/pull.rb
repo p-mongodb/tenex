@@ -220,7 +220,7 @@ Routes.included do
 
       begin
         jirra_client.transition_issue(pull_p.jira_issue_key!, 'In Code Review',
-          assignee: {name: 'oleg.pudeyev'})
+          assignee: {name: ENV['JIRA_USERNAME']})
       rescue Jirra::TransitionNotFound
         # ignore
       end
