@@ -58,7 +58,8 @@ module Evergreen
       response = connection.send(meth) do |req|
         req.url(url)
         if params
-          req.body = JSON.dump(params)
+          req.body = payload = JSON.dump(params)
+          puts "Sending payload: #{payload} for #{url}"
           req.headers['content-type'] = 'application/json'
         end
       end
@@ -67,6 +68,7 @@ module Evergreen
         begin
           error = JSON.parse(response.body)['error']
         rescue
+          error = response.body
         end
         msg = "Evergreen #{meth.to_s.upcase} #{url} failed: #{response.status}"
         if error
