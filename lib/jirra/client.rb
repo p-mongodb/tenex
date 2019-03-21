@@ -3,6 +3,9 @@ require 'faraday'
 require 'faraday/detailed_logger'
 
 module Jirra
+
+  class TransitionNotFound < StandardError; end
+
   class Client
 
     class ApiError < StandardError
@@ -70,6 +73,29 @@ module Jirra
       get_json("project/#{project_name}/versions").sort_by do |version|
         version['name']
       end
+    end
+
+    def transition_issue(issue_key, target_status_name, set_fields = {})
+      # https://stackoverflow.com/questions/21738782/does-the-jira-rest-api-require-submitting-a-transition-id-when-transitioning-an
+      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-edit-issues-6291632/
+      transitions = get_json("issue/#{issue_key}/transitions")
+      transition = transitions['transitions'].detect do |tr|
+        tr['name'] == target_status_name
+      end
+
+      if transition.nil?
+        raise TransitionNotFound
+      end
+
+      transition_id = transition['id']
+
+      payload = {
+        fields: set_fields,
+        transition: {
+          id: transition_id,
+        },
+      }
+      post_json("issue/#{issue_key}/transitions", payload)
     end
   end
 end

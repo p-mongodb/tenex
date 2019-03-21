@@ -11,7 +11,7 @@ autoload :Jirra, 'jirra/client'
 
 class PrMaker
 
-  attr_reader :num, :repo_name, :jira_project
+  attr_reader :num, :repo_name, :jira_project, :jira_issue_key
 
   def make_pr
     begin
@@ -56,7 +56,14 @@ class PrMaker
           },
         },
       }
-      jira_client.post_json("issue/#{@jira_project.upcase}-#{@num}/remotelink", payload)
+      jira_client.post_json("issue/#{jira_issue_key}/remotelink", payload)
+
+      fields = jira_client.get_issue_fields(jira_issue_key)
+      status_name = fields['status']['name']
+      if ['Needs Triage'].include?(status_name)
+        jira_client.transition_issue(jira_issue_key, 'In Progress',
+          assignee: {name: 'oleg.pudeyev'})
+      end
     end
   end
 
@@ -111,10 +118,12 @@ class TicketedPrMaker < PrMaker
     end
 
     @branch_name = num.to_s
+    @jira_project.upcase!
+    @jira_issue_key = "#{@jira_project}-#{@num}"
 
-    info = jira_client.get_json("issue/#{@jira_project.upcase}-#{@num}")
-    @title = "#{@jira_project.upcase}-#{@num} #{info['fields']['summary']}"
-    @body = "https://jira.mongodb.com/browse/#{@jira_project.upcase}-#{@num}"
+    info = jira_client.get_json("issue/#{@jira_issue_key}")
+    @title = "#{@jira_issue_key} #{info['fields']['summary']}"
+    @body = "https://jira.mongodb.com/browse/#{@jira_issue_key}"
   end
 end
 

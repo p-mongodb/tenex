@@ -218,26 +218,11 @@ Routes.included do
       }
       jirra_client.post_json("issue/#{pull_p.jira_issue_key!}/remotelink", payload)
 
-      # https://stackoverflow.com/questions/21738782/does-the-jira-rest-api-require-submitting-a-transition-id-when-transitioning-an
-      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-example-edit-issues-6291632/
-      transitions = jirra_client.get_json("issue/#{pull_p.jira_issue_key!}/transitions")
-      transition = transitions['transitions'].detect do |tr|
-        tr['name'] == 'In Code Review'
-      end
-      if transition
-        transition_id = transition['id']
-
-        payload = {
-          fields: {
-            assignee: {
-              name: 'oleg.pudeyev',
-            },
-          },
-          transition: {
-            id: transition_id,
-          },
-        }
-        jirra_client.post_json("issue/#{pull_p.jira_issue_key!}/transitions", payload)
+      begin
+        jirra_client.transition_issue(pull_p.jira_issue_key!, 'In Code Review',
+          assignee: {name: 'oleg.pudeyev'})
+      rescue Jirra::TransitionNotFound
+        # ignore
       end
     end
 
