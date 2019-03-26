@@ -193,10 +193,6 @@ module Github
       raw_requested_reviewers['users'].empty?
     end
 
-    def review_requested?
-      !raw_requested_reviewers['users'].empty?
-    end
-
     private def raw_reviews
       @raw_reviews ||=
         client.get_json("repos/#{repo_full_name}/pulls/#{number}/reviews")
@@ -214,6 +210,16 @@ module Github
     def comments
       @comments ||= client.get_json(info['comments_url']).map do |info|
         Comment.new(client, info: info)
+      end
+    end
+
+    def events
+      client.paginated_get("repos/#{repo_full_name}/issues/#{number}/events")
+    end
+
+    def review_requested?
+      events.any? do |info|
+        info['event'] == 'review_requested'
       end
     end
   end
