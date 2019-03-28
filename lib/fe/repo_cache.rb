@@ -138,7 +138,7 @@ class RepoCache
     end
     output.sub!(/\A.*\n.*\n.*\n\n/, '')
     output.gsub!(/^    /, '')
-    output.split("\n", 2)
+    output.split("\n\n", 2)
   end
 
   def diff_to_master(head)
