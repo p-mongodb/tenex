@@ -34,16 +34,21 @@ module Github
       request_json(:get, url)
     end
 
-    def post_json(url, params=nil)
-      request_json(:post, url, params)
+    def post_json(url, params, headers: nil)
+      request_json(:post, url, params: params, headers: headers)
     end
 
-    def request_json(meth, url, params=nil)
+    def request_json(meth, url, params: nil, headers: nil)
       response = connection.send(meth) do |req|
         req.url(url)
         if params
           req.body = JSON.dump(params)
           req.headers['content-type'] = 'application/json'
+        end
+        if headers
+          headers.each do |k, v|
+            req.headers[k] = v
+          end
         end
       end
       if response.status != 200 && response.status != 201
