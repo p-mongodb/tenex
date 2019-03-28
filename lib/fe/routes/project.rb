@@ -7,4 +7,3 @@ Routes.included do
     slim :project
   end
 end
-
