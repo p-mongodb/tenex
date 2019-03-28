@@ -7,5 +7,10 @@ style
 form method='post'
   textarea name='message'
     = @message
+    
+  p
+    label
+      input type='checkbox' name='update_pr' value='1'
+      | Also update PR
   
   button type='submit' Update

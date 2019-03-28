@@ -47,6 +47,17 @@ Routes.included do
     new_message = params[:message]
     rc.set_commit_message(@pull, new_message)
 
+    if params[:update_pr] == '1'
+      subject, message = new_message.gsub("\r\n", "\n").split("\n\n", 2)
+      if subject.length > 100
+        extra = subject[100...subject.length]
+        subject = subject[0...100] + '...'
+        message = "#{extra}\n\n#{message}"
+      end
+      byebug
+      @pull.update(title: subject, body: message)
+    end
+
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 end
