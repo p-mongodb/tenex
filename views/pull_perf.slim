@@ -16,7 +16,7 @@ table.status-table
             a href=status.restart_url Restart
         - if @pull.have_rspec_json? && !status.top_level?
           td
-            a href="/projects/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
+            a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
               | Results
         td
           = Taw.time_ago_in_words(Time.now - status.time_taken, approx: 2)

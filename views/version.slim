@@ -8,26 +8,26 @@ style
     tr.pending { background: #ffc; }
 
 p
-  a href="/projects/#{@project_id}" #{@project_id}
+  a href="/eg/#{@project_id}" #{@project_id}
   '
   a href="https://evergreen.mongodb.com/version/#{@version.id}" @ Evergreen
   '
-  a href="/projects/#{@project_id}/versions/#{@version.id}/restart-failed" Restart failed
+  a href="/eg/#{@project_id}/versions/#{@version.id}/restart-failed" Restart failed
   - if @newest_version
     '
-    a href="/projects/#{@project_id}/versions/#{@newest_version.id}" Newest version
+    a href="/eg/#{@project_id}/versions/#{@newest_version.id}" Newest version
   - if @builds.any? { |build| !build.completed? }
     '
     ' Bump priority to:
-    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=40" 40
+    a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=40" 40
     '
-    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=70" 70
+    a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=70" 70
     '
-    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=90" 90
+    a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=90" 90
     '
-    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=99" 99
+    a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=99" 99
     '
-    a href="/projects/#{@project_id}/versions/#{@version.id}/bump?priority=100" 100
+    a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=100" 100
 
 table
   - @builds.each do |build|
@@ -43,16 +43,16 @@ table
           - task = build.tasks.first
           a href="https://evergreen.mongodb.com/task/#{task.id}" Go
           '
-          a href="/projects/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/log" Log
+          a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/log" Log
           '
-          a href="/projects/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/mongod-log" Mongod Log
+          a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/mongod-log" Mongod Log
           - if task.failed? && build.artifact?('rspec.json')
             '
-            a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{build.id}"
+            a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{build.id}"
               i.fa.fa-puzzle-piece title='Results'
           - if task.waiting?
             '
-            a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
+            a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
             '
             | (p=#{task.priority})
         - else
@@ -65,14 +65,14 @@ table
                 '
                 a href="https://evergreen.mongodb.com/task/#{task.id}" Go
                 '
-                a href="/projects/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/tasks/#{task.id}/log" Log
+                a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/tasks/#{task.id}/log" Log
                 - if task.failed? && (false&&@version.have_rspec_json?) && !task.top_level?
                   '
-                  a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
+                  a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
                     i.fa.fa-puzzle-piece title='Results'
                 - if task.waiting?
                   '
-                  a href="/projects/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
+                  a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
                   '
                   | (p=#{task.priority})
 
