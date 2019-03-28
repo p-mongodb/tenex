@@ -46,4 +46,12 @@ Routes.included do
     end
     redirect "/projects/#{project.slug}"
   end
+
+  get '/repos/:org/:repo/recent-branches' do |org_name, repo_name|
+    @repo = system.hit_repo(org_name, repo_name)
+    rc = RepoCache.new('p-mongo', @repo.repo_name)
+    rc.update_cache
+    @branches = rc.recent_remote_branches(10)
+    slim :branches
+  end
 end

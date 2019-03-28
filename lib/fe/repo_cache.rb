@@ -233,4 +233,30 @@ CMD
       end
     end
   end
+
+  def recent_branches(limit, extra=nil)
+    Dir.chdir(cached_repo_path) do
+      output = ChildProcessHelper.check_output(['sh', '-c', <<-CMD])
+        git branch --sort=-committerdate #{extra}
+CMD
+      branches = output.split("\n").map do |branch|
+        if branch =~ /\s+master$/
+          nil
+        else
+          branch.strip
+        end
+      end.compact
+    end
+  end
+
+  def recent_remote_branches(limit)
+    branches = recent_branches(limit, '-r')
+    branches.map do |branch|
+      if branch =~ %r,^p/,
+        branch.sub(%r,^p/,, '')
+      else
+        nil
+      end
+    end.compact
+  end
 end

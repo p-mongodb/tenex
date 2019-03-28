@@ -21,7 +21,7 @@ class PullPresenter
   def statuses
     @statuses ||= @pull.statuses.map do |status|
       status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
-      if status.travis? && !@repo.travis?
+      if status.travis? && @repo.project && !@repo.project.travis?
         nil
       else
         status
