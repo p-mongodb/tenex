@@ -6,9 +6,6 @@ class Repo
   field :hit_count, type: Integer
   field :evergreen_project_id, type: String
   field :evergreen_project_queried_at, type: Time
-  field :workflow, type: Boolean
-  field :evergreen, type: Boolean
-  field :travis, type: Boolean
 
   has_many :pulls
   field :most_recent_pull_number, type: Integer

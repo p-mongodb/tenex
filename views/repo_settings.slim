@@ -1,0 +1,9 @@
+h1= @repo.full_name
+
+- if @project
+  p Project: #{@project.name}
+- else
+  a href="/repos/#{@repo.full_name}/create-project" Create project  
+
+- if @repo.evergreen_project_id
+  p Evergreen project: #{@repo.evergreen_project_id}

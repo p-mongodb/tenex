@@ -3,6 +3,11 @@ class Project
 
   field :name, type: String
   field :slug, type: String
+  field :workflow, type: Boolean
+  field :evergreen, type: Boolean
+  field :travis, type: Boolean
+  field :evergreen_project_id, type: String
+  field :evergreen_project_queried_at, type: Time
 
   has_one :repo
 

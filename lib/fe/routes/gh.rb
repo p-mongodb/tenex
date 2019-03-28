@@ -28,16 +28,7 @@ Routes.included do
 
   get '/repos/:org/:repo/settings' do |org_name, repo_name|
     @repo = system.hit_repo(org_name, repo_name)
-    slim :settings
-  end
-
-  post '/repos/:org/:repo/settings' do |org_name, repo_name|
-    @repo = system.hit_repo(org_name, repo_name)
-    @repo.workflow = params[:workflow] == 'on'
-    @repo.evergreen = params[:evergreen] == 'on'
-    @repo.travis = params[:travis] == 'on'
-    @repo.save!
-    redirect "/repos/#{org_name}/#{repo_name}/settings"
+    slim :repo_settings
   end
 
   get '/repos/:org/:repo/workflow/:settting' do |org_name, repo_name, setting|

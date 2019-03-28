@@ -1,0 +1,25 @@
+h1= @project.name
+
+form method='post' action="/projects/#{@project.slug}/settings"
+  p
+    label
+      input type='checkbox' name='workflow' value='on' checked=(@project.workflow ? 'checked' : nil)
+      '
+      ' Workflow
+  
+  p
+    label
+      input type='checkbox' name='evergreen' value='on' checked=(@project.evergreen ? 'checked' : nil)
+      '
+      ' Evergreen
+  
+  p
+    label
+      input type='checkbox' name='travis' value='on' checked=(@project.travis ? 'checked' : nil)
+      '
+      ' Travis
+    
+  input type='submit' value='Save'
+
+- if @project.evergreen_project_id
+  p Evergreen project: #{@project.evergreen_project_id}
