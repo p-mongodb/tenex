@@ -207,6 +207,11 @@ module Github
       client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", attrs)
     end
 
+    def approve
+      attrs = {event: 'APPROVE'}
+      client.request_json(:post, "repos/#{repo_full_name}/pulls/#{number}/reviews", attrs)
+    end
+
     def comments
       @comments ||= client.get_json(info['comments_url']).map do |info|
         Comment.new(client, info: info)

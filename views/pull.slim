@@ -8,9 +8,14 @@ h2
 p
   a href="https://github.com/#{@pull.repo_full_name}/pull/#{@pull['number']}/files" Diff
   '
-  - if @pull.review_requested?
+  - if @pull.approved?
+    | Approved
+  - elsif @pull.review_requested?
     | Review requested (
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/request-review" again
+    | ,
+    '
+    a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/approve" approve
     | )
   - else
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/request-review" Request review
