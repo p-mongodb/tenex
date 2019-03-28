@@ -1,3 +1,5 @@
+autoload :TicketedPrMaker, 'fe/pr_maker'
+
 Routes.included do
 
   get '/repos' do
@@ -53,5 +55,15 @@ Routes.included do
     rc.update_cache
     @branches = rc.recent_remote_branches(10)
     slim :branches
+  end
+
+  get '/repos/:org/:repo/branches/:branch/make-pr' do |org_name, repo_name, branch_name|
+    @repo = system.hit_repo(org_name, repo_name)
+    if branch_name.to_i.to_s == branch_name
+      pr_num = TicketedPrMaker.new(branch_name.to_i).make_pr
+    else
+      raise NotImplemented
+    end
+    redirect "/repos/#{@repo.full_name}/pulls/#{pr_num}"
   end
 end
