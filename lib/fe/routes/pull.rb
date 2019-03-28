@@ -273,8 +273,14 @@ Routes.included do
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(pull_id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
-    @pull.fetch_results
-    @result = @pull.aggregate_result { |result| !result.jruby? }
+    @pull.fetch_results(failed: params[:failed] == '1')
+    @result = @pull.aggregate_result do |result|
+      if params[:failed] == '1' && result.failed_results.count > 0
+        !result.jruby?
+      else
+        false
+      end
+    end
     slim :results
   end
 

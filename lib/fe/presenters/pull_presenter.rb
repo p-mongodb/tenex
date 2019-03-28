@@ -157,7 +157,7 @@ class PullPresenter
     "#{jira_project.upcase}-#{number}"
   end
 
-  def fetch_results
+  def fetch_results(options={})
     status = top_evergreen_status
     return unless status
 
@@ -171,6 +171,9 @@ class PullPresenter
       build.tasks.each do |task|
         task.artifacts.each do |artifact|
           if artifact.name == 'rspec.json'
+            if options[:failed] && !task.failed?
+              next
+            end
             ArtifactCache.instance.fetch_artifact(artifact.url)
             urls << artifact.url
           end

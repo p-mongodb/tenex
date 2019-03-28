@@ -29,6 +29,10 @@ p
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results" MRI results
   '
+  | (
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results?failed=1" failed
+  | )
+  '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/jruby-results" JRuby results
   - if @pull.jira_ticket_number
     '
