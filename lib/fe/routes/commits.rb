@@ -37,6 +37,7 @@ Routes.included do
     subject, message = rc.commitish_message(@pull.head_sha)
     @message = "#{subject}\n\n#{message}"
 
+    @branch_name = @pull.head_branch_name
     slim :edit_msg
   end
 
