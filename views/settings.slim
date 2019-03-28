@@ -1,5 +1,10 @@
 h1= @repo.full_name
 
+- if @project
+  p Project: #{@project.name}
+- else
+  a href="/repos/#{@repo.full_name}/create-project" Create project  
+
 form method='post'
   p
     label

@@ -46,4 +46,13 @@ Routes.included do
     @repo.save!
     redirect "/repos/#{@repo.full_name}"
   end
+
+  get '/repos/:org/:repo/create-project' do |org_name, repo_name|
+    @repo = system.hit_repo(org_name, repo_name)
+    project = @repo.project
+    if project.nil?
+      project = Project.create!(repo: @repo, name: @repo.full_name)
+    end
+    redirect "/projects/#{project.slug}"
+  end
 end

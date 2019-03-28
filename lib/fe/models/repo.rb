@@ -12,6 +12,7 @@ class Repo
 
   has_many :pulls
   field :most_recent_pull_number, type: Integer
+  belongs_to :project, optional: true
 
   def full_name
     "#{owner_name}/#{repo_name}"

@@ -35,6 +35,14 @@ class App < Sinatra::Base
   set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'public')
   set :strict_paths, false
 
+  def project_by_slug(slug)
+    project = Project.where(slug: slug).first
+    if project.nil?
+      raise "Project not found for #{slug}"
+    end
+    project
+  end
+
   def gh_client
     @gh_client ||= Github::Client.new(
         username: ENV['GITHUB_USERNAME'],
@@ -177,6 +185,7 @@ require 'fe/routes/global'
 require 'fe/routes/paste'
 require 'fe/routes/commits'
 require 'fe/routes/gh'
+require 'fe/routes/project'
 
 class App
   include Routes
