@@ -218,11 +218,14 @@ Routes.included do
       }
       jirra_client.post_json("issue/#{pull_p.jira_issue_key!}/remotelink", payload)
 
-      begin
-        jirra_client.transition_issue(pull_p.jira_issue_key!, 'In Code Review',
-          assignee: {name: ENV['JIRA_USERNAME']})
-      rescue Jirra::TransitionNotFound
-        # ignore
+      info = jirra_client.get_issue_fields(pull_p.jira_issue_key!)
+      if info['issuetype']['name'] != 'Epic'
+        begin
+          jirra_client.transition_issue(pull_p.jira_issue_key!, 'In Code Review',
+            assignee: {name: ENV['JIRA_USERNAME']})
+        rescue Jirra::TransitionNotFound
+          # ignore
+        end
       end
     end
 
