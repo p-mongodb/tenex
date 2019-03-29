@@ -72,6 +72,24 @@ module Evergreen
       (info['artifacts'] || []).map { |artifact| Artifact.new(client, info: artifact) }
     end
 
+    # in seconds
+    def time_taken
+      info['time_taken_ms'] / 1000.0
+    end
+
+    def self.normalize_status(status)
+      map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}
+      map[status].tap do |v|
+        if v.nil?
+          raise "No map entry for #{status['state']}"
+        end
+      end
+    end
+
+    def normalized_status
+      self.class.normalize_status(status)
+    end
+
     def restart
       resp = client.post_json("tasks/#{id}/restart")
     end

@@ -61,29 +61,24 @@ class EvergreenStatusPresenter
     @rspec_json_url
   end
 
+  def normalized_status
+    Evergreen::Task.normalize_status(status['state'])
+  end
+
   def passed?
-    normalized_state == 'passed'
+    normalized_status == 'passed'
   end
 
   def failed?
-    normalized_state == 'failed'
+    normalized_status == 'failed'
   end
 
   def pending?
-    normalized_state == 'pending'
+    normalized_status == 'pending'
   end
 
   def top_level?
     build_id.nil?
-  end
-
-  def normalized_state
-    map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}
-    map[status['state']].tap do |v|
-      if v.nil?
-        raise "No map entry for #{status['state']}"
-      end
-    end
   end
 
   def attrs

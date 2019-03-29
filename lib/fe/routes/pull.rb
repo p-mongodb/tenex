@@ -137,6 +137,20 @@ Routes.included do
     slim :pull_perf
   end
 
+  # pull eg perf
+  get '/repos/:org/:repo/pulls/:id/eg-perf' do |org_name, repo_name, id|
+    @repo = system.hit_repo(org_name, repo_name)
+    pull = gh_repo(org_name, repo_name).pull(id)
+    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    eg_version = @pull.evergreen_version
+    tasks = eg_version.builds.map { |build| build.tasks.first }
+    @tasks = tasks.sort_by do |task|
+      -task.time_taken
+    end
+    @branch_name = @pull.head_branch_name
+    slim :eg_perf
+  end
+
   # pr log
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     pull = gh_repo(org_name, repo_name).pull(pull_id)

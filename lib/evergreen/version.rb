@@ -12,6 +12,10 @@ module Evergreen
       @info ||= client.get_json("versions/#{id}")
     end
 
+    def project_name
+      info['project']
+    end
+
     def builds
       @builds ||= begin
         payload = client.get_json("versions/#{id}/builds")
@@ -43,9 +47,9 @@ module Evergreen
 
     def tasks
       @tasks ||= begin
-        payload = client.get_json("versions/#{id}/tasks")
+        payload = client.get_json("projects/#{project_name}/revisions/#{revision}/tasks?limit=5000")
         payload.map do |info|
-          Task.new(client, info['id'], info: info)
+          Task.new(client, info['id'] || info['task_id'], info: info)
         end
       end
     end
