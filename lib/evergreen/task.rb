@@ -12,40 +12,44 @@ module Evergreen
       @info ||= client.get_json("tasks/#{id}")
     end
 
-    def task_log_html_url
-      info['logs']['task_log']
+    def ui_url
+      "https://evergreen.mongodb.com/task/#{id}"
     end
 
-    def task_log_html
-      resp = client.connection.get(task_log_html_url)
-      if resp.status != 200
-        fail resp.status
+    %w(task agent system all).each do |kind|
+      define_method("#{kind}_log_html_url") do
+        info['logs']["#{kind}_log"]
       end
-      resp.body
-    end
 
-    def task_log_url
-      uri = URI.parse(info['logs']['task_log'])
-      query = CGI.parse(uri.query)
-      #query['text'] = 'true'
-      uri.query = URI.encode_www_form(query)
-      uri.to_s
-    end
-
-    def task_log
-      resp = client.connection.get(task_log_url)
-      if resp.status != 200
-        fail resp.status
+      define_method("#{kind}_log_html") do
+        resp = client.connection.get(send("#{kind}_log_html_url"))
+        if resp.status != 200
+          fail resp.status
+        end
+        resp.body
       end
-      resp.body
+
+      define_method("#{kind}_log_url") do
+        uri = URI.parse(info['logs']["#{kind}_log"])
+        query = CGI.parse(uri.query)
+        #query['text'] = 'true'
+        uri.query = URI.encode_www_form(query)
+        uri.to_s
+      end
+
+      define_method("#{kind}_log_url") do
+        resp = client.connection.get(send("#{kind}_log_url"))
+        if resp.status != 200
+          fail resp.status
+        end
+        resp.body
+      end
     end
 
-    def display_name
-      info['display_name']
-    end
-
-    def status
-      info['status']
+    %w(display_name status build_id).each do |m|
+      define_method(m) do
+        info[m]
+      end
     end
 
     def waiting?

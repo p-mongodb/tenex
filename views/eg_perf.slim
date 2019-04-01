@@ -5,11 +5,11 @@ table.status-table
       td
         = task.id
       td
-        a href=status['target_url'] Go
-      - if status.build_id
+        a href=task.ui_url Go
+      - if task.build_id
         td
-          - if status.log_url
-            a href=status.log_url Log
+          - if task.task_log_url
+            a href=task.task_log_url Log
         td
           - if status.restart_url
             a href=status.restart_url Restart
