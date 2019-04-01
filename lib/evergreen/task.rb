@@ -12,6 +12,10 @@ module Evergreen
       @info ||= client.get_json("tasks/#{id}")
     end
 
+    def configuration_id
+      id.sub(/_tests?_patch_.*/, '')
+    end
+
     def ui_url
       "https://evergreen.mongodb.com/task/#{id}"
     end

@@ -2,7 +2,7 @@ table.status-table
   - @tasks.each do |task|
     tr class=task.normalized_status
       td
-        = task.id
+        = task.configuration_id
       td
         a href=task.ui_url Go
       - if task.build_id
