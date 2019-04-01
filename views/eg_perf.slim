@@ -1,6 +1,5 @@
 table.status-table
   - @tasks.each do |task|
-    - byebug
     tr class=task.normalized_status
       td
         = task.id
@@ -11,24 +10,11 @@ table.status-table
           - if task.task_log_url
             a href=task.task_log_url Log
         td
-          - if status.restart_url
-            a href=status.restart_url Restart
-        - if @pull.have_rspec_json? && !status.top_level?
+          - if task.restart_url
+            a href=task.restart_url Restart
+        - if @pull.have_rspec_json?
           td
-            a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
+            a href=task.results_url
               | Results
         td
-          = Taw.time_ago_in_words(Time.now - status.time_taken, approx: 2)
-    - if status['context'] == 'continuous-integration/travis-ci/pr'
-      - @pull.travis_statuses.each do |status|
-        tr class="#{status.state}"
-          td
-            = status.context
-          td
-            a href=status.target_url Go
-          td
-            - if status.html_log_url
-              a href=status.html_log_url Log
-          td
-            - if status.restart_url
-              a href=status.restart_url Restart
+          = Taw.time_ago_in_words(Time.now - task.time_taken, approx: 2)

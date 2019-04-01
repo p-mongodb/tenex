@@ -146,6 +146,8 @@ Routes.included do
     tasks = eg_version.builds.map { |build| build.tasks.first }
     @tasks = tasks.sort_by do |task|
       -task.time_taken
+    end.map do |task|
+      EvergreenTaskPresenter.new(task, @pull, eg_client, system)
     end
     @branch_name = @pull.head_branch_name
     slim :eg_perf

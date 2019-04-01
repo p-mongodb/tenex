@@ -37,7 +37,7 @@ module Evergreen
         uri.to_s
       end
 
-      define_method("#{kind}_log_url") do
+      define_method("#{kind}_log") do
         resp = client.connection.get(send("#{kind}_log_url"))
         if resp.status != 200
           fail resp.status
@@ -82,10 +82,11 @@ module Evergreen
     end
 
     def self.normalize_status(status)
-      map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending'}
+      map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending',
+        'failed' => 'failed'}
       map[status].tap do |v|
         if v.nil?
-          raise "No map entry for #{status['state']}"
+          raise "No map entry for #{status}"
         end
       end
     end
