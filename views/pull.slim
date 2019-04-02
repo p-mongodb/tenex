@@ -86,7 +86,7 @@ p
                   - statuses = map2[ruby_version]
                   - if statuses
                     - statuses.each do |label, status|
-                      div class=status.normalized_state
+                      div class=status.normalized_status
                         ' #{label}
                         a href=status['target_url']
                           i.fa.fa-space-shuttle title='Go'
@@ -112,7 +112,7 @@ p
 
 table.status-table
   - @untaken_statuses.each do |status|
-    tr class=status.normalized_state
+    tr class=status.normalized_status
       td
         = status['context']
         - if status['description']
