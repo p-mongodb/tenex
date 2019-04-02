@@ -87,7 +87,7 @@ module Evergreen
 
     def self.normalize_status(status)
       map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending',
-        'failed' => 'failed'}
+        'failed' => 'failed', 'undispatched' => 'pending'}
       map[status].tap do |v|
         if v.nil?
           raise "No map entry for #{status}"
