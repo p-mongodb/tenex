@@ -11,7 +11,11 @@ class EvergreenTaskPresenter
   attr_reader :task
   attr_reader :eg_client, :system
   def_delegators :@task, :normalized_status, :id, :ui_url, :build_id,
-    :task_log_url, :time_taken, :configuration_id
+    :task_log_url, :time_taken
+
+  def configuration_id
+    id.sub(/_tests?_patch_.*/, '').sub(/^.*__/, '')
+  end
 
   def restart_url
     "/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart/#{build_id}"
