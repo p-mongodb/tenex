@@ -64,6 +64,9 @@ Routes.included do
         if meta_for_label.delete('lint')
           short_label << 'L'
         end
+        if meta_for_label.delete('retry-reads')
+          short_label << 'RR'
+        end
         if meta_for_label.delete('retry-writes')
           short_label << 'RW'
         end
