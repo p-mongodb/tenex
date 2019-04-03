@@ -17,6 +17,12 @@ class EvergreenTaskPresenter
     id.sub(/_tests?_patch_.*/, '').sub(/^.*__/, '')
   end
 
+  def description
+    configuration_id.
+      sub(/mongodb_version~(.+?)_fcv~(.+?)_/, 'server:\1/\2 ').
+      sub(/mongodb_version~(.+?)_/, 'server:\1 ')
+  end
+
   def restart_url
     "/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart/#{build_id}"
   end
