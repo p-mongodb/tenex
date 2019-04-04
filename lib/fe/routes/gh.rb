@@ -30,6 +30,7 @@ Routes.included do
 
   get '/repos/:org/:repo/settings' do |org_name, repo_name|
     @repo = system.hit_repo(org_name, repo_name)
+    @project = @repo.project
     slim :repo_settings
   end
 
@@ -44,7 +45,16 @@ Routes.included do
     @repo = system.hit_repo(org_name, repo_name)
     project = @repo.project
     if project.nil?
-      project = Project.create!(repo: @repo, name: @repo.full_name)
+      project = Project.where(name: @repo.full_name).first
+      if project && project.repo
+        raise "Project already exists"
+      end
+      if project
+        project.repo = @repo
+        project.save!
+      else
+        project = Project.create!(repo: @repo, name: @repo.full_name)
+      end
     end
     redirect "/projects/#{project.slug}"
   end
