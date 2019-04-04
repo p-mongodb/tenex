@@ -204,7 +204,7 @@ module Github
     end
 
     def update(attrs)
-      client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", attrs)
+      client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", params: attrs)
     end
 
     def approve
