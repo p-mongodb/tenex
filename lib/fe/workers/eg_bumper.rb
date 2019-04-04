@@ -7,5 +7,3 @@ class EgBumper
     puts "bumping"
   end
 end
-
-puts 'hai'

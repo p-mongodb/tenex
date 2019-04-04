@@ -1,3 +1,7 @@
 eg_bump:
   cron: "* * * * *"
   class: EgBumper
+
+fetch_results:
+  cron: "* * * * *"
+  class: ResultFetcher
