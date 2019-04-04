@@ -12,3 +12,5 @@ end
 autoload :System, 'fe/system'
 autoload :Toolchain, 'fe/toolchain'
 autoload :RepoCache, 'fe/repo_cache'
+
+autoload :ResultFetcher, 'fe/workers/result_fetcher'

@@ -1,3 +1,5 @@
+require 'fe/config'
+require 'open-uri'
 require 'singleton'
 
 class ArtifactCache

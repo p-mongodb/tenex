@@ -21,7 +21,7 @@ module Github
     def initialize(username:, auth_token:)
       @connection ||= Faraday.new('https://api.github.com') do |f|
         f.request :url_encoded
-        f.response :detailed_logger
+        #f.response :detailed_logger
         f.adapter Faraday.default_adapter
         f.headers['user-agent'] = 'EvergreenRubyClient'
         f.basic_auth(username, auth_token)

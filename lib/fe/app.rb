@@ -14,6 +14,8 @@ require 'sinatra/reloader'
 require 'travis'
 require 'taw'
 autoload :Jirra, 'jirra/client'
+require 'fe/globals'
+require 'fe/config'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -23,10 +25,11 @@ Travis.access_token = ENV['TRAVIS_TOKEN']
 
 Slim::Engine.set_options pretty: true, sort_attrs: false
 
-ARTIFACTS_LOCAL_PATH = Pathname.new(__FILE__).dirname.join('../../.artifacts')
 FileUtils.mkdir_p(ARTIFACTS_LOCAL_PATH)
 
 class App < Sinatra::Base
+  include Globals
+
   configure :development do
     register Sinatra::Reloader
   end
@@ -41,28 +44,6 @@ class App < Sinatra::Base
       raise "Project not found for #{slug}"
     end
     project
-  end
-
-  def gh_client
-    @gh_client ||= Github::Client.new(
-        username: ENV['GITHUB_USERNAME'],
-        auth_token: ENV['GITHUB_TOKEN'],
-      )
-  end
-
-  def gh_repo(org_name, repo_name)
-    gh_client.repo(org_name, repo_name)
-  end
-
-  def eg_client
-    @eg_client ||= Evergreen::Client.new(
-        username: ENV['EVERGREEN_AUTH_USERNAME'],
-        api_key: ENV['EVERGREEN_API_KEY'],
-      )
-  end
-
-  def system
-    System.new(eg_client, gh_client)
   end
 
   private def do_evergreen_log(build_id, title)

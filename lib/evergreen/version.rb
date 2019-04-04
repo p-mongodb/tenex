@@ -1,6 +1,9 @@
 module Evergreen
   class Version
     def initialize(client, id, info: nil)
+      if id.nil?
+        raise ArgumentError, 'id cannot be nil'
+      end
       @client = client
       @id = id
       @info = info

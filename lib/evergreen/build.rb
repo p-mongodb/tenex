@@ -70,6 +70,10 @@ module Evergreen
       %w(success failed).include?(status)
     end
 
+    def artifacts
+      tasks.map(&:artifacts)
+    end
+
     def artifact(basename)
       task = tasks.first
       artifact = task.artifacts.detect do |artifact|
