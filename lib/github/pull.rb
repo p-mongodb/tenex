@@ -204,7 +204,8 @@ module Github
     end
 
     def update(attrs)
-      client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", params: attrs)
+      client.request_json(:patch, "repos/#{repo_full_name}/pulls/#{number}", params: attrs,
+        headers: {'accept' => 'application/vnd.github.shadow-cat-preview'})
     end
 
     def approve

@@ -10,7 +10,7 @@ class PrMaker
     begin
       pr_info = gh_client.post_json("/repos/mongodb/#{repo_name}/pulls",
         {title: @title, head: "p-mongo:#{@branch_name}", base: 'master',
-        body: @body, draft: true},
+        body: @body, draft: false},
         headers: {'accept' => 'application/vnd.github.shadow-cat-preview'})
       pr_num = pr_info['number']
     rescue Github::Client::ApiError => e

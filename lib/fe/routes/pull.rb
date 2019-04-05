@@ -217,6 +217,7 @@ Routes.included do
   get '/repos/:org/:repo/pulls/:id/request-review' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @repo = system.hit_repo(org_name, repo_name)
+    @pull.update(draft: false)
     @statuses = @pull.request_review('saghm')
 
     pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
