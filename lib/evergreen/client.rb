@@ -48,12 +48,14 @@ module Evergreen
     end
 
     def request_json(meth, url, params=nil, options={})
-      case options[:version]
-      when 1
-      when nil, 2
-        url = "rest/v2/#{url}"
-      else
-        raise ArgumentError, "Unknown version #{options[:version]}"
+      unless url.start_with?('/')
+        case options[:version]
+        when 1
+        when nil, 2
+          url = "rest/v2/#{url}"
+        else
+          raise ArgumentError, "Unknown version #{options[:version]}"
+        end
       end
       response = connection.send(meth) do |req|
         req.url(url)
@@ -109,9 +111,9 @@ module Evergreen
     end
 
     def distros
-      payload = get_json("distros")
+      payload = get_json("/spawn/distros")
       payload.map do |info|
-        Distro.new(self, info['id'], info: info)
+        Distro.new(self, info['name'], info: info)
       end
     end
 
