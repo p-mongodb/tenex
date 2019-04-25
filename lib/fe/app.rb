@@ -151,6 +151,18 @@ class App < Sinatra::Base
       ::Jirra::Client.new(options)
     end
   end
+
+  private def confluence_client
+    @confluence_client ||= begin
+      options = {
+        :username     => ENV['JIRA_USERNAME'],
+        :password     => ENV['JIRA_PASSWORD'],
+        :site         => ENV['CONFLUENCE_SITE'],
+      }
+
+      ::Confluence::Client.new(options)
+    end
+  end
 end
 
 module Routes
@@ -167,6 +179,7 @@ require 'fe/routes/paste'
 require 'fe/routes/commits'
 require 'fe/routes/gh'
 require 'fe/routes/project'
+require 'fe/routes/wiki'
 
 class App
   include Routes
