@@ -41,8 +41,24 @@ module Env
     end
   end
 
+  module_function def gh_client
+    @gh_client ||= Github::Client.new(
+        username: ENV['GITHUB_USERNAME'],
+        auth_token: ENV['GITHUB_TOKEN'],
+      )
+  end
+
+  module_function def eg_client
+    @eg_client ||= Evergreen::Client.new(
+        username: ENV['EVERGREEN_AUTH_USERNAME'],
+        api_key: ENV['EVERGREEN_API_KEY'],
+      )
+  end
+
   module Access
-    %i(jira_client jirra_client confluence_client).each do |m|
+    %i(
+      jira_client jirra_client confluence_client gh_client eg_client
+    ).each do |m|
       define_method(m) do
         Env.send(m)
       end
