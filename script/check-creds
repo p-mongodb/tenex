@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'irb'
+$: << 'lib'
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'fe/boot'
+require 'fe/env'
+
+class Checker
+  include Env::Access
+
+  def run
+    run_gh
+    run_jirra
+    run_eg
+  end
+
+  def run_gh
+    puts 'github'
+
+    repo = gh_client.repo('10gen', 'mongo-ruby-toolchain')
+    if repo.pulls(state: 'all').count > 1
+      puts 'ok'
+    else
+      puts 'not working'
+    end
+  end
+
+  def run_jirra
+    puts 'jirra'
+
+    info = jirra_client.get_issue_fields('SPEC-1000')
+    if info['status']
+      puts 'ok'
+    else
+      puts 'not working'
+    end
+  end
+
+  def run_eg
+    puts 'evergreen'
+
+    distros = eg_client.distros
+    if distros.count > 1
+      puts 'ok'
+    else
+      puts 'not working'
+    end
+  end
+end
+
+Checker.new.run
