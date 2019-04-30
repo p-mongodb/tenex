@@ -1,5 +1,5 @@
+require 'fe/env'
 require 'multi_concern'
-autoload :JIRA, 'jira-ruby'
 autoload :Nokogiri, 'nokogiri'
 require 'open-uri'
 autoload :Ansi, 'ansi/to/html'
@@ -13,7 +13,6 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
 require 'taw'
-autoload :Jirra, 'jirra/client'
 require 'fe/globals'
 require 'fe/config'
 
@@ -29,6 +28,7 @@ FileUtils.mkdir_p(ARTIFACTS_LOCAL_PATH)
 
 class App < Sinatra::Base
   include Globals
+  include Env::Access
 
   configure :development do
     register Sinatra::Reloader
@@ -123,44 +123,6 @@ class App < Sinatra::Base
       cache_state.keys_updated_at = Time.now
       cache_state.save!
       keys
-    end
-  end
-
-  private def jira_client
-    @jira_client ||= begin
-      options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
-        :site         => ENV['JIRA_SITE'],
-        :context_path => '',
-        :auth_type    => :basic
-      }
-
-      JIRA::Client.new(options)
-    end
-  end
-
-  private def jirra_client
-    @jirra_client ||= begin
-      options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
-        :site         => ENV['JIRA_SITE'],
-      }
-
-      ::Jirra::Client.new(options)
-    end
-  end
-
-  private def confluence_client
-    @confluence_client ||= begin
-      options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
-        :site         => ENV['CONFLUENCE_SITE'],
-      }
-
-      ::Confluence::Client.new(options)
     end
   end
 end

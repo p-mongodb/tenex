@@ -6,15 +6,6 @@ $: << 'lib'
 ENV['MONGOID_ENV'] = 'development'
 
 require 'fe/boot'
-
-$eg_client ||= Evergreen::Client.new(
-    username: ENV['EVERGREEN_AUTH_USERNAME'],
-    api_key: ENV['EVERGREEN_API_KEY'],
-  )
-
-$gh_client ||= Github::Client.new(
-    username: ENV['GITHUB_USERNAME'],
-    auth_token: ENV['GITHUB_TOKEN'],
-  )
+require 'fe/env'
 
 IRB.start
