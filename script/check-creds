@@ -12,6 +12,7 @@ class Checker
   include Env::Access
 
   def run
+    run_wiki
     run_gh
     run_jirra
     run_eg
@@ -44,6 +45,15 @@ class Checker
 
     distros = eg_client.distros
     if distros.count > 1
+      puts 'ok'
+    else
+      puts 'not working'
+    end
+  end
+
+  def run_wiki
+    page = confluence_client.find_page_by_space_and_title('10GEN', 'Home')
+    if page
       puts 'ok'
     else
       puts 'not working'

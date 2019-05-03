@@ -15,12 +15,13 @@ module Confluence
       attr_reader :status
     end
 
-    def initialize(username:, password:, site:)
+    def initialize(username:, password:, site:, auth_token:)
       @connection ||= Faraday.new("#{site}/rest/api") do |f|
         f.request :url_encoded
         f.response :detailed_logger
         f.adapter Faraday.default_adapter
         f.headers['user-agent'] = 'EvergreenRubyClient'
+        f.headers['cookie'] = "auth_user=#{username}; auth_token=#{auth_token}"
         f.basic_auth(username, password)
       end
     end
