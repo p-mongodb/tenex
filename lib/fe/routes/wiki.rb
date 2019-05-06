@@ -16,7 +16,35 @@ Routes.included do
     end
 
     info = confluence_client.find_page_by_space_and_title(space, title)
-    p info
+    id = info['id'].to_i
+
+    redirect "/wiki/edit/#{id}"
+  end
+
+  get '/wiki/edit/:id' do |id|
+    info = confluence_client.get_page(id)
+    @info = OpenStruct.new(info)
+    p @info.body
+    @body = @info.body['storage']['value']
+
+    slim :wiki_edit
+  end
+
+  post '/wiki/update/:id' do |id|
+    info = confluence_client.get_page(id)
+    body = params[:body]
+    payload = {
+      type: 'page',
+      title: params[:title],
+      body: {
+        storage: {value: body, representation: 'storage'},
+      },
+      version: {number: info['version']['number'] + 1},
+    }
+    #byebug
+    confluence_client.update_page(id, payload)
+
+    redirect "/wiki/edit/#{id}"
   end
 
 end

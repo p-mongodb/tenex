@@ -50,7 +50,7 @@ module Confluence
       unless [200, 201].include?(response.status)
         error = nil
         begin
-          error = JSON.parse(response.body)['error']
+          error = JSON.parse(response.body)['message']
         rescue
         end
         msg = "Jira #{meth.to_s.upcase} #{url} failed: #{response.status}"
@@ -75,6 +75,14 @@ module Confluence
     def find_pages_by_cql(cql)
       payload = get_json("content/search?cql=#{URI.encode(cql)}")
       payload['results']
+    end
+
+    def get_page(id)
+      payload = get_json("content/#{id}?expand=body.editor,body.storage,version")
+    end
+
+    def update_page(id, payload)
+      request_json(:put, "content/#{id}", payload)
     end
   end
 end
