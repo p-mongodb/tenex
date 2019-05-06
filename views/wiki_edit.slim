@@ -1,9 +1,8 @@
 form action="/wiki/update/#{@info.id}" method='post' style='height:100%'
   p Edit #{@info.title}
   p
-    input name='title' value=@info.title
-  p
-    textarea name='body' style='width:75%;min-height:20em;display:block;'
-      = @body
+    input name='title' value=@info.title style='width:100%'
+  textarea name='body' style='width:100%;min-height:75%;display:block;'
+    = @body
   p
     input type='submit' value='Go'

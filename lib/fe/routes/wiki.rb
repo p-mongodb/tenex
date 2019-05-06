@@ -25,7 +25,7 @@ Routes.included do
     info = confluence_client.get_page(id)
     @info = OpenStruct.new(info)
     p @info.body
-    @body = @info.body['storage']['value']
+    @body = @info.body['editor']['value']
 
     slim :wiki_edit
   end
@@ -37,7 +37,7 @@ Routes.included do
       type: 'page',
       title: params[:title],
       body: {
-        storage: {value: body, representation: 'storage'},
+        storage: {value: body, representation: 'editor'},
       },
       version: {number: info['version']['number'] + 1},
     }
