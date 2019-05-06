@@ -1,4 +1,5 @@
 require 'confluence/client'
+require 'htmlentities'
 
 Routes.included do
 
@@ -24,8 +25,8 @@ Routes.included do
   get '/wiki/edit/:id' do |id|
     info = confluence_client.get_page(id)
     @info = OpenStruct.new(info)
-    p @info.body
-    @body = @info.body['editor']['value']
+    parts = @info.body['editor']['value'].split('{wiki}')
+    @body = HTMLEntities.new.decode(parts[1])
 
     slim :wiki_edit
   end
@@ -33,11 +34,14 @@ Routes.included do
   post '/wiki/update/:id' do |id|
     info = confluence_client.get_page(id)
     body = params[:body]
+    parts = info['body']['editor']['value'].split('{wiki}')
+    parts[1] = HTMLEntities.new.encode(body)
+    new_body = parts.join('{wiki}')
     payload = {
       type: 'page',
       title: params[:title],
       body: {
-        storage: {value: body, representation: 'editor'},
+        storage: {value: new_body, representation: 'editor'},
       },
       version: {number: info['version']['number'] + 1},
     }
