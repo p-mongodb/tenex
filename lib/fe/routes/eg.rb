@@ -42,14 +42,14 @@ Routes.included do
     @version = Evergreen::Version.new(eg_client, version_id)
     @version.restart_failed_builds
 
-    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+    redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
   end
 
   get '/eg/:project/versions/:version_id/restart-all' do |project_id, version_id|
     @version = Evergreen::Version.new(eg_client, version_id)
     @version.restart_all_builds
 
-    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+    redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
   end
 
   # eg version bump
@@ -57,11 +57,11 @@ Routes.included do
     version = Evergreen::Version.new(eg_client, version_id)
     do_bump(version, params[:priority].to_i)
 
-    redirect return_path || "/projects/#{project_id}/versions/#{version_id}"
+    redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
   end
 
   # eg log
-  #get %r,/projects/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
+  #get %r,/eg/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
   get '/eg/:project/versions/:version/builds/:build/log' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     title = "EG log"
@@ -69,7 +69,7 @@ Routes.included do
   end
 
   # eg log
-  #get %r,/projects/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
+  #get %r,/eg/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
   get '/eg/:project/versions/:version/builds/:build/mongod-log' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     unless build.tasks.count == 1
@@ -126,7 +126,7 @@ Routes.included do
     @build = Evergreen::Build.new(eg_client, build_id)
     artifact = @build.artifact('rspec.json')
     unless artifact
-      redirect "/projects/#{project_id}/versions/#{version_id}/evergreen-log/#{build_id}"
+      redirect "/eg/#{project_id}/versions/#{version_id}/evergreen-log/#{build_id}"
       return
     end
     @raw_artifact_url = url = artifact.url
@@ -139,6 +139,6 @@ Routes.included do
 
   get '/eg/:project/versions/:version/tasks/:task/bump' do |project_id, version_id, task_id|
     Task = Evergreen::Task.new(eg_client, task_id).set_priority(99)
-    redirect "/projects/#{project_id}/versions/#{version_id}"
+    redirect "/eg/#{project_id}/versions/#{version_id}"
   end
 end
