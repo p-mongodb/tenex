@@ -7,11 +7,12 @@ class PrMaker
   attr_reader :num, :repo_name, :jira_project, :jira_issue_key
 
   def make_pr
+    unless repo_name
+      raise 'Cannot make a PR when repo name is not known'
+    end
     begin
-      pr_info = gh_client.post_json("/repos/mongodb/#{repo_name}/pulls",
-        {title: @title, head: "p-mongo:#{@branch_name}", base: 'master',
-        body: @body, draft: false},
-        headers: {'accept' => 'application/vnd.github.shadow-cat-preview'})
+      pr_info = gh_client.create_pr('mongodb', repo_name,
+        title: @title, head: "p-mongo:#{@branch_name}", body: @body)
       pr_num = pr_info['number']
     rescue Github::Client::ApiError => e
       if e.status == 422
@@ -91,6 +92,9 @@ class PrMaker
         break
       when 'mongoid'
         @repo_name = 'mongoid'
+        break
+      when 'specifications'
+        @repo_name = 'specifications'
         break
       end
       dir = File.dirname(dir)

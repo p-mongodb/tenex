@@ -69,5 +69,14 @@ module Github
     def repo(user_name, repo_name)
       Repo.new(self, user_name, repo_name)
     end
+
+    def create_pr(org_name, repo_name, title:, body:,
+      head:, base: 'master'
+    )
+      post_json("/repos/#{org_name}/#{repo_name}/pulls",
+        {title: title, head: head, base: base,
+        body: body, draft: false},
+        headers: {'accept' => 'application/vnd.github.shadow-cat-preview'})
+    end
   end
 end

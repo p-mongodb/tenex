@@ -170,7 +170,7 @@ CMD
 
       ticket = nil
       if branch_name =~ /#{project}-/i
-        ticket = branch_name
+        ticket = branch_name.upcase
       elsif branch_name =~ /^(\d+)($|-)/
         ticket = "#{project}-#{$1}"
       else
