@@ -9,15 +9,24 @@ Routes.included do
 
   post '/wiki/edit' do
     url = params[:url]
+    id = nil
 
-    if url =~ %r,/display/(.+)/(.+)$,
+    if url =~ %r,pageId=(\d+),
+      id = $1.to_i
+    elsif url =~ %r,/display/(.+)/(.+)$,
       space, title = $1, $2
     else
-      raise "Ugh"
+      raise "Unknown URL format"
     end
 
-    info = confluence_client.find_page_by_space_and_title(space, title)
-    id = info['id'].to_i
+    if id.nil? && space && title
+      info = confluence_client.find_page_by_space_and_title(space, title)
+      id = info['id'].to_i
+    end
+
+    if id.nil?
+      raise 'Could not figure out page id'
+    end
 
     redirect "/wiki/edit/#{id}"
   end
@@ -25,8 +34,14 @@ Routes.included do
   get '/wiki/edit/:id' do |id|
     info = confluence_client.get_page(id)
     @info = OpenStruct.new(info)
-    parts = @info.body['editor']['value'].split('{wiki}')
-    @body = HTMLEntities.new.decode(parts[1])
+    content = @info.body['editor']['value']
+    if content.include?('{wiki}')
+      parts = content.split('{wiki}')
+      wiki_content = parts[1]
+    else
+      wiki_content = content
+    end
+    @body = HTMLEntities.new.decode(wiki_content)
 
     slim :wiki_edit
   end
@@ -34,9 +49,19 @@ Routes.included do
   post '/wiki/update/:id' do |id|
     info = confluence_client.get_page(id)
     body = params[:body]
-    parts = info['body']['editor']['value'].split('{wiki}')
-    parts[1] = HTMLEntities.new.encode(body)
-    new_body = parts.join('{wiki}')
+    encoded_body = HTMLEntities.new.encode(body)
+    content = info['body']['editor']['value']
+    if content.include?('{wiki}')
+      parts = content.split('{wiki}')
+      parts[1] = encoded_body
+      new_body = parts.join('{wiki}')
+    else
+      new_body = <<-EOT
+<p><table class="wysiwyg-macro" data-macro-name="unmigrated-inline-wiki-markup" data-macro-id="719b0242-5a91-45df-b15a-088350d631fd" data-macro-parameters="atlassian-macro-output-type=INLINE" data-macro-schema-version="1" style="background-image: url(/plugins/servlet/confluence/placeholder/macro-heading?definition=e3VubWlncmF0ZWQtaW5saW5lLXdpa2ktbWFya3VwOmF0bGFzc2lhbi1tYWNyby1vdXRwdXQtdHlwZT1JTkxJTkV9&amp;locale=en_GB&amp;version=2); background-repeat: no-repeat;" data-macro-body-type="PLAIN_TEXT"><tr><td class="wysiwyg-macro-body"><pre>
+{wiki}#{encoded_body}{wiki}
+</pre></td></tr></table></p>
+EOT
+    end
     payload = {
       type: 'page',
       title: params[:title],
@@ -45,7 +70,6 @@ Routes.included do
       },
       version: {number: info['version']['number'] + 1},
     }
-    #byebug
     confluence_client.update_page(id, payload)
 
     redirect "/wiki/edit/#{id}"
