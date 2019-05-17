@@ -1,8 +1,11 @@
 require 'fe/child_process_helper'
+require 'fe/env'
 
 autoload :Jirra, 'jirra/client'
+autoload :Orchestrator, 'fe/orchestrator'
 
 class PrMaker
+  include Env::Access
 
   attr_reader :num, :repo_name, :jira_project, :jira_issue_key
 
@@ -36,51 +39,14 @@ class PrMaker
       end
     end
 
-    if jira_project
-      pr_url = "https://github.com/mongodb/#{repo_name}/pull/#{pr_num}"
+    if jira_project && jira_issue_key
+      orchestrator.link_pr_to_issue(repo_name: repo_name,
+        pr_num: pr_num, jira_issue_key: jira_issue_key)
 
-      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
-      payload = {
-        globalId: "#{jira_project}-#{num}-pr-#{pr_num}",
-        object: {
-          url: pr_url,
-          title: "Fix - PR ##{pr_num}",
-          icon: {"url16x16":"https://github.com/favicon.ico"},
-          status: {
-            icon: {},
-          },
-        },
-      }
-      jirra_client.post_json("issue/#{jira_issue_key}/remotelink", payload)
-
-      fields = jirra_client.get_issue_fields(jira_issue_key)
-      status_name = fields['status']['name']
-      if ['Needs Triage'].include?(status_name)
-        jirra_client.transition_issue(jira_issue_key, 'In Progress',
-          assignee: {name: ENV['JIRA_USERNAME']})
-      end
+      orchestrator.transition_issue_to_in_progress(jira_issue_key)
     end
 
     pr_num
-  end
-
-  private def gh_client
-    @gh_client ||= Github::Client.new(
-        username: ENV['GITHUB_USERNAME'],
-        auth_token: ENV['GITHUB_TOKEN'],
-      )
-  end
-
-  private def jirra_client
-    @jirra_client ||= begin
-      options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
-        :site         => ENV['JIRA_SITE'],
-      }
-
-      Jirra::Client.new(options)
-    end
   end
 
   private def repo_from_cwd
@@ -89,12 +55,15 @@ class PrMaker
       case File.basename(dir)
       when 'ruby-driver'
         @repo_name = 'mongo-ruby-driver'
+        @jira_project = 'RUBY'
         break
       when 'mongoid'
         @repo_name = 'mongoid'
+        @jira_project = 'MONGOID'
         break
       when 'specifications'
         @repo_name = 'specifications'
+        @jira_project ||= 'SPEC'
         break
       end
       dir = File.dirname(dir)
@@ -103,10 +72,16 @@ class PrMaker
       raise ArgumentError, "Cannot figure out the project"
     end
   end
+
+  private def orchestrator
+    @orchestrator ||= Orchestrator.new
+  end
 end
 
 class TicketedPrMaker < PrMaker
-  def initialize(num)
+  def initialize(num, options=nil)
+    @options = options || {}
+
     @num = num
 
     @config = if num > 2000
@@ -128,12 +103,14 @@ class TicketedPrMaker < PrMaker
 end
 
 class BranchPrMaker < PrMaker
-  def initialize(branch_name)
-  end
+  #def initialize(branch_name, options=nil)
+  #end
 end
 
 class CurrentPrMaker < BranchPrMaker
-  def initialize
+  def initialize(options=nil)
+    @options = options || {}
+
     repo_from_cwd
     @num = nil
     @jira_project = nil
@@ -142,6 +119,14 @@ class CurrentPrMaker < BranchPrMaker
     @branch_name = branch_output.split("\n").first.split(' ').last
     if @branch_name.strip.empty?
       raise ArgumentError, "Cannot figure out branch name"
+    end
+
+    if @branch_name =~ /^spec-\d+$/i
+      @jira_project = 'SPEC'
+      @jira_issue_key = @branch_name.upcase
+    elsif @branch_name =~ /^writing-\d+$/i
+      @jira_project = 'WRITING'
+      @jira_issue_key = @branch_name.upcase
     end
 
     commit_msg = ChildProcessHelper.check_output(%w(git show --pretty=%s -q))

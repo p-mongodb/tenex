@@ -6,16 +6,29 @@ ENV['MONGOID_ENV'] = 'development'
 
 require 'fe/boot_lite'
 require 'fe/pr_maker'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.on('-L', '--link-only', 'Link ticket to PR only') do
+    options[:link_only] = true
+  end
+end.parse!
 
 what = ARGV.shift
 if what.nil?
-  pr_maker = CurrentPrMaker.new
+  pr_maker = CurrentPrMaker.new(options)
 else
   num = what.to_i
   if num > 0
-    pr_maker = TicketedPrMaker.new(num)
+    pr_maker = TicketedPrMaker.new(num, options)
   else
-    pr_maker = BranchPrMaker.new(what)
+    pr_maker = BranchPrMaker.new(what, options)
   end
 end
-pr_maker.make_pr
+
+if options[:link_only]
+  pr_maker.link
+else
+  pr_maker.make_pr
+end
