@@ -185,13 +185,7 @@ CMD
         raise "Weird ticket #{ticket} (project must be uppercased)"
       end
 
-      issue_fields = jirra_client.get_issue_fields(ticket)
-      summary = issue_fields['summary']
-      type = issue_fields['issuetype']['name']
-      subject = "#{ticket} #{summary}"
-      if type == 'Bug'
-        subject = "Fix #{subject}"
-      end
+      subject = jirra_client.subject_for_issue(ticket)
 
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
         git checkout master &&

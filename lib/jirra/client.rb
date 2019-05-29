@@ -97,5 +97,16 @@ module Jirra
       }
       post_json("issue/#{issue_key}/transitions", payload)
     end
+
+    def subject_for_issue(issue_key)
+      issue_fields = get_issue_fields(issue_key)
+      summary = issue_fields['summary']
+      type = issue_fields['issuetype']['name']
+      subject = "#{issue_key} #{summary}"
+      if type == 'Bug'
+        subject = "Fix #{subject}"
+      end
+      subject
+    end
   end
 end

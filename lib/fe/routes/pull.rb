@@ -323,12 +323,22 @@ Routes.included do
     slim :results
   end
 
-  get '/repos/:org/:repo/pulls/:id/retitle' do |org_name, repo_name, pull_id|
+  get '/repos/:org/:repo/pulls/:id/retitle-commit' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
     rc.update_cache
     subject, message = rc.commitish_message(@pull.head_sha)
     @pull.update(title: subject, body: message)
+
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
+  end
+
+  get '/repos/:org/:repo/pulls/:id/retitle-jira' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+
+    subject = jirra_client.subject_for_issue(pull_p.jira_issue_key!)
+    @pull.update(title: subject)
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
