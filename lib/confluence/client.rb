@@ -78,7 +78,7 @@ module Confluence
     end
 
     def get_page(id)
-      payload = get_json("content/#{id}?expand=body.editor,body.storage,version")
+      payload = get_json("content/#{id}?expand=body.editor,body.storage,version,space")
     end
 
     def update_page(id, payload)

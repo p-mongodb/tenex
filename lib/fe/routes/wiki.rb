@@ -4,6 +4,7 @@ require 'htmlentities'
 Routes.included do
 
   get '/wiki' do
+    @recent_pages = RecentWikiPage.order(last_hit_at: -1).limit(15)
     slim :wiki
   end
 
@@ -43,6 +44,8 @@ Routes.included do
     end
     @body = HTMLEntities.new.decode(wiki_content)
 
+    hit_wiki(id, info)
+
     slim :wiki_edit
   end
 
@@ -72,7 +75,25 @@ EOT
     }
     confluence_client.update_page(id, payload)
 
+    hit_wiki(id, info)
+
     redirect "/wiki/edit/#{id}"
+  end
+
+  private def hit_wiki(id, info)
+    rwp = RecentWikiPage.where(id: id).first
+    if rwp.nil?
+      unless info['space']
+        raise "Space not in info, it must be requested"
+      end
+      rwp = RecentWikiPage.new(
+        id: id,
+        space_name: info['space']['name'],
+        title: info['title'],
+      )
+    end
+    rwp.last_hit_at = Time.now
+    rwp.save!
   end
 
 end

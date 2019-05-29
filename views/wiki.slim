@@ -5,3 +5,11 @@ form action='/wiki/edit' method='post'
     input type='text' name='url'
   p
     input type='submit' value='Go'
+
+h2 Recent pages
+
+ul
+  - @recent_pages.each do |page|
+    li
+      a href="/wiki/edit/#{page.id}"
+        | #{page.space_name} => #{page.title}
