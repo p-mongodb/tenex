@@ -210,7 +210,7 @@ module Github
 
     def approve
       attrs = {event: 'APPROVE'}
-      client.request_json(:post, "repos/#{repo_full_name}/pulls/#{number}/reviews", attrs)
+      client.request_json(:post, "repos/#{repo_full_name}/pulls/#{number}/reviews", params: attrs)
     end
 
     def comments
