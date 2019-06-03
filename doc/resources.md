@@ -9,3 +9,7 @@ and [examples](https://github.com/evergreen-ci/evergreen/wiki/REST-V2-Use-Case-G
 
 [Faraday documentation](https://github.com/lostisland/faraday)
 and [examples](https://mislav.net/2011/07/faraday-advanced-http/)
+
+## Captcha
+
+https://solvecaptcha.com/api-description
