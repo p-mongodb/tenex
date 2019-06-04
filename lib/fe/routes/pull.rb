@@ -40,6 +40,9 @@ Routes.included do
         elsif label =~ /enterprise-auth-tests-rhel/
           meta['mongodb-version'] = 'EA'
           meta['topology'] = 'rhel'
+        elsif label =~ /local-tls/
+          meta['mongodb-version'] = 'TLS'
+          meta['auth-and-ssl'] = ''
         else
           meta['auth-and-ssl'] ||= 'noauth-and-nossl'
         end
