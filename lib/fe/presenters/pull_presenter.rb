@@ -133,7 +133,8 @@ class PullPresenter
       sources = [@pull.body] + @pull.comments.map(&:body)
       sources.each do |body|
         if body =~ /#{jira_project}-(\d+)/i
-          if number
+          this_number = $1.to_i
+          if number && number != this_number
             raise "Confusing ticket situation"
           end
           number = $1.to_i
