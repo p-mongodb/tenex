@@ -23,23 +23,25 @@ module Evergreen
       end
     end
 
-    def task_log_url
-      if info['tasks'].length != 1
-        raise "Have #{info['tasks'].length} tasks, expecting 1"
+    %i(task all).each do |which|
+      define_method("#{which}_log_url") do
+        if info['tasks'].length != 1
+          raise "Have #{info['tasks'].length} tasks, expecting 1"
+        end
+
+        task_id = info['tasks'].first
+
+        task_info = client.get_json("tasks/#{task_id}")
+        task_info['logs']["#{which}_log"]
       end
 
-      task_id = info['tasks'].first
-
-      task_info = client.get_json("tasks/#{task_id}")
-      task_info['logs']['task_log']
-    end
-
-    def task_log
-      resp = client.connection.get(task_log_url)
-      if resp.status != 200
-        fail resp.status
+      define_method("#{which}_log") do
+        resp = client.connection.get(send("#{which}_log_url"))
+        if resp.status != 200
+          fail resp.status
+        end
+        resp.body
       end
-      resp.body
     end
 
     def restart

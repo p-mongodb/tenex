@@ -46,9 +46,12 @@ class App < Sinatra::Base
     project
   end
 
-  private def do_evergreen_log(build_id, title)
+  private def do_evergreen_log(build_id, title, which = :task)
+    unless %i(task all).include?(which)
+      raise ArgumentError, "Invalid which value #{which}"
+    end
     build = Evergreen::Build.new(eg_client, build_id)
-    do_log(build.task_log, build.task_log_url, title)
+    do_log(build.send("#{which}_log"), build.send("#{which}_log_url"), title)
   end
 
   private def do_log(log, log_url, title)

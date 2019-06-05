@@ -166,6 +166,12 @@ Routes.included do
     do_evergreen_log(build_id, title)
   end
 
+  get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id/all' do |org_name, repo_name, pull_id, build_id|
+    pull = gh_repo(org_name, repo_name).pull(pull_id)
+    title = "All log: #{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
+    do_evergreen_log(build_id, title, :all)
+  end
+
   get '/repos/:org/:repo/pulls/:id/restart/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     build.restart
