@@ -1,0 +1,5 @@
+ul
+  - @files.each do |path|
+    li
+      a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@build_id}/artifact-log/#{URI.escape(path)}"
+        = path

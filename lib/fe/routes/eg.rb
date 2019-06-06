@@ -94,22 +94,37 @@ Routes.included do
     end
   end
 
-  get '/eg/:project/versions/:version/builds/:build/logs' do |project_id, version_id, build_id|
+  get '/eg/:project/versions/:version/builds/:build/artifact-log/*rel_path' do |project_id, version_id, build_id, rel_path|
     build = Evergreen::Build.new(eg_client, build_id)
     artifact = build.detect_artifact!('mongodb-logs.tar.gz')
-    files = []
-    artifact.extract_tarball do |root|
-      Find.find(root) do |path|
-        files << path[root.length+1...path.length]
-      end
-    end
+    contents = artifact.extract_tarball_path(rel_path)
 
-    if !files.empty?
+    if contents
       response.headers['content-type'] = 'text/plain'
-      files.join("\n")
+      contents
     else
       "No log file found"
     end
+  end
+
+  get '/eg/:project/versions/:version/builds/:build/artifact-logs' do |project_id, version_id, build_id|
+    build = Evergreen::Build.new(eg_client, build_id)
+    artifact = build.detect_artifact!('mongodb-logs.tar.gz')
+    @files = []
+    artifact.extract_tarball do |root|
+      Find.find(root) do |path|
+        next unless File.file?(path)
+        rel = path[root.length+1...path.length]
+        if rel
+          @files << path[root.length+1...path.length]
+        end
+      end
+    end
+
+    @project_id = project_id
+    @version_id = version_id
+    @build_id = build_id
+    slim :artifact_logs
   end
 
   # eg task log

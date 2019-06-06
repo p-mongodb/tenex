@@ -40,6 +40,18 @@ module Evergreen
       end
     end
 
+    def extract_tarball_path(rel_path)
+      extract_tarball do |root|
+        Find.find(root) do |path|
+          this_rel_path = path[root.length+1...path.length]
+          if rel_path == this_rel_path
+            return File.read(path)
+          end
+        end
+      end
+      nil
+    end
+
     def extract_tarball_file(basename)
       extract_tarball do |root|
         Find.find(root) do |path|
