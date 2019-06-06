@@ -83,44 +83,30 @@ Routes.included do
   #get %r,/eg/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
   get '/eg/:project/versions/:version/builds/:build/mongod-log' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
-    unless build.tasks.count == 1
-      raise "Build has #{build.tasks.count} tasks, need 1"
-    end
-    task = build.tasks.first
-    artifact = task.artifacts.detect do |artifact|
-      artifact.name == 'mongodb-logs.tar.gz'
-    end
-    if artifact.nil?
-      raise "Could not find mongodb logs artifact"
-    end
-
-    contents = nil
-    Dir.mktmpdir do |path|
-      Dir.chdir(path) do
-        process = ChildProcess.build('tar', 'zxf', '-')
-        process.duplex = true
-        process.start
-        f = open(artifact.url)
-        while content = f.read(1048576)
-          process.io.stdin.write(content)
-        end
-        process.io.stdin.close
-        process.wait
-        unless process.exit_code == 0
-          raise "Failed to fetch/untar"
-        end
-
-        Find.find('.') do |path|
-          if File.basename(path) == 'mongod.log'
-            contents = File.read(path)
-          end
-        end
-      end
-    end
+    artifact = build.detect_artifact!('mongodb-logs.tar.gz')
+    contents = artifact.extract_tarball_file('mongod.log')
 
     if contents
       response.headers['content-type'] = 'text/plain'
       contents
+    else
+      "No log file found"
+    end
+  end
+
+  get '/eg/:project/versions/:version/builds/:build/logs' do |project_id, version_id, build_id|
+    build = Evergreen::Build.new(eg_client, build_id)
+    artifact = build.detect_artifact!('mongodb-logs.tar.gz')
+    files = []
+    artifact.extract_tarball do |root|
+      Find.find(root) do |path|
+        files << path[root.length+1...path.length]
+      end
+    end
+
+    if !files.empty?
+      response.headers['content-type'] = 'text/plain'
+      files.join("\n")
     else
       "No log file found"
     end

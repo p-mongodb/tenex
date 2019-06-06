@@ -99,5 +99,23 @@ module Evergreen
     def started_at
       Time.parse(info['start_time'])
     end
+
+    def detect_artifact(name)
+      unless tasks.count == 1
+        raise "Build has #{tasks.count} tasks, need 1"
+      end
+      task = tasks.first
+      task.artifacts.detect do |artifact|
+        artifact.name == name
+      end
+    end
+
+    def detect_artifact!(name)
+      detect_artifact(name).tap do |artifact|
+        if artifact.nil?
+          raise "Could not find artifact: #{name}"
+        end
+      end
+    end
   end
 end
