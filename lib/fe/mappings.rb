@@ -25,6 +25,8 @@ module Mappings
       'ruby'
     when 'mongodb/specifications'
       'spec'
+    when '10gen/mongo-ruby-toolchain'
+      'ruby'
     else
       raise "Bogus repo name: #{repo_full_name}"
     end.upcase
