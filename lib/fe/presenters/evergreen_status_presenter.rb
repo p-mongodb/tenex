@@ -42,6 +42,11 @@ class EvergreenStatusPresenter
     "/eg/#{project.id}/versions/#{@pull.evergreen_version_id}/builds/#{build_id}/mongod-log"
   end
 
+  def server_logs_url
+    project = system.evergreen_project_for_github_repo(@pull.base_owner_name, @pull.base_repo_name)
+    "/eg/#{project.id}/versions/#{@pull.evergreen_version_id}/builds/#{build_id}/artifact-logs"
+  end
+
   def restart_url
     "/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart/#{build_id}"
   end
