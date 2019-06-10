@@ -62,5 +62,19 @@ module Evergreen
       end
       nil
     end
+
+    def tarball_file_infos
+      [].tap do |infos|
+        extract_tarball do |root|
+          Find.find(root) do |path|
+            next unless File.file?(path)
+            rel = path[root.length+1...path.length]
+            if rel
+              infos << ArtifactFileInfo.new(rel, path)
+            end
+          end
+        end
+      end
+    end
   end
 end

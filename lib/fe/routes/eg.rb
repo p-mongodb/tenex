@@ -110,16 +110,7 @@ Routes.included do
   get '/eg/:project/versions/:version/builds/:build/artifact-logs' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     artifact = build.detect_artifact!('mongodb-logs.tar.gz')
-    @files = []
-    artifact.extract_tarball do |root|
-      Find.find(root) do |path|
-        next unless File.file?(path)
-        rel = path[root.length+1...path.length]
-        if rel
-          @files << path[root.length+1...path.length]
-        end
-      end
-    end
+    @files = artifact.tarball_file_infos
 
     @project_id = project_id
     @version_id = version_id

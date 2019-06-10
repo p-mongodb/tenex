@@ -13,6 +13,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'travis'
 require 'taw'
+require 'action_view/helpers/number_helper'
 require 'fe/globals'
 require 'fe/config'
 
@@ -29,6 +30,7 @@ FileUtils.mkdir_p(ARTIFACTS_LOCAL_PATH)
 class App < Sinatra::Base
   include Globals
   include Env::Access
+  include ActionView::Helpers::NumberHelper
 
   configure :development do
     register Sinatra::Reloader
