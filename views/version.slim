@@ -45,7 +45,7 @@ table
           '
           a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/log" Log
           '
-          a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/mongod-log" Mongod Log
+          a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/artifact-logs" Server Logs
           - if task.failed? && build.artifact?('rspec.json')
             '
             a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{build.id}"
