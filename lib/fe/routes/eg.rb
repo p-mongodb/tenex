@@ -18,7 +18,7 @@ Routes.included do
   # eg projects list
   get '/eg' do
     @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
-    slim :projects
+    slim :eg_projects
   end
 
   # eg project
