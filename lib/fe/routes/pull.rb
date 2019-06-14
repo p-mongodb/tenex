@@ -319,7 +319,15 @@ Routes.included do
         false
       end
     end
-    slim :results
+    if @result.empty?
+      if params[:failed]
+        slim :no_failures
+      else
+        raise NotImplemented
+      end
+    else
+      slim :results
+    end
   end
 
   # aggregated results - jruby

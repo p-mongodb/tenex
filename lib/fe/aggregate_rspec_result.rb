@@ -142,4 +142,8 @@ class AggregateRspecResult
       item.join(' ')
     end.join(', ')
   end
+
+  def empty?
+    summary.empty?
+  end
 end
