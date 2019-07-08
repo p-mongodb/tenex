@@ -9,6 +9,10 @@ class ArtifactCache
   # fetched already. Returns full local path to the fetched artifact.
   def fetch_artifact(url)
     basename = File.basename(url)
+    if basename.length > 250
+      ext = basename.split('.').last
+      basename = Digest::MD5.new.update(basename).hexdigest + '.' + ext
+    end
     local_path = ARTIFACTS_LOCAL_PATH.join(basename)
     unless File.exist?(local_path)
       puts "Fetching #{url}"
