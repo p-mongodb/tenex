@@ -23,11 +23,13 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.4.0)
     ansi-to-html (0.0.3)
+    atlassian-jwt (0.2.0)
+      jwt (~> 2.1.0)
     backports (3.15.0)
     bson (4.5.0)
     builder (3.2.3)
     byebug (11.0.1)
-    childprocess (1.0.1)
+    childprocess (2.0.0)
       rake (< 13.0)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
@@ -59,11 +61,13 @@ GEM
     htmlentities (4.3.4)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
-    jira-ruby (1.6.0)
+    jira-ruby (1.7.0)
       activesupport
+      atlassian-jwt
       multipart-post
       oauth (~> 0.5, >= 0.5.0)
     json (2.2.0)
+    jwt (2.1.0)
     launchy (2.4.3)
       addressable (~> 2.3)
     link_header (0.0.8)
@@ -86,7 +90,7 @@ GEM
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
     oauth (0.5.4)
-    puma (4.0.0)
+    puma (4.0.1)
       nio4r (~> 2.0)
     pusher-client (0.6.2)
       json
