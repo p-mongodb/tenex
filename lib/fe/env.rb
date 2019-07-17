@@ -21,8 +21,11 @@ module Env
   module_function def jirra_client
     @jirra_client ||= begin
       options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
+        oauth_access_token: ENV['JIRA_ACCESS_TOKEN'],
+        oauth_access_token_secret: ENV['JIRA_ACCESS_TOKEN_SECRET'],
+        oauth_consumer_key: ENV['JIRA_CONSUMER_KEY'],
+        oauth_consumer_secret: ENV['JIRA_CONSUMER_SECRET'],
+        oauth_signature_method: 'RSA-SHA1',
         :site         => ENV['JIRA_SITE'],
       }
 

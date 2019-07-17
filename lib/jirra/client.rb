@@ -1,6 +1,7 @@
 autoload :JSON, 'json'
 require 'faraday'
 require 'faraday/detailed_logger'
+require 'oauthenticator'
 
 module Jirra
 
@@ -17,13 +18,32 @@ module Jirra
       attr_reader :status
     end
 
-    def initialize(username:, password:, site:)
+    def initialize(
+      site:,
+      username: nil, password: nil,
+      oauth_access_token: nil, oauth_access_token_secret: nil,
+      oauth_consumer_key: nil, oauth_consumer_secret: nil,
+      oauth_signature_method: nil
+    )
+      signing_options = {
+        signature_method: oauth_signature_method,
+        consumer_key: oauth_consumer_key,
+        consumer_secret: oauth_consumer_secret,
+        token: oauth_access_token,
+        token_secret: oauth_access_token_secret,
+        realm: site,
+      }
       @connection ||= Faraday.new("#{site}/rest/api/latest") do |f|
         f.request :url_encoded
         f.response :detailed_logger
+        if ENV['JIRA_ACCESS_TOKEN']
+          f.request :oauthenticator_signer, signing_options
+        end
         f.adapter Faraday.default_adapter
         f.headers['user-agent'] = 'EvergreenRubyClient'
-        f.basic_auth(username, password)
+        if username && password
+          f.basic_auth(username, password)
+        end
       end
     end
 
