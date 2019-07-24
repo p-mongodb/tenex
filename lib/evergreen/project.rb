@@ -45,5 +45,9 @@ module Evergreen
         Version.new(client, info['version_id'], info: info)
       end
     end
+
+    def update(attributes)
+      client.patch_json("projects/#{id}", attributes)
+    end
   end
 end
