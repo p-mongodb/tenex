@@ -94,6 +94,11 @@ module Evergreen
       end
     end
 
+    def project_by_id(id)
+      payload = get_json("projects/#{id}")
+      Project.new(self, payload['identifier'], info: payload)
+    end
+
     def project_for_github_repo(owner_name, repo_name)
       projects.each do |project|
         begin

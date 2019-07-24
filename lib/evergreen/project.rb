@@ -8,12 +8,20 @@ module Evergreen
 
     attr_reader :client, :id
 
+    def info
+      @info ||= client.get_json("projects/#{id}")
+    end
+
     def display_name
-      if @info['display_name'] && !@info['display_name'].empty?
-        @info['display_name']
+      if info['display_name'] && !@info['display_name'].empty?
+        info['display_name']
       else
-        @info['identifier']
+        info['identifier']
       end
+    end
+
+    def branch_name
+      info['branch_name']
     end
 
     def recent_patches
