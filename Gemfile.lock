@@ -34,7 +34,7 @@ GEM
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
     crass (1.0.4)
-    dotenv (2.7.4)
+    dotenv (2.7.5)
     erubi (1.8.0)
     et-orbi (1.2.1)
       tzinfo
