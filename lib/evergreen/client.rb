@@ -99,6 +99,11 @@ module Evergreen
       Project.new(self, payload['identifier'], info: payload)
     end
 
+    def version_by_id(id)
+      payload = get_json("versions/#{id}")
+      Version.new(self, payload['version_id'], info: payload)
+    end
+
     def project_for_github_repo(owner_name, repo_name)
       projects.each do |project|
         begin
@@ -113,6 +118,11 @@ module Evergreen
         end
       end
       nil
+    end
+
+    def patch_by_id(id)
+      payload = get_json("patches/#{id}")
+      Patch.new(self, payload['patch_id'], info: payload)
     end
 
     def distros

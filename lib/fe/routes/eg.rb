@@ -29,6 +29,12 @@ Routes.included do
     slim :patches
   end
 
+  get '/eg/:project/patches/:patch_id' do |project_id, patch_id|
+    patch = eg_client.patch_by_id(patch_id)
+    version = patch.version
+    redirect "/eg/#{project_id}/versions/#{version.id}"
+  end
+
   # eg version
   get '/eg/:project/versions/:version_id' do |project_id, version_id|
     @project_id = project_id

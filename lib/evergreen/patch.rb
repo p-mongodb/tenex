@@ -16,8 +16,15 @@ module Evergreen
       end
     end
 
-    def version
+    def version_id
       info['version']
+    end
+
+    def version
+      if version_id.nil?
+        raise ArgumentError, 'Cannot obtain version when version_id is nil'
+      end
+      client.version_by_id(version_id)
     end
 
     def authorize!
