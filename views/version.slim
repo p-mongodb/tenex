@@ -55,6 +55,10 @@ table
             a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
             '
             | (p=#{task.priority})
+          - if task.failed?
+            '
+            a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/restart"
+              i.fa.fa-repeat title='Restart'
         - else
           ul
             - build.tasks.each do |task|

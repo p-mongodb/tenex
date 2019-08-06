@@ -57,6 +57,13 @@ Routes.included do
     redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
   end
 
+  get '/eg/:project/versions/:version_id/tasks/:task_id/restart' do |project_id, version_id, task_id|
+    @task = Evergreen::Task.new(eg_client, task_id)
+    @task.restart
+
+    redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
+  end
+
   # eg version bump
   get '/eg/:project/versions/:version_id/bump' do |project_id, version_id|
     version = Evergreen::Version.new(eg_client, version_id)
