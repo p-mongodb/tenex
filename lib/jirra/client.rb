@@ -71,7 +71,11 @@ module Jirra
       unless [200, 201].include?(response.status)
         error = nil
         begin
-          error = JSON.parse(response.body)['error']
+          payload = JSON.parse(response.body)
+          error = payload['error']
+          if payload['errorMessages']
+            error ||= payload['errorMessages'].join(', ')
+          end
         rescue
         end
         msg = "Jira #{meth.to_s.upcase} #{url} failed: #{response.status}"
@@ -127,6 +131,15 @@ module Jirra
         subject = "Fix #{subject}"
       end
       subject
+    end
+
+    def jql(jql, options={})
+      url = "search?jql=#{CGI.escape(jql)}"
+      if options[:max_results]
+        url << "&maxResults=#{CGI.escape(options[:max_results].to_s)}"
+      end
+      payload = get_json(url)
+      payload['issues']
     end
   end
 end

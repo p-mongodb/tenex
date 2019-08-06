@@ -21,9 +21,12 @@ Routes.included do
     else
       extra_conds = ''
     end
-    @issues = JIRA::Resource::Issue.jql(jira_client, <<-jql, max_results: 500)
+    res = jirra_client.jql(<<-jql, max_results: 500)
       project=#{project_name} and fixversion=#{version} #{extra_conds} order by type, priority desc, key
 jql
+    @issues = res.map do |info|
+      OpenStruct.new(info)
+    end
     slim :fixed_issues
   end
 

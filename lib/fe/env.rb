@@ -7,14 +7,21 @@ module Env
   module_function def jira_client
     @jira_client ||= begin
       options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
         :site         => ENV['JIRA_SITE'],
+        signature_method: 'RSA-SHA1',
+        private_key_file: ENV['JIRA_CONSUMER_SECRET'],
+        consumer_key: ENV['JIRA_CONSUMER_KEY'],
+        consumer_secret: ENV['JIRA_CONSUMER_SECRET'],
         :context_path => '',
-        :auth_type    => :basic
+        :auth_type    => :oauth,
       }
 
-      JIRA::Client.new(options)
+      JIRA::Client.new(options).tap do |client|
+        client.set_access_token(
+          ENV['JIRA_ACCESS_TOKEN'],
+          ENV['JIRA_ACCESS_TOKEN_SECRET'],
+        )
+      end
     end
   end
 

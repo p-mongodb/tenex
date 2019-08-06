@@ -5,12 +5,12 @@ table
     tr
       td
         a href="https://jira.mongodb.org/browse/#{issue.key}"= issue.key
-      td= "[#{issue.issuetype.name}]"
-      td= issue.summary
+      td= "[#{issue.fields['issuetype']['name']}]"
+      td= issue.fields['summary']
 
 textarea rows='40' cols='100'
   - @issues.each do |issue|
-    = "- [#{issue.key} #{issue.summary}](https://jira.mongodb.org/browse/#{issue.key})\n"
+    = "- [#{issue.key} #{issue.fields['summary']}](https://jira.mongodb.org/browse/#{issue.key})\n"
 
 - if @excluded_versions
   p
