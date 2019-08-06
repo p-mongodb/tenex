@@ -52,6 +52,24 @@ module Evergreen
       end
     end
 
+    {
+      created_at: 'create_time',
+      ingested_at: 'ingest_time',
+      scheduled_at: 'scheduled_time',
+      dispatched_at: 'dispatch_time',
+      started_at: 'start_time',
+      finished_at: 'finish_time',
+    }.each do |m, key|
+      define_method(m) do
+        v = info[key]
+        if v
+          Time.parse(v)
+        else
+          nil
+        end
+      end
+    end
+
     def waiting?
       %w(undispatched).include?(status)
     end
