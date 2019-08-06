@@ -90,7 +90,9 @@ class App < Sinatra::Base
   end
 
   private def return_path
-    URI.parse(request.env['HTTP_REFERER']).path
+    if request.env['HTTP_REFERER']
+      URI.parse(request.env['HTTP_REFERER']).path
+    end
   end
 
   private def distros_with_cache

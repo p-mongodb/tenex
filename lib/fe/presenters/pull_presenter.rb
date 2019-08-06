@@ -191,4 +191,15 @@ class PullPresenter
     version = EgVersion.find(top_evergreen_status.evergreen_version_id)
     AggregateRspecResult.new(version.rspec_json_urls, &block)
   end
+
+  def patch
+    if @patch.nil?
+      @patch = Patch.where(gh_pull_id: pull.number,
+        repo_id: @repo.id, head_sha: pull.head_sha).first
+      if @patch.nil?
+        @patch = false
+      end
+    end
+    @patch || nil
+  end
 end

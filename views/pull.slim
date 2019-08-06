@@ -31,6 +31,9 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle-jira" Retitle from Jira
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/submit-patch" Submit as EG patch
+  - if @pull.patch
+    '
+    a href="/eg/#{@pull.patch.eg_project_id}/patches/#{@pull.patch.id}" EG patch build
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-perf" EG Perf
   '

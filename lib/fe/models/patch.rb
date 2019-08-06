@@ -7,6 +7,7 @@ class Patch
   field :created_at, type: Time
   field :eg_project_id, type: String
   field :gh_pull_id, type: Integer
+  field :eg_submission_result, type: Hash
 
   belongs_to :repo
 end

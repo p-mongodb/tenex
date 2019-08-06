@@ -300,6 +300,7 @@ Routes.included do
       eg_project_id: repo.evergreen_project_id,
       repo_id: repo.id,
       head_sha: @pull.head_sha,
+      eg_submission_result: rv,
     )
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
