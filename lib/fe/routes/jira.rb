@@ -27,6 +27,22 @@ jql
     @issues = res.map do |info|
       OpenStruct.new(info)
     end
+    @issues.sort_by! do |issue|
+      case issue.fields['issuetype']['name']
+      when 'Epic'
+        1
+      when 'New Feature'
+        2
+      when 'Improvement'
+        3
+      when 'Task'
+        4
+      when 'Bug'
+        5
+      else
+        10
+      end
+    end
     slim :fixed_issues
   end
 
