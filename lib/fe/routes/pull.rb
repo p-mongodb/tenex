@@ -292,7 +292,15 @@ Routes.included do
 
     patch_id = rv['patch']['Id']
 
-    # TODO record patch internally and link it to the PR
+    patch = Patch.create!(
+      id: patch_id,
+      head_branch_name: @pull.head_branch_name,
+      base_branch_name: @pull.base_branch_name,
+      gh_pull_id: pull_id,
+      eg_project_id: repo.evergreen_project_id,
+      repo_id: repo.id,
+      head_sha: @pull.head_sha,
+    )
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
