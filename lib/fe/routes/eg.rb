@@ -147,7 +147,13 @@ Routes.included do
     end
     @raw_artifact_url = url = artifact.url
     local_path = ArtifactCache.instance.fetch_artifact(url)
-    @result = RspecResult.new(url, File.open(local_path).read)
+    content = File.read(local_path)
+    if content.empty?
+      # Happens sometimes
+      redirect "/eg/#{project_id}/versions/#{version_id}/evergreen-log/#{build_id}"
+      return
+    end
+    @result = RspecResult.new(url, content)
 
     @branch_name = params[:branch]
     slim :results

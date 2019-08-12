@@ -1,6 +1,15 @@
 class RspecResult
+  class EmptyContent < ArgumentError
+  end
+
   def initialize(url, content)
     @url = url
+    if content.nil?
+      raise EmptyContent, 'Content is nil'
+    end
+    if content.empty?
+      raise EmptyContent, 'Content is an empty string'
+    end
     @payload = JSON.parse(content)
   end
 
