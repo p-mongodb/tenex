@@ -31,15 +31,7 @@
 
       - if failure[:sdam_log_entries] && !failure[:sdam_log_entries].empty?
         p SDAM log:
-        pre
-          - if failure[:started_at]
-            ' #{failure[:started_at]} | &lt;started&gt;
-            = "\n"
-          - failure[:sdam_log_entries].each do |entry|
-            = entry + "\n"
-          - if failure[:finished_at]
-            ' #{failure[:finished_at]} | &lt;finished&gt;
-            = "\n"
+        = sdam_log_entries(failure)
 
 - if @result.summary[:errors_outside_of_examples_count] > 0
   h2 #{@result.summary[:errors_outside_of_examples_count]} errors outside of examples
@@ -60,16 +52,7 @@ ul
   - @result.slowest_examples[0..19].each do |result|
     li
       | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
-      - if result[:sdam_log_entries] && !result[:sdam_log_entries].empty?
-        pre
-          - if result[:started_at]
-            ' #{result[:started_at]} | &lt;started&gt;
-            = "\n"
-          - result[:sdam_log_entries].each do |entry|
-            = entry + "\n"
-          - if result[:finished_at]
-            ' #{result[:finished_at]} | &lt;finished&gt;
-            = "\n"
+      = sdam_log_entries(result)
 
 - if @result.respond_to?(:always_skipped_examples) && (results = @result.always_skipped_examples) && !results.empty?
   h2 Always skipped

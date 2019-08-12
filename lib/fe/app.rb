@@ -16,6 +16,7 @@ require 'taw'
 require 'action_view/helpers/number_helper'
 require 'fe/globals'
 require 'fe/config'
+require 'fe/formatting_helpers'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -31,6 +32,7 @@ class App < Sinatra::Base
   include Globals
   include Env::Access
   include ActionView::Helpers::NumberHelper
+  include FormattingHelpers
 
   configure :development do
     register Sinatra::Reloader
