@@ -17,7 +17,13 @@ Routes.included do
 
   # eg projects list
   get '/eg' do
-    @projects = eg_client.projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
+    projects = eg_client.projects
+    if params[:filter] == 'ruby'
+      projects.select! do |project|
+        project.id =~ /ruby|mongoid/i
+      end
+    end
+    @projects = projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
     slim :eg_projects
   end
 
