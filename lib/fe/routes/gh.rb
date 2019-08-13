@@ -78,7 +78,9 @@ Routes.included do
       name.sub(/^origin\//, '')
     end.compact.reject do |name|
       %w(master HEAD).include?(name)
-    end.sort
+    end.sort_by do |branch_name|
+      branch_name.sub(/-.*/, '').split('.').map { |c| c.to_i }
+    end.reverse
     slim :upstream_branches
   end
 
