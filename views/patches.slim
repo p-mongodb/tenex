@@ -4,7 +4,7 @@ ul
   - @patches.each do |patch|
     li
       - if patch.version
-        a href="/eg/#{@project.id}/versions/#{patch.version}"
+        a href="/eg/#{@project.id}/versions/#{patch.version.id}"
           = patch.description
       - else
         ' Patch without a version
