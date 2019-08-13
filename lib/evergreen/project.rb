@@ -49,5 +49,11 @@ module Evergreen
     def update(attributes)
       client.patch_json("projects/#{id}", attributes)
     end
+
+    def admin_usernames
+      # Sometimes admins is an array, sometimes it is null.
+      # https://jira.mongodb.org/browse/EVG-6598
+      info['admins'] || []
+    end
   end
 end

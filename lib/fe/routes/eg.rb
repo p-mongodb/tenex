@@ -20,7 +20,8 @@ Routes.included do
     projects = eg_client.projects
     if params[:filter] == 'ruby'
       projects.select! do |project|
-        project.id =~ /ruby|mongoid/i
+        project.admin_usernames.include?(ENV['EVERGREEN_AUTH_USERNAME']) &&
+          project.id =~ /ruby|mongoid/i
       end
     end
     @projects = projects.map { |project| ProjectPresenter.new(project, eg_client) }.sort_by { |project| project.display_name.downcase }
