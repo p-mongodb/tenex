@@ -1,0 +1,6 @@
+ul
+  - @branches.each do |branch_name|
+    li
+      = branch_name
+      '
+      a href="/repos/#{@repo.full_name}/branches/#{branch_name}/submit-patch" Submit as EG patch

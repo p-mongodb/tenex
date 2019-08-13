@@ -9,7 +9,7 @@ module FormattingHelpers
         str << "#{h(entry)}\n"
       end
       if result[:finished_at]
-        str << " #{h(result[:finished_at])} | &lt;finished&gt;\n"
+        str << "#{h(result[:finished_at])} | &lt;finished&gt;\n"
       end
       str << '</pre>'
       str.html_safe

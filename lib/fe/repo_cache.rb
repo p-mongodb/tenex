@@ -228,23 +228,27 @@ CMD
     end
   end
 
-  def recent_branches(limit, extra=nil)
+  def branches(extra=nil)
     Dir.chdir(cached_repo_path) do
       output = ChildProcessHelper.check_output(['sh', '-c', <<-CMD])
-        git branch --sort=-committerdate #{extra}
+        git branch #{extra}
 CMD
       branches = output.split("\n").map do |branch|
         if branch =~ /\s+master$/
           nil
         else
-          branch.strip
+          branch.strip.sub(/ .*/, '')
         end
       end.compact
     end
   end
 
+  def recent_branches(extra=nil)
+    branches("--sort=-committerdate #{extra}")
+  end
+
   def recent_remote_branches(limit)
-    branches = recent_branches(limit, '-r')
+    branches = branches('-r')
     branches.map do |branch|
       if branch =~ %r,^p/,
         branch.sub(%r,^p/,, '')
@@ -252,5 +256,11 @@ CMD
         nil
       end
     end.compact
+  end
+
+  def remote_branches
+    branches('-r').map do |name|
+      name.sub(/.+?\//, '')
+    end
   end
 end

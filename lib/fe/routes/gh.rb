@@ -64,7 +64,21 @@ Routes.included do
     rc = RepoCache.new('p-mongo', @repo.repo_name)
     rc.update_cache
     @branches = rc.recent_remote_branches(10)
-    slim :branches
+    slim :recent_branches
+  end
+
+  get '/repos/:org/:repo/upstream-branches' do |org_name, repo_name|
+    @repo = system.hit_repo(org_name, repo_name)
+    rc = RepoCache.new('mongodb', @repo.repo_name)
+    rc.update_cache
+    @branches = rc.branches('-r').select do |name|
+      name =~ /^origin\//
+    end.map do |name|
+      name.sub(/^origin\//, '')
+    end.compact.reject do |name|
+      %w(master HEAD).include?(name)
+    end.sort
+    slim :upstream_branches
   end
 
   get '/repos/:org/:repo/branches/:branch/make-pr' do |org_name, repo_name, branch_name|
