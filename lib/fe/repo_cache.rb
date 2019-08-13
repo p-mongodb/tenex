@@ -144,7 +144,7 @@ class RepoCache
   def diff_to_master(head)
     output = Dir.chdir(cached_repo_path) do
       ChildProcessHelper.check_output(%W(
-        git diff master #{head}
+        git diff master..#{head}
       ))
     end
   end

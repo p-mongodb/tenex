@@ -1,4 +1,5 @@
 autoload :TicketedPrMaker, 'fe/pr_maker'
+require 'fe/models/patch'
 
 Routes.included do
 
@@ -89,5 +90,41 @@ Routes.included do
       raise NotImplemented
     end
     redirect "/repos/#{@repo.full_name}/pulls/#{pr_num}"
+  end
+
+  get '/repos/:org/:repo/branches/:branch/submit-patch' do |org_name, repo_name, branch_name|
+    @repo = system.hit_repo(org_name, repo_name)
+    branch_owner_name, branch_name = branch_name.split(':')
+    rc = RepoCache.new('mongodb', @repo.repo_name)
+    rc.update_cache
+    rc.add_remote(branch_owner_name, repo_name)
+    Dir.chdir(rc.cached_repo_path) do
+      diff = rc.diff_to_master("#{branch_owner_name}/#{branch_name}")
+
+      rv = eg_client.create_patch(
+        project_id: @repo.evergreen_project_id,
+        diff_text: diff,
+        base_sha: rc.master_sha,
+        description: "Branch: #{branch_owner_name}:#{branch_name}",
+        variant_ids: ['all'],
+        task_ids: ['all'],
+        finalize: true,
+      )
+
+      patch_id = rv['patch']['Id']
+
+      patch = Patch.create!(
+        id: patch_id,
+        head_branch_name: branch_name,
+        base_branch_name: 'master',
+        eg_project_id: @repo.evergreen_project_id,
+        repo_id: @repo.id,
+        # TODO fill in
+        head_sha: nil,
+        eg_submission_result: rv,
+      )
+    end
+
+    redirect "/repos/#{@repo.full_name}/upstream-branches"
   end
 end
