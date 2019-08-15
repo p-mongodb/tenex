@@ -82,6 +82,8 @@ Routes.included do
         if compressor = meta_for_label.delete('compressor')
           short_label << compressor[0].upcase
         end
+        # We do not currently run the same test on multiple OSes
+        meta_for_label.delete('os')
         if meta_for_label.empty?
           if short_label.empty?
             short_label = '*'
