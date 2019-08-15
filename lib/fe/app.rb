@@ -68,14 +68,15 @@ class App < Sinatra::Base
         log = lines.join("\n")
         break
       end
+      if line =~ /\[.*?\] curl: (\d+) Recv failure:/
+        @mo_curl_failure = line
+      end
     end
-    style = %q,
-      pre { overflow: initial; }
-    ,
-    log.sub!(/<\/head>/, "<style>#{style}</style><title>#{title}</title></head>")
-    inject = %Q,<p style='margin:1em;font-size:150%'><a href="#{log_url}">Log @ Evergreen</a></p>,
-    log.sub!(/<body(.*?)>/, "<body\\1>#{inject}")
-    log
+    @title = title
+    log.sub!(/.*?<body(.*?)>(.*)<\/body>.*/m, '\2')
+    @html_log = log.html_safe
+    @eg_log_url = log_url
+    slim :eg_log
   end
 
   private def do_bump(version, priority)

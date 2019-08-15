@@ -9,7 +9,9 @@ html
         .status-table .pending { background: #ffc; }
         html, body { height: 100%; }
   title
-    - if @branch_name
+    - if @title
+      = @title
+    - elsif @branch_name
       | [#{@branch_name}]
 
   body
