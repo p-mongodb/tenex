@@ -86,7 +86,7 @@ p
               td= mongodb_version
               td= topology
               td= auth
-              - @ruby_versions.each do |ruby_version|
+              - @category_values['ruby'].each do |ruby_version|
                 td
                   - statuses = map2[ruby_version]
                   - if statuses
