@@ -68,8 +68,8 @@ class App < Sinatra::Base
         log = lines.join("\n")
         break
       end
-      if line =~ /\[.*?\] curl: (\d+) Recv failure:/
-        @mo_curl_failure = line
+      if line =~ /\[.*?\] curl: \(\d+\) Recv failure:/
+        @mo_curl_failure = line.html_safe
       end
     end
     @title = title

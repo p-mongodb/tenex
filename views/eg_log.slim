@@ -5,6 +5,11 @@ css:
   .severity-W { color: #ea9b09; }
   .severity-E { color: red; }
 
+- if @mo_curl_failure
+  p
+    ' mongo-orchestration curl failure:
+    pre= @mo_curl_failure
+
 p style='margin:1em;font-size:150%'
   a href="#{@eg_log_url}"
     | Log @ Evergreen
