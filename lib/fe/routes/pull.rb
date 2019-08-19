@@ -183,7 +183,7 @@ Routes.included do
   get '/repos/:org/:repo/pulls/:id/restart/:build_id' do |org_name, repo_name, pull_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     build.restart
-    redirect "/pulls/#{pull_id}"
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
   get '/repos/:org/:repo/pulls/:id/restart-failed' do |org_name, repo_name, pull_id|
@@ -210,7 +210,7 @@ Routes.included do
       return 'Could not find anything to restart'
     end
 
-    redirect return_path || "/pulls/#{pull_id}"
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
   get '/repos/:org/:repo/pulls/:id/restart-all' do |org_name, repo_name, pull_id|
@@ -228,7 +228,7 @@ Routes.included do
       return 'Could not find anything to restart'
     end
 
-    redirect return_path || "/pulls/#{pull_id}"
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
   get '/repos/:org/:repo/pulls/:id/request-review' do |org_name, repo_name, pull_id|
