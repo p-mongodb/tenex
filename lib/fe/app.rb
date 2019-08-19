@@ -71,6 +71,14 @@ class App < Sinatra::Base
       if line =~ /\[.*?\] curl: \(\d+\) Recv failure:/
         @mo_curl_failure = line.html_safe
       end
+      if line =~ /Unfortunately, an unexpected error occurred, and Bundler cannot continue./
+        @bundler_failure = 'Could not locate the failure in the log'
+        lines.each_with_index do |l, i|
+          if l =~ %r,https://github.com/bundler/bundler/issues/new,
+            @bundler_failure = lines[i+1].html_safe
+          end
+        end
+      end
     end
     @title = title
     log.sub!(/.*?<body(.*?)>(.*)<\/body>.*/m, '\2')
