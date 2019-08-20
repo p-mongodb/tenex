@@ -79,5 +79,9 @@ table
                   a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
                   '
                   | (p=#{task.priority})
+      td
+        - if build.tasks.length == 1
+          - task = build.tasks.first
+          = short_task_runtime(task)
 
 p Created: #{Taw.time_ago_in_words(@version.created_at, approx: 2)} ago

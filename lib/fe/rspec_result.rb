@@ -18,6 +18,9 @@ class RspecResult
   end
 
   def summary
+    if @payload.keys == %w(version)
+      raise 'Result file has only version in it, something went terribly wrong'
+    end
     @summary ||= {}.tap do |summary|
       @payload['summary'].each do |k, v|
         summary[k.to_sym] = v

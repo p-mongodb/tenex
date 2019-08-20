@@ -17,11 +17,4 @@ table.status-table
             a href=task.results_url
               | Results
         td
-          - if task.completed?
-            = Taw.time_ago_in_words(Time.now - task.time_taken, approx: 2)
-          - elsif task.started_at
-            ' Running for
-            = Taw.time_ago_in_words(task.started_at, approx: 2)
-          - else
-            ' Waiting for
-            = Taw.time_ago_in_words(task.created_at, approx: 2)
+          = task_runtime(task)
