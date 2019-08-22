@@ -14,7 +14,7 @@ class EvergreenTaskPresenter
     :task_log_url, :time_taken, :completed?, :started_at, :created_at
 
   def configuration_id
-    id.sub(/_tests?_patch_.*/, '').sub(/^.*__/, '')
+    id.sub(/_test(|s|_mlaunch)_patch_.*/, '').sub(/^.*__/, '')
   end
 
   def description
