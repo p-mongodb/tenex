@@ -49,7 +49,7 @@ p
     a href="https://jira.mongodb.org/browse/#{@pull.jira_issue_key!}" Jira
 
 p
-  - if eg_status = @pull.top_evergreen_status
+  - if (eg_status = @pull.top_evergreen_status) && @pull.evergreen_version_id
     a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}" Evergreen build
     '
     - if str = eg_status.build_count_str
