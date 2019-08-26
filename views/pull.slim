@@ -47,6 +47,8 @@ p
   - if @pull.jira_ticket_number
     '
     a href="https://jira.mongodb.org/browse/#{@pull.jira_issue_key!}" Jira
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-validate" Validate EG config
 
 p
   - if (eg_status = @pull.top_evergreen_status) && @pull.evergreen_version_id

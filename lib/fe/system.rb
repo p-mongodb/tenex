@@ -1,4 +1,6 @@
 class System
+  EVERGREEN_BINARY_URL = 'https://evergreen.mongodb.com/clients/linux_amd64/evergreen'
+
   def initialize(eg_client, gh_client)
     @eg_client, @gh_client = eg_client, gh_client
   end
@@ -39,5 +41,36 @@ class System
     repo.hit_count = RepoHit.where(repo: repo).count
     repo.save!
     repo
+  end
+
+  def evergreen_binary_path
+    @evergreen_binary_path ||= begin
+      found_path = nil
+      ENV['PATH'].split(':').each do |dir|
+        if File.executable?(path = File.join(dir, 'evergreen'))
+          found_path = path
+          break
+        end
+      end
+      if found_path.nil? && File.exist?(local_evergreen_binary_path)
+        found_path = local_evergreen_binary_path
+      end
+      found_path
+    end
+  end
+
+  def local_evergreen_binary_path
+    File.join(File.dirname(__FILE__), '../../tmp/evergreen')
+  end
+
+  def fetch_evergreen_binary_if_needed
+    if evergreen_binary_path.nil?
+      FileUtils.mkdir_p(File.dirname(local_evergreen_binary_path))
+      contents = open(EVERGREEN_BINARY_URL).read
+      File.open(local_evergreen_binary_path + '.part', 'w') do |f|
+        f << contents
+      end
+      FileUtils.mv(local_evergreen_binary_path + '.part', local_evergreen_binary_path)
+    end
   end
 end

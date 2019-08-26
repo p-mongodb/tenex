@@ -376,4 +376,9 @@ Routes.included do
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
+
+  get '/repos/:org/:repo/pulls/:id/eg-validate' do |org_name, repo_name, pull_id|
+    system.fetch_evergreen_binary_if_needed
+    system.evergreen_binary_path
+  end
 end
