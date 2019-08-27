@@ -84,13 +84,13 @@ class System
   def create_global_evergreen_config_if_needed
     unless File.exists?(evergreen_global_config_path)
       config = {
-        api_server_host: 'https://evergreen.mongodb.com/api',
-        ui_server_host: 'https://evergreen.mongodb.com',
-        api_key: ENV['EVERGREEN_API_KEY'],
-        user: ENV['EVERGREEN_AUTH_USERNAME'],
+        'api_server_host' => 'https://evergreen.mongodb.com/api',
+        'ui_server_host' => 'https://evergreen.mongodb.com',
+        'api_key' => ENV['EVERGREEN_API_KEY'],
+        'user' => ENV['EVERGREEN_AUTH_USERNAME'],
       }
       FileUtils.mkdir_p(File.dirname(evergreen_global_config_path))
-      File.new("#{evergreen_global_config_path}.part", 'w') do |f|
+      File.open("#{evergreen_global_config_path}.part", 'w') do |f|
         f << YAML.dump(config)
       end
       FileUtils.mv("#{evergreen_global_config_path}.part", evergreen_global_config_path)
