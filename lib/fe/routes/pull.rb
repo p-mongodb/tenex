@@ -419,6 +419,9 @@ Routes.included do
       if proc.exit_code != 0
         summary.status = 'failed'
         summary.evergreen_error = output
+      elsif output == ''
+        summary.status = 'failed'
+        summary.evergreen_error = "Evergreen tool validation produced no output (but exited successfully). This generally indicates a bug in the tool (EVG-6417)."
       end
 
       summaries[File.basename(project_eg_config_path)] = summary
