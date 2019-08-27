@@ -398,7 +398,7 @@ Routes.included do
     paths = Dir[rc.cached_repo_path.join('.evergreen', '*.yml')]
     paths += Dir[rc.cached_repo_path.join('.evergreen', '.*.yml')]
     paths.sort.each do |project_eg_config_path = rc.cached_repo_path|
-      summary = OpenStruct.new
+      summary = OpenStruct.new(status: 'ok')
 
       # Since evergreen tool provides wrong line numbers
       # (https://jira.mongodb.org/browse/EVG-6413), using its validator
