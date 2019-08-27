@@ -1,5 +1,8 @@
+require 'pathname'
+
 class System
   EVERGREEN_BINARY_URL = 'https://evergreen.mongodb.com/clients/linux_amd64/evergreen'
+  TMP_DIR = Pathname.new(File.join(File.dirname(__FILE__), '../../tmp'))
 
   def initialize(eg_client, gh_client)
     @eg_client, @gh_client = eg_client, gh_client
@@ -60,7 +63,7 @@ class System
   end
 
   def local_evergreen_binary_path
-    File.join(File.dirname(__FILE__), '../../tmp/evergreen')
+    TMP_DIR.join('evergreen')
   end
 
   def fetch_evergreen_binary_if_needed
@@ -71,6 +74,26 @@ class System
         f << contents
       end
       FileUtils.mv(local_evergreen_binary_path + '.part', local_evergreen_binary_path)
+    end
+  end
+
+  def evergreen_global_config_path
+    TMP_DIR.join('evergreen.yml')
+  end
+
+  def create_global_evergreen_config_if_needed
+    unless File.exists?(evergreen_global_config_path)
+      config = {
+        api_server_host: 'https://evergreen.mongodb.com/api',
+        ui_server_host: 'https://evergreen.mongodb.com',
+        api_key: ENV['EVERGREEN_API_KEY'],
+        user: ENV['EVERGREEN_AUTH_USERNAME'],
+      }
+      FileUtils.mkdir_p(File.dirname(evergreen_global_config_path))
+      File.new("#{evergreen_global_config_path}.part", 'w') do |f|
+        f << YAML.dump(config)
+      end
+      FileUtils.mv("#{evergreen_global_config_path}.part", evergreen_global_config_path)
     end
   end
 end

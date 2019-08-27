@@ -263,4 +263,12 @@ CMD
       name.sub(/.+?\//, '')
     end
   end
+
+  def checkout(commitish)
+    Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
+        git checkout #{commitish}
+CMD
+    end
+  end
 end

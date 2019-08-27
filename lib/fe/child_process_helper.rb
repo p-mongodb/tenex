@@ -25,7 +25,7 @@ module ChildProcessHelper
     end
   end
 
-  module_function def check_output(cmd, env: nil, cwd: nil)
+  module_function def get_output(cmd, env: nil, cwd: nil)
     process = ChildProcess.new(*cmd)
     process.io.inherit!
     process.io.stdout = Tempfile.new("child-output")
@@ -39,10 +39,15 @@ module ChildProcessHelper
     end
     process.start
     process.wait
+    process.io.stdout.rewind
+    [process, process.io.stdout.read]
+  end
+
+  module_function def check_output(*args)
+    process, output = get_output(*args)
     unless process.exit_code == 0
       raise "Failed to execute: #{cmd}"
     end
-    process.io.stdout.rewind
-    process.io.stdout.read
+    output
   end
 end

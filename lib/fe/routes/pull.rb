@@ -378,7 +378,53 @@ Routes.included do
   end
 
   get '/repos/:org/:repo/pulls/:id/eg-validate' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+
     system.fetch_evergreen_binary_if_needed
-    system.evergreen_binary_path
+    system.create_global_evergreen_config_if_needed
+
+    eg_path = system.evergreen_binary_path
+    unless eg_path
+      raise 'No evergreen binary path'
+    end
+
+    rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
+    rc.update_cache
+    rc.add_remote(@pull.head_owner_name, @pull.head_repo_name)
+    rc.checkout("#{@pull.head_owner_name}/#{@pull.head_branch_name}")
+
+    summaries = {}
+
+    paths = Dir[rc.cached_repo_path.join('.evergreen', '*.yml')]
+    paths += Dir[rc.cached_repo_path.join('.evergreen', '.*.yml')]
+    paths.sort.each do |project_eg_config_path = rc.cached_repo_path|
+      summary = OpenStruct.new
+
+      # Since evergreen tool provides wrong line numbers
+      # (https://jira.mongodb.org/browse/EVG-6413), using its validator
+      # is often a frustrating experience. YAML validators seem to in
+      # general have poor error reporting (https://jira.mongodb.org/browse/EVG-6657),
+      # but at least Ruby's one reports the line numbers properly which is
+      # often all that is needed to close in on the problem.
+      begin
+        YAML.load(File.read(project_eg_config_path))
+      rescue Psych::SyntaxError => e
+        summary.status = 'failed'
+        summary.ruby_error = "#{e.class}: #{e}"
+      end
+
+      cmd = [eg_path, '-c', system.evergreen_global_config_path.to_s,
+        'validate', project_eg_config_path.to_s]
+      proc, output = ChildProcessHelper.get_output(cmd)
+      if proc.exit_code != 0
+        summary.status = 'failed'
+        summary.evergreen_error = output
+      end
+
+      summaries[File.basename(project_eg_config_path)] = summary
+    end
+
+    @summaries = summaries
+    slim :eg_validate
   end
 end

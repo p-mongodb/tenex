@@ -1,0 +1,15 @@
+h1 Evergreen project file validation
+
+- @summaries.each do |basename, summary|
+  div
+    p
+      strong= basename
+    - if summary.status == 'ok'
+      p OK
+    - else
+      p Failed
+      
+    div
+      = summary.ruby_error
+      = summary.evergreen_error
+
