@@ -246,7 +246,7 @@ Routes.included do
         globalId: "#{pull_p.jira_issue_key!}-pr-#{pull_id}",
         object: {
           url: pr_url,
-          title: "Fix - PR ##{pull_id}",
+          title: "PR ##{pull_id}: #{@pull.title}",
           icon: {"url16x16":"https://github.com/favicon.ico"},
           status: {
             icon: {},
