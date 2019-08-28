@@ -3,7 +3,7 @@ h3 Patches
 ul
   - @patches.each do |patch|
     li
-      - if patch.version
+      - if patch.version_id
         a href="/eg/#{@project.id}/versions/#{patch.version.id}"
           = patch.description
       - else

@@ -17,12 +17,16 @@ module Evergreen
     end
 
     def version_id
-      info['version']
+      version_id = info['version']
+      if version_id == ''
+        version_id = nil
+      end
+      version_id
     end
 
     def version
       if version_id.nil?
-        raise ArgumentError, 'Cannot obtain version when version_id is nil'
+        raise ArgumentError, "Cannot obtain version when version_id is nil (for patch #{id})"
       end
       client.version_by_id(version_id)
     end
