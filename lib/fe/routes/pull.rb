@@ -235,7 +235,7 @@ Routes.included do
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @repo = system.hit_repo(org_name, repo_name)
     @pull.update(draft: false)
-    @statuses = @pull.request_review(ENV['PR_REVIEWERS'].split(','))
+    @statuses = @pull.request_review(*ENV['PR_REVIEWERS'].split(','))
 
     pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
     jira_ticket = pull_p.jira_ticket_number

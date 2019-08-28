@@ -54,7 +54,8 @@ module Github
       if response.status != 200 && response.status != 201
         error = nil
         begin
-          error = JSON.parse(response.body)['error']
+          payload = JSON.parse(response.body)
+          error = payload['error'] || payload['message']
         rescue
         end
         msg = "Github #{meth.to_s.upcase} #{url} failed: #{response.status}"
