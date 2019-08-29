@@ -72,7 +72,7 @@ Routes.included do
     @repo = system.hit_repo(org_name, repo_name)
     rc = RepoCache.new('mongodb', @repo.repo_name)
     rc.update_cache
-    @branches = rc.branches('-r').select do |name|
+    branches = rc.branches('-r').select do |name|
       name =~ /^origin\//
     end.map do |name|
       name.sub(/^origin\//, '')
@@ -81,6 +81,9 @@ Routes.included do
     end.sort_by do |branch_name|
       branch_name.sub(/-.*/, '').split('.').map { |c| c.to_i }
     end.reverse
+    @branches = branches.map do |branch_name|
+      BranchPresenter.new(name: branch_name, repo: @repo)
+    end
     slim :upstream_branches
   end
 

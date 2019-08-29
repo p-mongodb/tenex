@@ -1,7 +1,7 @@
 ul
-  - @branches.each do |branch_name|
+  - @branches.each do |branch|
     li
-      a href="https://github.com/#{@repo.full_name}/tree/#{branch_name}"
-        = branch_name
+      a href=branch.html_url
+        = branch.name
       '
-      a href="/repos/#{@repo.full_name}/branches/mongodb:#{branch_name}/submit-patch" Submit as EG patch
+      a href="/repos/#{@repo.full_name}/branches/mongodb:#{branch.name}/submit-patch" Submit as EG patch
