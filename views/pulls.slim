@@ -1,3 +1,15 @@
+p
+  a href="/repos/#{@repo.full_name}/recent-branches" Recent branches
+  '
+  a href="/repos/#{@repo.full_name}/upstream-branches" Upstream branches
+  - if @repo.evergreen_project_id
+    '
+    ' Evergreen project:
+    a href="/eg/#{@repo.evergreen_project_id}"
+      = @repo.evergreen_project_id
+  '
+  a href="/repos/#{@repo.full_name}/settings" Settings
+
 - @pulls.each do |pull|
   h2
     a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}" ##{pull['number']}: #{pull['title']}
@@ -27,10 +39,3 @@
     - elsif pull.review_requested?
       '
       span Review requested.
-
-p
-  a href="/repos/#{@repo.full_name}/recent-branches" Recent branches
-  '
-  a href="/repos/#{@repo.full_name}/upstream-branches" Upstream branches
-  '
-  a href="/repos/#{@repo.full_name}/settings" Settings
