@@ -61,10 +61,14 @@ class RepoCache
   end
 
   def master_sha
+    commitish_sha('master')
+  end
+
+  def commitish_sha(commitish)
     update_cache
 
     Dir.chdir(cached_repo_path) do
-      output = ChildProcessHelper.check_output(%w(git show --pretty=oneline))
+      output = ChildProcessHelper.check_output(%w(git show --pretty=oneline) + [commitish])
       output.strip.split(/\s/, 2).first
     end
   end

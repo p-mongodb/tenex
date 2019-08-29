@@ -46,7 +46,7 @@ module ChildProcessHelper
   module_function def check_output(*args)
     process, output = get_output(*args)
     unless process.exit_code == 0
-      raise "Failed to execute: #{cmd}"
+      raise "Failed to execute: #{args}"
     end
     output
   end

@@ -102,6 +102,7 @@ Routes.included do
     rc.add_remote(branch_owner_name, repo_name)
     Dir.chdir(rc.cached_repo_path) do
       diff = rc.diff_to_master("#{branch_owner_name}/#{branch_name}")
+      head_sha = rc.commitish_sha("#{branch_owner_name}/#{branch_name}")
 
       rv = eg_client.create_patch(
         project_id: @repo.evergreen_project_id,
@@ -121,8 +122,7 @@ Routes.included do
         base_branch_name: 'master',
         eg_project_id: @repo.evergreen_project_id,
         repo_id: @repo.id,
-        # TODO fill in
-        head_sha: nil,
+        head_sha: head_sha,
         eg_submission_result: rv,
       )
     end
