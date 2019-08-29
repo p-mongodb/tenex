@@ -5,3 +5,6 @@ ul
         = branch.name
       '
       a href="/repos/#{@repo.full_name}/branches/mongodb:#{branch.name}/submit-patch" Submit as EG patch
+      - if branch.eg_patch
+        '
+        a href="/eg/#{branch.eg_patch.eg_project_id}/patches/#{branch.eg_patch.id}" EG patch build

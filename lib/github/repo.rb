@@ -43,5 +43,10 @@ module Github
         end
       end
     end
+
+    def upstream?
+      # Slight hack
+      owner_name == 'mongodb'
+    end
   end
 end
