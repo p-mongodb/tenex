@@ -34,7 +34,9 @@ Routes.included do
             meta[key] = value
           end
         end
-        if label =~ /enterprise-auth-tests-ubuntu/
+        if label =~ /kerberos-tests/
+          meta['kerberos'] = true
+        elsif label =~ /enterprise-auth-tests-ubuntu/
           meta['mongodb-version'] = 'EA'
           meta['topology'] = 'ubuntu'
         elsif label =~ /enterprise-auth-tests-rhel/
@@ -63,6 +65,9 @@ Routes.included do
         short_label = ''
         if meta_for_label.delete('as')
           short_label << 'AS'
+        end
+        if meta_for_label.delete('kerberos')
+          short_label << 'K'
         end
         if meta_for_label.delete('lint')
           short_label << 'L'
