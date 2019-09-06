@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(__FILE__), '../lib')
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'fe/boot'
+require 'fe/env'
+
+files = {}
+ARGV.each do |path|
+  files[path.gsub('/', '?')] = {
+    content: File.read(path),
+  }
+end
+
+payload = {
+  description: 'File Paste',
+  files: files,
+}
+rv = Env.gh_client.create_gist(payload)
+
+puts rv['html_url']

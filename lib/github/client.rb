@@ -14,6 +14,10 @@ module Github
       end
 
       attr_reader :status, :body
+
+      def message
+        "#{super}: #{status}: #{body}"
+      end
     end
 
     include PaginatedGet
