@@ -79,5 +79,9 @@ module Github
         body: body, draft: false},
         headers: {'accept' => 'application/vnd.github.shadow-cat-preview'})
     end
+
+    def create_gist(payload)
+      post_json('/gists', payload)
+    end
   end
 end

@@ -19,7 +19,7 @@ Routes.included do
         basename => {content: params[:content]},
       }
     }
-    rv = gh_client.post_json('/gists', payload)
+    rv = gh_client.create_gist(payload)
     redirect rv['html_url']
   end
 end
