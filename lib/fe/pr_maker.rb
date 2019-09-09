@@ -65,6 +65,12 @@ class PrMaker
         @repo_name = 'specifications'
         @jira_project ||= 'SPEC'
         break
+      when 'source'
+        if File.basename(File.dirname(dir)) == 'specifications'
+          @repo_name = 'specifications'
+          @jira_project ||= 'SPEC'
+          break
+        end
       end
       dir = File.dirname(dir)
     end
@@ -84,7 +90,12 @@ class TicketedPrMaker < PrMaker
 
     @num = num
 
-    @config = if num > 2000
+    @config = if File.basename(Dir.pwd) == 'specifications' ||
+      File.basename(Dir.pwd) == 'source' && File.basename(File.dirname(Dir.pwd)) == 'specifications'
+    then
+      @repo_name = 'specifications'
+      @jira_project = 'spec'
+    elsif num > 2000
       @repo_name = 'mongoid'
       @jira_project = 'mongoid'
     else
