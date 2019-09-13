@@ -45,7 +45,6 @@ Routes.included do
         subject = subject[0...100] + '...'
         message = "#{extra}\n\n#{message}"
       end
-      byebug
       @pull.update(title: subject, body: message)
     end
 
