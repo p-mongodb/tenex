@@ -1,3 +1,5 @@
+autoload :Orchestrator, 'fe/orchestrator'
+
 Routes.included do
 
   # pull
@@ -245,30 +247,12 @@ Routes.included do
     pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
     jira_ticket = pull_p.jira_ticket_number
     if jira_ticket
-      pr_url = "https://github.com/#{org_name}/#{repo_name}/pull/#{pull_id}"
-      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
-      payload = {
-        globalId: "#{pull_p.jira_issue_key!}-pr-#{pull_id}",
-        object: {
-          url: pr_url,
-          title: "PR ##{pull_id}: #{@pull.title}",
-          icon: {"url16x16":"https://github.com/favicon.ico"},
-          status: {
-            icon: {},
-          },
-        },
-      }
-      jirra_client.post_json("issue/#{pull_p.jira_issue_key!}/remotelink", payload)
+      orchestrator = Orchestrator.new
+      orchestrator.link_pr_to_issue(org_name: org_name, repo_name: repo_name,
+        pr_num: pull_id, jira_issue_key: pull_p.jira_issue_key!,
+        pr_title: @pull.title)
 
-      info = jirra_client.get_issue_fields(pull_p.jira_issue_key!)
-      if info['issuetype']['name'] != 'Epic'
-        begin
-          jirra_client.transition_issue(pull_p.jira_issue_key!, 'In Code Review',
-            assignee: {name: ENV['JIRA_USERNAME']})
-        rescue Jirra::TransitionNotFound
-          # ignore
-        end
-      end
+      orchestrator.transition_issue_to_in_review(pull_p.jira_issue_key!)
     end
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
