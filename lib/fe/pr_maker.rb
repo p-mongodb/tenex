@@ -95,6 +95,9 @@ class TicketedPrMaker < PrMaker
     then
       @repo_name = 'specifications'
       @jira_project = 'spec'
+    elsif File.basename(Dir.pwd) == 'bson-ruby'
+      @repo_name = 'bson-ruby'
+      @jira_project = 'ruby'
     elsif num > 2000
       @repo_name = 'mongoid'
       @jira_project = 'mongoid'
