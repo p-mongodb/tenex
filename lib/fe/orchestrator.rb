@@ -7,7 +7,7 @@ class Orchestrator
     pr_url = "https://github.com/#{org_name}/#{repo_name}/pull/#{pr_num}"
 
     if pr_title.nil?
-      pull = gh_repo(org_name, repo_name).pull(pr_num)
+      pull = gh_client.repo(org_name, repo_name).pull(pr_num)
       pr_title = pull.title
     end
 
