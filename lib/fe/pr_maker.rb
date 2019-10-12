@@ -65,6 +65,10 @@ class PrMaker
         @repo_name = 'specifications'
         @jira_project ||= 'SPEC'
         break
+      when 'bson-ruby'
+        @repo_name = 'bson-ruby'
+        @jira_project ||= 'RUBY'
+        break
       when 'source'
         if File.basename(File.dirname(dir)) == 'specifications'
           @repo_name = 'specifications'
