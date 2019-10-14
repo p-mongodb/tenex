@@ -101,7 +101,10 @@ module Evergreen
 
     def self.normalize_status(status)
       map = {'failure' => 'failed', 'success' => 'passed', 'pending' => 'pending',
-        'failed' => 'failed', 'undispatched' => 'waiting', 'started' => 'running'}
+        'failed' => 'failed', 'undispatched' => 'waiting', 'started' => 'running',
+        # These are travis statuses which for some reason go through
+        # the evergreen task code
+        'error' => 'failed'}
       map[status].tap do |v|
         if v.nil?
           raise "No map entry for #{status}"
