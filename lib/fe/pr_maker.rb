@@ -151,6 +151,11 @@ class CurrentPrMaker < BranchPrMaker
     @title = commit_msg
     @body = ''
 
-    ChildProcessHelper.check_call(['git', 'pp', @branch_name])
+    cmd = ['git', 'pp', @branch_name]
+    username = ChildProcessHelper.check_output(%w(id -un)).strip
+    if username == 'me'
+      cmd = %w(sudo -u mpush) + cmd
+    end
+    ChildProcessHelper.check_call(cmd)
   end
 end
