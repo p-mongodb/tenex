@@ -47,6 +47,9 @@ Routes.included do
         elsif label =~ /local-tls/
           meta['mongodb-version'] = meta['mongodb-version']
           meta['auth-and-ssl'] = 'TLS-verify'
+        elsif label =~ /x509-tests/
+          meta['mongodb-version'] = meta['mongodb-version']
+          meta['auth-and-ssl'] = 'x509'
         else
           meta['auth-and-ssl'] ||= 'noauth-and-nossl'
         end
