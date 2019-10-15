@@ -10,32 +10,36 @@ p
   '
   a href="/repos/#{@repo.full_name}/settings" Settings
 
-- @pulls.each do |pull|
-  h2
-    a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}" ##{pull['number']}: #{pull['title']}
-    '
-    span by #{pull['user']['login']}
-    '
-    code= pull.head_branch_name
-  p
-    a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR
-    '
-    a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}/files" Diff
-    - if pull.evergreen_project_id
+- if @pulls.empty?
+  h2 Pull Requests
+  p There aren't any right now.
+- else
+  - @pulls.each do |pull|
+    h2
+      a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}" ##{pull['number']}: #{pull['title']}
       '
-      a href="/eg/#{URI.escape(pull.evergreen_project_id)}/versions/#{pull.evergreen_version_id}" EG
-    '
-    - if pull.green?
-      span CI: green.
-    - else
-      span
-        ' #{pull.success_count} successful builds,
-        ' #{pull.failure_count} failed builds,
-        ' #{pull.pending_count} pending builds.
-      a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/restart-failed" Restart failed
-    - if pull.approved?
+      span by #{pull['user']['login']}
       '
-      span Approved.
-    - elsif pull.review_requested?
+      code= pull.head_branch_name
+    p
+      a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}" PR
       '
-      span Review requested.
+      a href="https://github.com/#{pull.repo_full_name}/pull/#{pull['number']}/files" Diff
+      - if pull.evergreen_project_id
+        '
+        a href="/eg/#{URI.escape(pull.evergreen_project_id)}/versions/#{pull.evergreen_version_id}" EG
+      '
+      - if pull.green?
+        span CI: green.
+      - else
+        span
+          ' #{pull.success_count} successful builds,
+          ' #{pull.failure_count} failed builds,
+          ' #{pull.pending_count} pending builds.
+        a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/restart-failed" Restart failed
+      - if pull.approved?
+        '
+        span Approved.
+      - elsif pull.review_requested?
+        '
+        span Review requested.
