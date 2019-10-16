@@ -69,6 +69,10 @@ class PrMaker
         @repo_name = 'bson-ruby'
         @jira_project ||= 'RUBY'
         break
+      when 'krb'
+        @repo_name = 'mongo-ruby-kerberos'
+        @jira_project ||= 'RUBY'
+        break
       when 'source'
         if File.basename(File.dirname(dir)) == 'specifications'
           @repo_name = 'specifications'
@@ -101,6 +105,9 @@ class TicketedPrMaker < PrMaker
       @jira_project = 'spec'
     elsif File.basename(Dir.pwd) == 'bson-ruby'
       @repo_name = 'bson-ruby'
+      @jira_project = 'ruby'
+    elsif File.basename(Dir.pwd) == 'krb'
+      @repo_name = 'mongo-ruby-kerberos'
       @jira_project = 'ruby'
     elsif num > 2000
       @repo_name = 'mongoid'
