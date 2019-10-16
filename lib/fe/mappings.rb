@@ -21,7 +21,7 @@ module Mappings
     case repo_full_name
     when 'mongodb/mongoid'
       'mongoid'
-    when 'mongodb/mongo-ruby-driver', 'mongodb/bson-ruby'
+    when 'mongodb/mongo-ruby-driver', 'mongodb/bson-ruby', 'mongodb/mongo-ruby-kerberos'
       'ruby'
     when 'mongodb/specifications'
       'spec'
