@@ -50,6 +50,9 @@ Routes.included do
         elsif label =~ /x509-tests/
           meta['mongodb-version'] = meta['mongodb-version']
           meta['auth-and-ssl'] = 'x509'
+        elsif label =~ /fle-tests/
+          meta['mongodb-version'] = meta['mongodb-version']
+          meta['auth-and-ssl'] = 'FLE'
         else
           meta['auth-and-ssl'] ||= 'noauth-and-nossl'
         end
@@ -107,7 +110,7 @@ Routes.included do
           end
         end
         if map[short_label]
-          raise "overwrite for #{short_label} #{meta.inspect}"
+          raise "overwrite for #{id}: #{short_label} #{meta.inspect}"
         end
         map[short_label] = status
       else
