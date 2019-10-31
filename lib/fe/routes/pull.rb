@@ -425,4 +425,18 @@ Routes.included do
     @summaries = summaries
     slim :eg_validate
   end
+
+  get '/repos/:org/:repo/pulls/:id/edit-pr' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @return_path = return_path
+    slim :edit_pr
+  end
+
+  post '/repos/:org/:repo/pulls/:id/edit-pr' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    title = params[:title]
+    body = params[:body]
+    @pull.update(title: title, body: body)
+    redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
+  end
 end

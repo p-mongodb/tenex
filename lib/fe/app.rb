@@ -101,7 +101,9 @@ class App < Sinatra::Base
   end
 
   private def return_path
-    if request.env['HTTP_REFERER']
+    if params[:return_path]
+      params[:return_path]
+    elsif request.env['HTTP_REFERER']
       URI.parse(request.env['HTTP_REFERER']).path
     end
   end
