@@ -8,6 +8,9 @@ class Project
   field :travis, type: Boolean
   field :evergreen_project_id, type: String
   field :evergreen_project_queried_at, type: Time
+  field :gh_upstream_owner_name, type: String
+  field :gh_repo_name, type: String
+  field :jira_project, type: String
 
   has_one :repo
 
