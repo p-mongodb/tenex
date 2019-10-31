@@ -44,6 +44,11 @@ PROJECT_CONFIGS = {
     'specifications',
     'WRITING',
   ),
+  'mongo-ruby-toolchain' => ProjectConfig.new(
+    '10gen',
+    'mongo-ruby-toolchain',
+    'RUBY',
+  ),
 }
 
 class ProjectDetector
@@ -57,6 +62,9 @@ class ProjectDetector
         break
       when 'krb'
         key = 'mongo-ruby-kerberos'
+        break
+      when 'toolchain'
+        key = 'mongo-ruby-toolchain'
         break
       when 'source'
         if File.basename(File.dirname(dir)) == 'specifications'
@@ -80,20 +88,20 @@ end
 class PrMaker
   include Env::Access
 
-  attr_reader :num, :repo_name, :jira_project, :jira_issue_key
+  attr_reader :num, :owner_name, :repo_name, :jira_project, :jira_issue_key
 
   def make_pr
     unless repo_name
       raise 'Cannot make a PR when repo name is not known'
     end
     begin
-      pr_info = gh_client.create_pr('mongodb', repo_name,
+      pr_info = gh_client.create_pr(owner_name, repo_name,
         title: @title, head: "p-mongo:#{@branch_name}", body: @body)
       pr_num = pr_info['number']
     rescue Github::Client::ApiError => e
       if e.status == 422
         if e.body =~ /already exists/
-          pulls = gh_client.repo('mongodb', repo_name).pulls
+          pulls = gh_client.repo(owner_name, repo_name).pulls
           pr_num = nil
           pulls.each do |pull|
             if pull.head_label == "p-mongo:#{@branch_name}"
@@ -144,6 +152,7 @@ class TicketedPrMaker < PrMaker
     end
 
     @repo_name = @project.gh_repo_name
+    @owner_name = @project.gh_upstream_owner_name || 'mongodb'
     @jira_project = @project.jira_project
 
     @branch_name = num.to_s
@@ -185,14 +194,19 @@ class CurrentPrMaker < BranchPrMaker
     end
 
     @repo_name = config.gh_repo_name
+    @owner_name = config.gh_upstream_owner_name || 'mongodb'
     @jira_project = config.jira_project
 
     commit_msg = ChildProcessHelper.check_output(%w(git show --pretty=%s -q))
     @title = commit_msg
-    unless @title =~ /^#{config.jira_project}-#{@num}\b/
+    if @num && @title !~ /^#{config.jira_project}-#{@num}\b/
       @title = "#{config.jira_project}-#{@num} #{@title}"
     end
-    @body = "https://jira.mongodb.com/browse/#{@jira_project}-#{@num}"
+    @body = if @num
+      "https://jira.mongodb.com/browse/#{@jira_project}-#{@num}"
+    else
+      ''
+    end
 
     cmd = ['git', 'pp', @branch_name]
     username = ChildProcessHelper.check_output(%w(id -un)).strip
