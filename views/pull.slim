@@ -135,8 +135,12 @@ table.status-table
         a href=status['target_url'] Go
       - if status.build_id
         td
-          - if status.log_url
-            a href=status.log_url Log
+          - if status.failed?
+            - if status.log_url
+              a href="#{status.log_url}#first-failure" Log
+          - else
+            - if status.log_url
+              a href=status.log_url Log
         td
           - if status.restart_url
             a href=status.restart_url Restart
