@@ -142,18 +142,18 @@ class TicketedPrMaker < PrMaker
     @num = num
 
     begin
-      @project = ProjectDetector.new.project
+      config = ProjectDetector.new.project_config
     rescue CannotDetermineProject
       if num > 2500
-        @project = ProjectDetector.force('mongoid')
+        config = PROJECT_CONFIGS['mongoid']
       else
-        @project = ProjectDetector.force('mongo-ruby-driver')
+        config = PROJECT_CONFIGS['mongo-ruby-driver']
       end
     end
 
-    @repo_name = @project.gh_repo_name
-    @owner_name = @project.gh_upstream_owner_name || 'mongodb'
-    @jira_project = @project.jira_project
+    @repo_name = config.gh_repo_name
+    @owner_name = config.gh_upstream_owner_name || 'mongodb'
+    @jira_project = config.jira_project
 
     @branch_name = num.to_s
     @jira_project.upcase!
