@@ -59,30 +59,46 @@ class App < Sinatra::Base
   end
 
   private def do_log(log, log_url, title)
-    log = log.gsub(%r,<i class="fa fa-link line-link" id='line-link-\d+'></i> ,, '')
-    lines = log.split("\n")
-    lines.each_with_index do |line, index|
-      if line =~ %r,Failure/Error:,
-        insert_point = [index-3, 0].max
-        lines.insert(insert_point, '<a name="first-failure"></a>')
-        log = lines.join("\n")
+    # Evergreen provides logs in html and text formats.
+    # Unfortunately text format drops each line's severity which indicates,
+    # in particular, the output stream (stdout/stderr) that the
+    # line came from.
+    # Convert html logs to the underlying log structure.
+    #
+    # Nokogiri has special handling of escape characters, bypass it to allow
+    # us to run individual lines through ansi->html conversion.
+    doc = Nokogiri::HTML(log.gsub("\x1b", "\ufff9"))
+    lines = doc.xpath('//i').map do |line|
+      num = line.attr('id').sub(/.*-/, '').to_i + 1
+      span = line.xpath('./following-sibling::span[1]').first
+      severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }.sub(/.*-/, '').downcase
+      text = span.text.gsub("\ufff9", "\x1b")
+      {num: num, severity: severity, text: text}
+    end
+
+    lines.each do |line|
+      if line[:text] =~ %r,Failure/Error:,
+        line[:first_failure] = true
         break
       end
+    end
+
+    lines.each_with_index do |line, index|
       if line =~ /\[.*?\] curl: \(\d+\) Recv failure:/
-        @mo_curl_failure = line.html_safe
+        @mo_curl_failure = line
       end
       if line =~ /Unfortunately, an unexpected error occurred, and Bundler cannot continue./
         @bundler_failure = 'Could not locate the failure in the log'
         lines.each_with_index do |l, i|
           if l =~ %r,https://github.com/bundler/bundler/issues/new,
-            @bundler_failure = lines[i+1].html_safe
+            @bundler_failure = lines[i+1]
           end
         end
       end
     end
+
     @title = title
-    log.sub!(/.*?<body(.*?)>(.*)<\/body>.*/m, '\2')
-    @html_log = log.html_safe
+    @log_lines = lines
     @eg_log_url = log_url
     slim :eg_log
   end

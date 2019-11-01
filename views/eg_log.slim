@@ -19,4 +19,9 @@ p style='margin:1em;font-size:150%'
   a href="#{@eg_log_url}"
     | Log @ Evergreen
 
-= @html_log
+pre
+  - @log_lines.each do |line|
+    - if line[:first_failure]
+      a name='first-failure'
+    span id="line-#{line[:num]}" class="severity-#{line[:severity].upcase}"
+      = Ansi::To::Html.new(line[:text]).to_html.html_safe + "\n"
