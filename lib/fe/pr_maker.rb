@@ -57,8 +57,11 @@ class ProjectDetector
 
     until @repo_name || %w(. /).include?(path)
       case basename = File.basename(path)
-      when 'ruby-driver', 'mongoid', 'specifications', 'bson-ruby'
+      when 'mongoid', 'specifications', 'bson-ruby'
         key = basename
+        break
+      when 'ruby-driver'
+        key = 'mongo-ruby-driver'
         break
       when 'krb'
         key = 'mongo-ruby-kerberos'
