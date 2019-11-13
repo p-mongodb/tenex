@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(__FILE__), '../lib')
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'fe/boot_lite'
+require 'fe/env'
+require 'fe/repo_cache'
+
+class EgProjectUpdater
+  def initialize(eg_project_name:, gh_owner_name:, gh_repo_name:)
+    @eg_project_name = eg_project_name
+    @gh_owner_name = gh_owner_name
+    @gh_repo_name = gh_repo_name
+  end
+
+  attr_reader :eg_project_name
+  attr_reader :gh_owner_name
+  attr_reader :gh_repo_name
+
+  def run
+    branches = stable_branches.reverse.slice(0, 2)
+    setup_eg_project('stable', branches.first)
+    setup_eg_project('oldstable', branches.last)
+  end
+
+  def setup_eg_project(suffix, branch_name)
+    p [suffix,branch_name]
+    project = Env.eg_client.project_by_id("#{eg_project_name}-#{suffix}")
+    previous_sha = repo_cache.commitish_sha("origin/#{branch_name}~1")
+    p project.update(
+      branch_name: branch_name,
+      remote_path: '.evergreen/config.yml',
+      revision: previous_sha,
+      force_repotracker_run: true,
+      tracks_push_events: true,
+    )
+  end
+
+  def stable_branches
+    repo_cache.upstream_branches.grep(/stable/).sort_by do |branch_name|
+      branch_name.sub('-stable', '').split('.').map do |part|
+        if part.to_i.to_s == part
+          part.to_i
+        else
+          part
+        end
+      end
+    end
+  end
+
+  def repo_cache
+    @repo_cache ||= RepoCache.new(gh_owner_name, gh_repo_name).tap do |rc|
+      rc.update_cache
+    end
+  end
+end
+
+EgProjectUpdater.new(
+  eg_project_name: 'mongo-ruby-driver',
+  gh_owner_name: 'mongodb',
+  gh_repo_name: 'mongo-ruby-driver',
+).run

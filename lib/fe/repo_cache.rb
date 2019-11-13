@@ -68,8 +68,8 @@ class RepoCache
     update_cache
 
     Dir.chdir(cached_repo_path) do
-      output = ChildProcessHelper.check_output(%w(git show --pretty=oneline) + [commitish])
-      output.strip.split(/\s/, 2).first
+      output = ChildProcessHelper.check_output(%w(git show --pretty=%H -s) + [commitish])
+      output.strip
     end
   end
 
@@ -266,6 +266,16 @@ CMD
     branches('-r').map do |name|
       name.sub(/.+?\//, '')
     end
+  end
+
+  def upstream_branches
+    branches('-r').map do |name|
+      if name =~ /^origin\//
+        name.sub(/.+?\//, '')
+      else
+        nil
+      end
+    end.compact
   end
 
   def checkout(commitish)
