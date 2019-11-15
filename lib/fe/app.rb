@@ -59,6 +59,10 @@ class App < Sinatra::Base
   end
 
   private def do_log(log, log_url, title)
+    if log.encoding.name == 'ASCII-8BIT'
+      log = log.force_encoding('utf-8')
+    end
+
     # Evergreen provides logs in html and text formats.
     # Unfortunately text format drops each line's severity which indicates,
     # in particular, the output stream (stdout/stderr) that the
