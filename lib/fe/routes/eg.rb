@@ -85,6 +85,13 @@ Routes.included do
     redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
   end
 
+  get '/eg/:project/versions/:version_id/abort' do |project_id, version_id|
+    version = Evergreen::Version.new(eg_client, version_id)
+    version.abort
+
+    redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
+  end
+
   # eg log
   #get %r,/eg/(?<project>[^/]+)/versions/:version/builds/:build/log, do |project_id, version_id, build_id|
   get '/eg/:project/versions/:version/builds/:build/log' do |project_id, version_id, build_id|

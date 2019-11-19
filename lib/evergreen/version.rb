@@ -87,5 +87,9 @@ module Evergreen
       # iso8601
       Time.parse(info['create_time'])
     end
+
+    def abort
+      client.post_json("versions/#{id}/abort")
+    end
   end
 end
