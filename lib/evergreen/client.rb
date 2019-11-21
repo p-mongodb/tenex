@@ -1,6 +1,7 @@
 require 'json'
 require 'faraday'
 require_relative '../paginated_get'
+require 'active_support/core_ext/string'
 
 module Evergreen
   class Client
@@ -159,10 +160,10 @@ module Evergreen
     end
 
     def create_patch(project_id:, description: nil,
-      diff_text:, base_sha:, variant_ids: [], task_ids: [],
+      diff_text:, base_sha:, variant_ids: %w(all), task_ids: %w(all),
       finalize: nil
     )
-      request_json(:put, 'patches/', {
+      resp = request_json(:put, 'patches/', {
         project: project_id,
         desc: description,
         patch: diff_text,
@@ -171,6 +172,26 @@ module Evergreen
         tasks: task_ids,
         finalize: finalize,
       }, version: 1)
+
+      if resp['message'] != ''
+        byebug
+        1
+      end
+      if resp['action'] != ''
+        byebug
+        1
+      end
+
+      patch_info = deep_underscore_keys(resp['patch'])
+      Patch.new(self, patch_info['id'], info: patch_info)
+    end
+
+    private def deep_underscore_keys(hash)
+      if hash.is_a?(Hash)
+        Hash[hash.map { |k, v| [k.underscore, deep_underscore_keys(v)] }]
+      else
+        hash
+      end
     end
   end
 end
