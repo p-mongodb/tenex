@@ -68,6 +68,7 @@ module Env
     @eg_client ||= Evergreen::Client.new(
         username: ENV['EVERGREEN_AUTH_USERNAME'],
         api_key: ENV['EVERGREEN_API_KEY'],
+        cache_root: File.join(File.dirname(__FILE__), '../../tmp/eg'),
       )
   end
 
