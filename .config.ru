@@ -15,4 +15,5 @@ if ENV['USERNAME'].to_s != '' || ENV['PASSWORD'].to_s != ''
   end
 end
 
+#app = Rack::ShowExceptions.new(app)
 run app

@@ -41,6 +41,8 @@ class App < Sinatra::Base
   set :views, File.join(File.dirname(__FILE__), '..', '..', 'views')
   set :public_folder, File.join(File.dirname(__FILE__), '..', '..', 'public')
   set :strict_paths, false
+  # Show exceptions in production environment
+  set :show_exceptions, true
 
   def project_by_slug(slug)
     project = Project.where(slug: slug).first
