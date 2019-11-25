@@ -77,7 +77,8 @@ class App < Sinatra::Base
       span = line.xpath('./following-sibling::span[1]').first
       severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }.sub(/.*-/, '').downcase
       text = span.text.gsub("\ufff9", "\x1b")
-      {num: num, severity: severity, text: text}
+      html = Ansi::To::Html.new(CGI.escapeHTML(text)).to_html
+      {num: num, severity: severity, text: text, html: html}
     end
 
     lines.each do |line|
