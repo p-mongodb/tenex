@@ -17,6 +17,18 @@ Routes.included do
     subject, message = rc.commitish_message(@pull.head_branch_name)
     @pull.update(title: subject, body: message)
 
+    @repo = system.hit_repo(org_name, repo_name)
+    pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+    jira_ticket = pull_p.jira_ticket_number
+    if jira_ticket
+      orchestrator = Orchestrator.new
+      orchestrator.link_pr_to_issue(org_name: org_name, repo_name: repo_name,
+        pr_num: pull_id, jira_issue_key: pull_p.jira_issue_key!,
+        pr_title: @pull.title)
+
+      orchestrator.transition_issue_to_in_progress(pull_p.jira_issue_key!)
+    end
+
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
