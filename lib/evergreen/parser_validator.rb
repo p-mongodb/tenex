@@ -12,11 +12,23 @@ module Evergreen
     attr_reader :project_file_contents
 
     def validate
-      errors = []
       begin
         doc = YAML.load(project_file_contents)
       rescue Psych::SyntaxError => e
-        errors << e
+        @errors = ["Failed to parse project file: #{e.class}: #{e}"]
+        return
+      end
+
+      errors = []
+
+      doc['tasks'].each do |task|
+        if task['commands']
+          task['commands'].each do |command|
+            unless doc['functions'].key?(command['func'])
+              errors << %Q`Task "#{task['name']}" references undefined function "#{command['func']}"`
+            end
+          end
+        end
       end
 
       @errors = errors
@@ -31,8 +43,7 @@ module Evergreen
 
     def validate!
       if errors.any?
-        msg = errors.map { |error| "#{error.class}: #{error}" }.join("\n")
-        msg = "The following errors were detected in project file:\n#{msg}"
+        msg = "The following errors were detected in project file:\n#{errors.join("\n")}"
         raise ProjectFileInvalid, msg
       end
     end
