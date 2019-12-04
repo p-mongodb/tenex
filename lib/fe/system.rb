@@ -63,7 +63,7 @@ class System
   end
 
   def local_evergreen_binary_path
-    TMP_DIR.join('evergreen')
+    TMP_DIR.join('bin/evergreen')
   end
 
   def fetch_evergreen_binary_if_needed
