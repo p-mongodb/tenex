@@ -1,6 +1,8 @@
+# Task references an undefined function, but there is at least one function
+# defined.
+
 functions:
   "fetch source":
-    # Executes git clone and applies the submitted patch, if any
     - command: git.get_project
       params:
         directory: "src"

@@ -1,0 +1,6 @@
+# Task references an undefined function, and there are no functions defined.
+
+tasks:
+    - name: "test"
+      commands:
+        - func: "run tests"

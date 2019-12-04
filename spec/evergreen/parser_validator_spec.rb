@@ -17,4 +17,13 @@ describe Evergreen::ParserValidator do
       error_msg.should =~ /references undefined function/
     end
   end
+
+  context 'task referencing missing function and no functions are defined' do
+    let(:config_path) { CONFIG_ROOT.join('task_ref_no_functions.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /references undefined function/
+      error_msg.should =~ /there are no functions defined/
+    end
+  end
 end

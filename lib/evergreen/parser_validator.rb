@@ -24,8 +24,15 @@ module Evergreen
       doc['tasks'].each do |task|
         if task['commands']
           task['commands'].each do |command|
-            unless doc['functions'].key?(command['func'])
-              errors << %Q`Task "#{task['name']}" references undefined function "#{command['func']}"`
+            if command['func']
+              unless doc['functions']
+                errors << %Q`Task "#{task['name']}" references undefined function "#{command['func']}" - there are no functions defined`
+                next
+              end
+
+              unless doc['functions'].key?(command['func'])
+                errors << %Q`Task "#{task['name']}" references undefined function "#{command['func']}"`
+              end
             end
           end
         end
