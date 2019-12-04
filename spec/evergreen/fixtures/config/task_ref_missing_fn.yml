@@ -1,0 +1,11 @@
+functions:
+  "fetch source":
+    # Executes git clone and applies the submitted patch, if any
+    - command: git.get_project
+      params:
+        directory: "src"
+
+tasks:
+    - name: "test"
+      commands:
+        - func: "run tests"
