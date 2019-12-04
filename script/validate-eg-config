@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(__FILE__), '../lib')
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'evergreen/parser_validator'
+
+Evergreen::ParserValidator.new(File.read(ARGV.shift)).validate!
