@@ -117,6 +117,16 @@ recent master commit of the toolchain.
 
 ![Toolchain URLs](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/toolchain-urls.png) 
 
+### Evergreen Configuration Validation
+
+Tenex provides its own validator of Evergreen configuration files, which
+offers accurate, informative and actionable error reporting. Specifically:
+
+- When parsing files, parse errors are reported with correct line numbers.
+- Validation errors informatively describe the issue and what it affects.
+
+Tenex can also run Evergreen binary's validator on the configuration file.
+
 ### Evergreen Spawn Hosts
 
 Adds a list of recently spawned distros for quickly spawning more of
