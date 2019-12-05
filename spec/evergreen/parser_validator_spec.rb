@@ -26,4 +26,12 @@ describe Evergreen::ParserValidator do
       error_msg.should =~ /there are no functions defined/
     end
   end
+
+  context 'task with space in name' do
+    let(:config_path) { CONFIG_ROOT.join('task_name_space.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /contains a space in its name/
+    end
+  end
 end

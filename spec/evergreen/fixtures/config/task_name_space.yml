@@ -1,0 +1,4 @@
+# Task with a space in its name.
+
+tasks:
+    - name: "hello world"

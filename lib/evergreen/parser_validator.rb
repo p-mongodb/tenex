@@ -22,6 +22,14 @@ module Evergreen
       errors = []
 
       doc['tasks'].each do |task|
+        if task['name'].include?(' ')
+          # Spaces in task names are not expilcitly prohibited, but, per
+          # the Evergreen team, Evergreen's handling of task names with spaces
+          # is "poor" which causes unspecified issues.
+          # This validator flags spaces in task names as an error.
+          errors << %Q`Task #{task['name']} contains a space in its name. Evergreen does not explicitly prohibit this but it mishandles tasks with spaces in their names`
+        end
+
         if task['commands']
           task['commands'].each do |command|
             if command['func']
