@@ -201,7 +201,7 @@ CMD
         (git branch -D #{branch_name} || true) &&
         git checkout -b #{branch_name} --track p/#{branch_name} &&
         git reset --soft $(git merge-base master #{branch_name}) &&
-        git commit -am "#{subject.gsub('"', "\\\"").gsub("$", "\\$")}" &&
+        git commit -am "#{subject.gsub(/["$`]/) { "\\#{$1}" }}" &&
         git rebase master &&
         git push p #{branch_name} -f
 CMD
