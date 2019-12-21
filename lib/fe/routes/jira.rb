@@ -54,6 +54,14 @@ jql
     slim :epics
   end
 
+  get '/jira/:project/changelogs' do |project_name|
+    @jira_project = project_name = project_name.upcase
+    @versions = jirra_client.project_versions(project_name).select do |version|
+      !version['released']
+    end
+    slim :changelogs
+  end
+
   get '/jira/editmeta' do
     @heading = 'Edit Meta'
     @payload = jirra_client.get_json('issue/RUBY-1690/editmeta')

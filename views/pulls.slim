@@ -2,6 +2,8 @@ p
   a href="/repos/#{@repo.full_name}/recent-branches" Recent branches
   '
   a href="/repos/#{@repo.full_name}/upstream-branches" Upstream branches
+  '
+  a href="/jira/#{@jira_project}/changelogs" Changelogs
   - if @repo.evergreen_project_id
     '
     ' Evergreen project:

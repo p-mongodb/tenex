@@ -1,0 +1,4 @@
+- @versions.each do |version|
+  li
+    a href="/jira/#{@jira_project}/fixed/#{version['name']}"
+      = version['name']

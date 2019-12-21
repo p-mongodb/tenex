@@ -26,6 +26,7 @@ Routes.included do
       raise
     end
     @pulls.map! { |pull| PullPresenter.new(pull, eg_client, system, @repo) }
+    @jira_project = Mappings.repo_full_name_to_jira_project(@repo.full_name)
     slim :pulls
   end
 
