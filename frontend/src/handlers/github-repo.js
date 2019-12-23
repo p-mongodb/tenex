@@ -13,14 +13,10 @@ import Store from '../store'
 import { mapProps } from '@rq/react-map-props'
 
 export default
-class Home extends React.Component {
+class GithubRepo extends React.Component {
   render() {
     return <div>
-    <h1>Home</h1>
-    <ul>
-    <li><Link to='GithubRepo' params={{repo_name:'mongoid'}}>
-    Mongoid</Link></li>
-    </ul>
+    <h1>{this.props.params.repo_name}</h1>
     </div>
   }
 }
