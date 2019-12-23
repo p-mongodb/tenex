@@ -1,4 +1,11 @@
 #!/bin/sh
 
-cd frontend &&
-exec ./node_modules/.bin/webpack-dev-server -d
+set -e
+
+cd frontend
+
+opts=
+if grep -q i9-7940 /proc/cpuinfo; then
+  opts="--host 0.0.0.0 --disable-host-check"
+fi
+exec ./node_modules/.bin/webpack-dev-server -d $opts
