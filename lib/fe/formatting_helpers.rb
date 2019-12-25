@@ -47,4 +47,14 @@ module FormattingHelpers
     minutes = (delta / 60).to_i
     "#{minutes}:#{'%02d' % seconds}"
   end
+
+  def truncate(text, limit)
+    if text.nil?
+      nil
+    elsif text.length > limit
+      text[0...limit-3] + '...'
+    else
+      text
+    end
+  end
 end

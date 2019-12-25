@@ -24,7 +24,7 @@ Routes.included do
     res = jirra_client.jql(<<-jql, max_results: 500)
       project=#{@project_name}
       and fixversion=#{version}
-      and labels not in (no-changelog)
+      and (labels is empty or labels not in (no-changelog))
       #{extra_conds}
       order by type, priority desc, key
 jql

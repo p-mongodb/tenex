@@ -1,13 +1,24 @@
 h1 Fixed Issues
 
-table
+style
+  |
+    /* redo with https://hashnode.com/post/really-responsive-tables-using-css3-flexbox-cijzbxd8n00pwvm53sl4l42cx */
+    .issue-table { width: 100%; table-layout: fixed; }
+    .issue-table td { vertical-align: top; }
+    /* .issue-table div { display: inline-block; } */
+
+table.issue-table
   - @issues.each do |issue|
     tr
+      td style='width:15%'
+        nobr
+          a href="https://jira.mongodb.org/browse/#{issue.key}"= issue.key
+      td style='width:15%'
+        nobr= "[#{issue.fields['issuetype']['name']}]"
       td
-        a href="https://jira.mongodb.org/browse/#{issue.key}"= issue.key
-      td= "[#{issue.fields['issuetype']['name']}]"
-      td= issue.fields['summary']
-      td
+        div= issue.fields['summary']
+        div= truncate(issue.fields['description'], 240)
+      td style='width:10%'
         a href="/jira/#{@project_name}/#{issue.key}/no-changelog"
           ' Remove
 
