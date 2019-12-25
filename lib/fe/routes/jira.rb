@@ -21,7 +21,7 @@ Routes.included do
     else
       extra_conds = ''
     end
-    res = jirra_client.jql(<<-jql, max_results: 500)
+    res = jirra_client.jql(<<-jql, max_results: 500, fields: %w(summary description issuetype))
       project=#{@project_name}
       and fixversion=#{version}
       and (labels is empty or labels not in (no-changelog))

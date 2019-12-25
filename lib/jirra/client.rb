@@ -145,10 +145,14 @@ module Jirra
       subject
     end
 
-    def jql(jql, options={})
+    def jql(jql, max_results: nil, fields: nil)
       url = "search?jql=#{CGI.escape(jql)}"
-      if options[:max_results]
-        url << "&maxResults=#{CGI.escape(options[:max_results].to_s)}"
+      if max_results
+        url << "&maxResults=#{CGI.escape(max_results.to_s)}"
+      end
+      if fields
+        escaped_fields = fields.map { |f| CGI.escape(f) }.join(',')
+        url << "&fields=#{escaped_fields}"
       end
       payload = get_json(url)
       payload['issues']
