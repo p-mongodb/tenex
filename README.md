@@ -139,6 +139,11 @@ spawned host.
 
 ![Spawn page](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/spawn.png) 
 
+### Jira operations
+
+- View tickets in a version, export list to Markdown for changelog drafting
+- Exclude ticket from being in changelog
+
 ### Paste
 
 Tenex offers a non-intrusive frontend to Gist allowing quick pasting of

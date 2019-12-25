@@ -122,6 +122,18 @@ module Jirra
       post_json("issue/#{issue_key}/transitions", payload)
     end
 
+    def edit_issue(issue_key, add_labels: nil)
+      payload = {}
+      if add_labels
+        payload[:update] ||= {}
+        payload[:update][:labels] ||= []
+        add_labels.each do |label|
+          payload[:update][:labels] << {add: label}
+        end
+      end
+      request_json(:put, "issue/#{issue_key}", payload)
+    end
+
     def subject_for_issue(issue_key)
       issue_fields = get_issue_fields(issue_key)
       summary = issue_fields['summary']

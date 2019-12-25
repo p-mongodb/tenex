@@ -10,9 +10,9 @@ Routes.included do
   end
 
   get '/jira/:project/fixed/:version' do |project_name, version|
-    project_name = project_name.upcase
+    @project_name = project_name.upcase
     if params[:exclusive]
-      all_versions = jirra_client.project_versions(project_name)
+      all_versions = jirra_client.project_versions(@project_name)
       versions = all_versions.select { |v| v['released'] }.sort_by do |version|
         version['releaseDate']
       end.reverse[0..4]
@@ -22,7 +22,11 @@ Routes.included do
       extra_conds = ''
     end
     res = jirra_client.jql(<<-jql, max_results: 500)
-      project=#{project_name} and fixversion=#{version} #{extra_conds} order by type, priority desc, key
+      project=#{@project_name}
+      and fixversion=#{version}
+      and labels not in (no-changelog)
+      #{extra_conds}
+      order by type, priority desc, key
 jql
     @issues = res.map do |info|
       OpenStruct.new(info)
@@ -60,6 +64,13 @@ jql
       !version['released']
     end
     slim :changelogs
+  end
+
+  get '/jira/:project/:issue_key/no-changelog' do |project_name, issue_key|
+    @project_name = project_name.upcase
+    @issue_key = issue_key.upcase
+    jirra_client.edit_issue(@issue_key, add_labels: %w(no-changelog))
+    redirect return_path
   end
 
   get '/jira/editmeta' do

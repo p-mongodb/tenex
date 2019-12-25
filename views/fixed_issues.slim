@@ -7,6 +7,9 @@ table
         a href="https://jira.mongodb.org/browse/#{issue.key}"= issue.key
       td= "[#{issue.fields['issuetype']['name']}]"
       td= issue.fields['summary']
+      td
+        a href="/jira/#{@project_name}/#{issue.key}/no-changelog"
+          ' Remove
 
 textarea rows='40' cols='100'
   - @issues.each do |issue|
