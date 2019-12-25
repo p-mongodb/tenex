@@ -16,7 +16,8 @@ table.issue-table
       td style='width:15%'
         nobr= "[#{issue.fields['issuetype']['name']}]"
       td
-        div= issue.fields['summary']
+        div
+          strong= issue.fields['summary']
         div= truncate(issue.fields['description'], 240)
       td style='width:10%'
         a href="/jira/#{@project_name}/#{issue.key}/no-changelog"
