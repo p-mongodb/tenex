@@ -57,4 +57,21 @@ module FormattingHelpers
       text
     end
   end
+
+  def short_issue_type(issue_type_name)
+    case issue_type_name
+    when 'Epic'
+      'Epic'
+    when 'New Feature'
+      'Feat'
+    when 'Improvement'
+      'Imp'
+    when 'Task'
+      'Task'
+    when 'Bug'
+      'Bug'
+    else
+      issue_type_name
+    end
+  end
 end

@@ -14,7 +14,7 @@ table.issue-table
         nobr
           a href="https://jira.mongodb.org/browse/#{issue.key}"= issue.key
       td style='width:15%'
-        nobr= "[#{issue.fields['issuetype']['name']}]"
+        nobr= "[#{short_issue_type(issue.fields['issuetype']['name'])}]"
       td
         div
           strong= issue.fields['summary']
