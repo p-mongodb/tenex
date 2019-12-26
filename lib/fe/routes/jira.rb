@@ -11,15 +11,40 @@ Routes.included do
 
   get '/jira/:project/fixed/:version' do |project_name, version|
     @project_name = project_name.upcase
+    extra_conds = ''
     if params[:exclusive]
       all_versions = jirra_client.project_versions(@project_name)
       versions = all_versions.select { |v| v['released'] }.sort_by do |version|
         version['releaseDate']
       end.reverse[0..4]
       @excluded_versions = versions
-      extra_conds = versions.map { |v| %Q~and fixversion != "#{v['name']}"~ }.join(' ')
-    else
-      extra_conds = ''
+      extra_conds << versions.map { |v| %Q~ and fixversion != "#{v['name']}"~ }.join(' ')
+    elsif params[:smart_exclusive]
+      parts = version.split('.')[0..1].map(&:to_i)
+      if parts.last > 0
+        lb_parts = [parts.first, parts.last-1]
+      else
+        lb_parts = [parts.first-1]
+      end
+
+      lb = Gem::Version.new(lb_parts.map(&:to_s).join('.'))
+      hb = Gem::Version.new(version.split('.')[0..2].join('.'))
+
+      all_versions = jirra_client.project_versions(@project_name)
+      exclude_versions = all_versions.map do |info|
+        begin
+          v = Gem::Version.new(info['name'])
+          if v >= lb && v < hb
+            info['name']
+          end
+        rescue ArgumentError
+          nil
+        end
+      end.compact
+
+      unless exclude_versions.empty?
+        extra_conds << " and fixversion not in (#{exclude_versions.map { |v| "\"#{v}\"" }.join(',')})"
+      end
     end
     res = jirra_client.jql(<<-jql, max_results: 500, fields: %w(summary description issuetype))
       project=#{@project_name}
