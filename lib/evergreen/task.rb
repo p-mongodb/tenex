@@ -1,4 +1,7 @@
 module Evergreen
+  # When a task has {activated: true} in its info, this is rendered in UI as
+  # the task being scheduled. {activated: false} is rendered as the task being
+  # "unscheduled".
   class Task
     def initialize(client, id, info: nil)
       @client = client
@@ -86,8 +89,11 @@ module Evergreen
       info['priority']
     end
 
+    # Sets priority of the task, also activating the task if it was inactive
+    # (on the assumption that if the user is setting a priority, the intention
+    # is for the task to execute).
     def set_priority(priority)
-      client.patch_json("tasks/#{id}", priority: priority)
+      client.patch_json("tasks/#{id}", priority: priority, activated: true)
     end
 
     def artifacts
