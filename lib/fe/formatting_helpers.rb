@@ -37,6 +37,12 @@ module FormattingHelpers
       render_time_delta(task.time_taken)
     elsif task.started_at
       render_time_delta(Time.now - task.started_at)
+    elsif task.scheduled_at
+      render_time_delta(Time.now - task.scheduled_at)
+    # Task creation time is bogus - https://jira.mongodb.org/browse/EVG-7122
+    # Use ingest time instead
+    elsif task.ingested_at
+      render_time_delta(Time.now - task.ingested_at)
     else
       render_time_delta(Time.now - task.created_at)
     end
