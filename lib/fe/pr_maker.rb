@@ -79,8 +79,8 @@ class TicketedPrMaker < PrMaker
     @jira_project.upcase!
     @jira_issue_key = "#{@jira_project}-#{@num}"
 
-    info = jirra_client.get_json("issue/#{@jira_issue_key}")
-    @title = "#{@jira_issue_key} #{info['fields']['summary']}"
+    fields = jirra_client.get_issue_fields(@jira_issue_key, fields: %w(summary))
+    @title = "#{@jira_issue_key} #{fields['summary']}"
     @body = "https://jira.mongodb.com/browse/#{@jira_issue_key}"
   end
 end

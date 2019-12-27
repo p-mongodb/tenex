@@ -89,8 +89,12 @@ module Jirra
 
     # endpoints
 
-    def get_issue_fields(issue_key)
-      get_json("issue/#{issue_key.upcase}")['fields']
+    def get_issue_fields(issue_key, fields: nil)
+      url = "issue/#{issue_key.upcase}?"
+      if fields
+        url << "&fields=#{fields.map { |f| CGI.escape(f) }.join(',')}"
+      end
+      get_json(url)['fields']
     end
 
     def project_versions(project_name)
