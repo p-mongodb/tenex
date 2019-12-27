@@ -41,7 +41,7 @@ class PrMaker
     end
 
     if jira_project && jira_issue_key
-      orchestrator.link_pr_to_issue(repo_name: repo_name,
+      orchestrator.link_pr_in_issue(repo_name: repo_name,
         pr_num: pr_num, jira_issue_key: jira_issue_key)
 
       orchestrator.transition_issue_to_in_progress(jira_issue_key)

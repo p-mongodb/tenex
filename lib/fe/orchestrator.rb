@@ -1,7 +1,7 @@
 class Orchestrator
   include Env::Access
 
-  def link_pr_to_issue(org_name: 'mongodb', repo_name:, pr_num:, pr_title: nil,
+  def link_pr_in_issue(org_name: 'mongodb', repo_name:, pr_num:, pr_title: nil,
     jira_issue_key:
   )
     pr_url = "https://github.com/#{org_name}/#{repo_name}/pull/#{pr_num}"
