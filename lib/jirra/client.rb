@@ -97,6 +97,18 @@ module Jirra
       get_json(url)['fields']
     end
 
+    def get_issue_editmeta(issue_key)
+      get_json("issue/#{issue_key}/editmeta")
+    end
+
+    def get_issue_transitions(issue_key)
+      get_json("issue/#{issue_key}/transitions")
+    end
+
+    def project_statuses(project_key)
+      get_json("project/#{project_key}/statuses")
+    end
+
     def project_versions(project_name)
       get_json("project/#{project_name}/versions").sort_by do |version|
         version['name']

@@ -112,19 +112,19 @@ jql
 
   get '/jira/editmeta' do
     @heading = 'Edit Meta'
-    @payload = jirra_client.get_json('issue/RUBY-1690/editmeta')
+    @payload = jirra_client.get_issue_editmeta('RUBY-1690')
     slim :editmeta
   end
 
   get '/jira/transitions' do
     @heading = 'Transitions'
-    @payload = jirra_client.get_json('issue/RUBY-1690/transitions')
+    @payload = jirra_client.get_issue_transitions('RUBY-1690')
     slim :editmeta
   end
 
   get '/jira/statuses' do
     @heading = 'Statuses'
-    @payload = jirra_client.get_json('project/RUBY/statuses')
+    @payload = jirra_client.project_statuses('RUBY')
     slim :editmeta
   end
 end
