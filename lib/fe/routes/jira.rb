@@ -41,6 +41,9 @@ Routes.included do
           nil
         end
       end.compact
+      # When version is 7.1.0.rc0 it compares less than 7.1.0, thus
+      # would end up in exclude_versions
+      exclude_versions.delete(version)
 
       unless exclude_versions.empty?
         extra_conds << " and fixversion not in (#{exclude_versions.map { |v| "\"#{v}\"" }.join(',')})"
