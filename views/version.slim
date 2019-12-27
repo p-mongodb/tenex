@@ -30,6 +30,9 @@ p
     a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=100" 100
   '
   a href="/eg/#{@project_id}/versions/#{@version.id}/abort" Abort
+  - if @project_id == 'mongo-ruby-driver-toolchain'
+    '
+    a href="/eg/#{@project_id}/versions/#{@version.id}/toolchain-urls" Toolchain URLs
 
 table
   - @builds.each do |build|

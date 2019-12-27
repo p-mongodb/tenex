@@ -1,0 +1,9 @@
+table
+  - @urls.each do |key, url|
+    tr
+      td= key
+      td
+        - if url =~ /^http/
+          a href=url #{key}
+        - else
+          = url

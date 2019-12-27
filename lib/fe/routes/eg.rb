@@ -177,4 +177,23 @@ Routes.included do
     Task = Evergreen::Task.new(eg_client, task_id).set_priority(99)
     redirect "/eg/#{project_id}/versions/#{version_id}"
   end
+
+  get '/eg/:project/versions/:version_id/toolchain-urls' do |project_id, version_id|
+    version = Evergreen::Version.new(eg_client, version_id)
+    @urls = {}
+    version.builds.each do |build|
+      @urls[build.build_variant] = case build.status
+      when 'success'
+        log = build.tasks.last.task_log
+        if log =~ %r,Putting mongo-ruby-toolchain/ruby-toolchain.tar.gz into (https://s3.amazonaws.com/[^<]+),
+          $1
+        else
+          'missing url'
+        end
+      else
+        'n/a'
+      end
+    end
+    slim :version_toolchain_urls
+  end
 end

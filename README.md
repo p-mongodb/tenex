@@ -113,10 +113,13 @@ information is displayed:
 
 ### Toolchain Tarball Retrieval
 
-Allows quickly getting URLs of built toolchain tarballs for the most
-recent master commit of the toolchain.
+Allows quickly getting URLs of built toolchain tarballs for:
+
+- The most recent master commit of the toolchain:
 
 ![Toolchain URLs](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/toolchain-urls.png) 
+
+- Any toolchain build
 
 ### Evergreen Configuration Validation
 
