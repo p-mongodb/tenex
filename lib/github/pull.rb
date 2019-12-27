@@ -228,5 +228,9 @@ module Github
         info['event'] == 'review_requested'
       end
     end
+
+    def add_comment(text)
+      client.post_json("repos/#{repo_full_name}/issues/#{number}/comments", body: text)
+    end
   end
 end

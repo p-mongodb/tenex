@@ -1,3 +1,5 @@
+require 'fe/pull_ext'
+
 class Orchestrator
   include Env::Access
 
@@ -17,6 +19,32 @@ class Orchestrator
       title: "#{repo_name} ##{pr_num}: #{pr_title}",
       icon: {"url16x16":"https://github.com/favicon.ico"},
     )
+  end
+
+  def link_issue_in_pr(pull: nil,
+    org_name: nil, repo_name: nil, pr_num: nil,
+    jira_issue_key: nil
+  )
+    pull ||= begin
+      unless org_name && repo_name && pr_num
+        raise ArgumentError, 'If pull is not given, org_name, repo_name and pr_num are required'
+      end
+      gh_client.repo(org_name, repo_name).pull(pr_num)
+    end
+
+    jira_issue_key ||= pull.jira_issue_key!
+
+    url = "https://jira.mongodb.org/browse/#{jira_issue_key}"
+    texts = [pull.body || ''] + pull.comments.map(&:body)
+    if texts.any? { |text| text.include?(url) }
+      # already added
+    else
+      if pull.body.nil?
+        pull.update(body: url)
+      else
+        pull.add_comment(url)
+      end
+    end
   end
 
   def transition_issue_to_in_progress(jira_issue_key)

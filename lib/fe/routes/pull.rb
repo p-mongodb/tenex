@@ -369,6 +369,8 @@ Routes.included do
     subject = jirra_client.subject_for_issue(pull_p.jira_issue_key!)
     @pull.update(title: subject)
 
+    Orchestrator.new.link_issue_in_pr(pull: @pull)
+
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
   end
 
