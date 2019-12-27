@@ -134,6 +134,26 @@ module Jirra
       request_json(:put, "issue/#{issue_key}", payload)
     end
 
+    def add_issue_link(issue_key, link_id: nil, url:, title:, icon: nil)
+      # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
+      payload = {
+        object: {
+          url: url,
+          title: title,
+          status: {
+            icon: {},
+          },
+        },
+      }
+      if link_id
+        payload[:globalId] = link_id
+      end
+      if icon
+        payload[:object][:icon] = icon
+      end
+      jirra_client.post_json("issue/#{issue_key}/remotelink", payload)
+    end
+
     def subject_for_issue(issue_key)
       issue_fields = get_issue_fields(issue_key)
       summary = issue_fields['summary']

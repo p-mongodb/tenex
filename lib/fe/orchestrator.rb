@@ -11,19 +11,12 @@ class Orchestrator
       pr_title = pull.title
     end
 
-    # https://developer.atlassian.com/server/jira/platform/jira-rest-api-for-remote-issue-links/
-    payload = {
-      globalId: "#{jira_issue_key}-pr-#{pr_num}",
-      object: {
-        url: pr_url,
-        title: "#{repo_name} ##{pr_num}: #{pr_title}",
-        icon: {"url16x16":"https://github.com/favicon.ico"},
-        status: {
-          icon: {},
-        },
-      },
-    }
-    jirra_client.post_json("issue/#{jira_issue_key}/remotelink", payload)
+    jirra_client.add_issue_link(jira_issue_key,
+      link_id: "#{jira_issue_key}-pr-#{pr_num}",
+      url: pr_url,
+      title: "#{repo_name} ##{pr_num}: #{pr_title}",
+      icon: {"url16x16":"https://github.com/favicon.ico"},
+    )
   end
 
   def transition_issue_to_in_progress(jira_issue_key)
