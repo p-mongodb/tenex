@@ -80,4 +80,18 @@ module FormattingHelpers
       issue_type_name
     end
   end
+
+  def build_timing(build)
+    if build.running?
+      if build.expected_duration
+        suffix = " out of ~ #{Taw.time_ago_in_words(Time.now - build.expected_duration, approx: 2)}"
+      else
+        suffix = ''
+      end
+      elapsed_time = Taw.time_ago_in_words(build.started_at, approx: 2)
+      " (for #{elapsed_time}#{suffix})"
+    else
+      ''
+    end
+  end
 end

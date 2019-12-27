@@ -40,9 +40,7 @@ table
       td= build.build_variant
       td
         = build.status
-        - if build.running?
-          '
-          = "(for #{Taw.time_ago_in_words(build.started_at, approx: 2)})"
+        = build_timing(build)
       td
         - if build.tasks.length == 1
           - task = build.tasks.first

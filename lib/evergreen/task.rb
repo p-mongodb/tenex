@@ -88,6 +88,10 @@ module Evergreen
       end
     end
 
+    def running?
+      status == 'started'
+    end
+
     def waiting?
       %w(undispatched).include?(status)
     end

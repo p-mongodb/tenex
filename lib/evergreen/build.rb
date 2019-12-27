@@ -72,6 +72,12 @@ module Evergreen
       %w(success failed).include?(status)
     end
 
+    # Returns expected duration of running task
+    def expected_duration
+      task = tasks.detect(&:running?)
+      task&.expected_duration
+    end
+
     def artifacts
       tasks.map(&:artifacts)
     end
