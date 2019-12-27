@@ -15,6 +15,21 @@ module Evergreen
       @info ||= client.get_json("tasks/#{id}")
     end
 
+    # Information that the evergreen UI shows, scraped from HTML output
+    def ui_info
+      @ui_info ||= begin
+        resp = client.connection.get("/task/#{id}")
+        if resp.status != 200
+          raise "Bad status #{resp.status}"
+        end
+        if resp.body =~ /task_data = (.*)/
+          JSON.parse($1)
+        else
+          raise 'Did not find magic data in response'
+        end
+      end
+    end
+
     def ui_url
       "https://evergreen.mongodb.com/task/#{id}"
     end
@@ -103,6 +118,15 @@ module Evergreen
     # in seconds
     def time_taken
       info['time_taken_ms'] / 1000.0
+    end
+
+    def queue_position
+      ui_info['min_queue_pos']
+    end
+
+    def expected_duration
+      # value must be in nanoseconds
+      ui_info['expected_duration'] / 1_000_000_000
     end
 
     def self.normalize_status(status)
