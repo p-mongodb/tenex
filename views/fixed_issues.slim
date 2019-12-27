@@ -1,11 +1,18 @@
-h1 Fixed Issues
-
 style
   |
     /* redo with https://hashnode.com/post/really-responsive-tables-using-css3-flexbox-cijzbxd8n00pwvm53sl4l42cx */
     .issue-table { width: 100%; table-layout: fixed; }
     .issue-table td { vertical-align: top; }
     /* .issue-table div { display: inline-block; } */
+
+h1 Fixed Issues
+
+p
+  a href="/jira/#{@project_name}/fixed/#{@version}" All
+  '
+  a href="/jira/#{@project_name}/fixed/#{@version}?exclusive=1" Exclusive
+  '
+  a href="/jira/#{@project_name}/fixed/#{@version}?smart=1" Smart
 
 table.issue-table
   - @issues.each do |issue|
@@ -29,4 +36,4 @@ textarea rows='40' cols='100'
 - if @excluded_versions
   p
     ' Versions excluded:
-    = @excluded_versions.map { |version| version['name'] }.join(', ')
+    = @excluded_versions.join(', ')

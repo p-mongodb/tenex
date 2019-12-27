@@ -11,15 +11,21 @@ Routes.included do
 
   get '/jira/:project/fixed/:version' do |project_name, version|
     @project_name = project_name.upcase
+    @version = version
     extra_conds = ''
     if params[:exclusive]
       all_versions = jirra_client.project_versions(@project_name)
-      versions = all_versions.select { |v| v['released'] }.sort_by do |version|
-        version['releaseDate']
-      end.reverse[0..4]
-      @excluded_versions = versions
-      extra_conds << versions.map { |v| %Q~ and fixversion != "#{v['name']}"~ }.join(' ')
-    elsif params[:smart_exclusive]
+      exclude_versions = all_versions.select { |v| v['released'] }.sort_by do |version|
+        version['releaseDate'] || '-'
+      end.reverse[0..4].map { |v| v['name'] }
+      # Remove version being looked at in case we look at it after it
+      # has been released
+      exclude_versions.delete(version)
+      unless exclude_versions.empty?
+        extra_conds << " and fixversion not in (#{exclude_versions.map { |v| "\"#{v}\"" }.join(',')})"
+      end
+      @excluded_versions = exclude_versions
+    elsif params[:smart]
       parts = version.split('.')[0..1].map(&:to_i)
       if parts.last > 0
         lb_parts = [parts.first, parts.last-1]
@@ -31,7 +37,9 @@ Routes.included do
       hb = Gem::Version.new(version.split('.')[0..2].join('.'))
 
       all_versions = jirra_client.project_versions(@project_name)
-      exclude_versions = all_versions.map do |info|
+      exclude_versions = all_versions.select do |info|
+        info['released']
+      end.map do |info|
         begin
           v = Gem::Version.new(info['name'])
           if v >= lb && v < hb
@@ -48,6 +56,7 @@ Routes.included do
       unless exclude_versions.empty?
         extra_conds << " and fixversion not in (#{exclude_versions.map { |v| "\"#{v}\"" }.join(',')})"
       end
+      @excluded_versions = exclude_versions
     end
     res = jirra_client.jql(<<-jql, max_results: 500, fields: %w(summary description issuetype))
       project=#{@project_name}
