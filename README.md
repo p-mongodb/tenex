@@ -47,6 +47,7 @@ failures also are not included in the number of failures.
 
 - Jump to Evergreen version view for the PR
 (which has individual task priorities, for instance).
+- Set task priority (also activates/schedules the task).
 - Bulk bump Evergreen task priority for all pending builds.
 - Jump to parsed test suite results (RSpec/JUnit XML) for each build.
 - Authorize patch build for externally submitted PRs.
