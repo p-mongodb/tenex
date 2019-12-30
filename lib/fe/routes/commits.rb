@@ -27,8 +27,9 @@ Routes.included do
         pr_title: @pull.title)
 
       orchestrator.transition_issue_to_in_progress(pull_p.jira_issue_key!)
-      orchestrator.link_pr_in_issue(org_name: org_name, repo_name: repo_name,
-        pr_num: pull_id, pr_title: @pull.title, jira_issue_key: pull_p.jira_issue_key!)
+      orchestrator.link_issue_and_pr(pull: @pull,
+        org_name: org_name, repo_name: repo_name,
+        jira_issue_key: pull_p.jira_issue_key!)
     end
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"

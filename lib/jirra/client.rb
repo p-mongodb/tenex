@@ -167,7 +167,7 @@ module Jirra
       if icon
         payload[:object][:icon] = icon
       end
-      jirra_client.post_json("issue/#{issue_key}/remotelink", payload)
+      post_json("issue/#{issue_key}/remotelink", payload)
     end
 
     def subject_for_issue(issue_key)
