@@ -4,6 +4,12 @@ require 'fe/rspec_result'
 
 Routes.included do
 
+  get '/eg/distros' do
+    hosts = eg_client.hosts
+    @distros = hosts.map(&:distro).sort.uniq(&:id)
+    slim :distros
+  end
+
   # eg project log
   get "/eg/:project/versions/:version/evergreen-log/:build" do |project_id, version_id, build_id|
     title = 'Evergreen log'

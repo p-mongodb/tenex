@@ -36,8 +36,8 @@ module Evergreen
     # Where various files are to be stored
     attr_reader :cache_root
 
-    def get_json(url)
-      request_json(:get, url)
+    def get_json(url, params=nil)
+      request_json(:get, url, params)
     end
 
     def post_json(url, params=nil)
@@ -63,6 +63,21 @@ module Evergreen
         end
       end
       response = connection.send(meth) do |req|
+        if meth.to_s.downcase == 'get'
+          if params
+            u = URI.parse(url)
+            query = u.query
+            if query
+              query = Rack::Utils.parse_nested_query(query)
+            else
+              query = {}
+            end
+            query.update(params)
+            u.query = Rack::Utils.build_query(query)
+            url = u.to_s
+            params = nil
+          end
+        end
         req.url(url)
         if params
           req.body = payload = JSON.dump(params)
@@ -145,7 +160,7 @@ module Evergreen
     end
 
     def hosts
-      payload = get_json("hosts")
+      payload = get_json("hosts", limit: 100_000)
       payload.map do |info|
         Host.new(self, info['host_id'], info: info)
       end

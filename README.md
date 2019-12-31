@@ -51,6 +51,7 @@ failures also are not included in the number of failures.
 - Bulk bump Evergreen task priority for all pending builds.
 - Jump to parsed test suite results (RSpec/JUnit XML) for each build.
 - Authorize patch build for externally submitted PRs.
+- Get a list of all known distros based on currently running hosts.
 
 #### Github Operations
 

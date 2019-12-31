@@ -1,0 +1,10 @@
+h1 Distros
+
+ul
+  - @distros.each do |distro|
+    li
+      = distro.id
+
+p
+  | This list is obtained from running hosts. If no hosts for a distro are
+  | running, the distro will not appear in the above list.
