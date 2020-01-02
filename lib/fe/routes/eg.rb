@@ -190,7 +190,7 @@ Routes.included do
     version.builds.each do |build|
       @urls[build.build_variant] = case build.status
       when 'success'
-        log = build.tasks.last.task_log
+        log = build.tasks.first.task_log
         if log =~ %r,Putting mongo-ruby-toolchain/ruby-toolchain.tar.gz into (https://s3.amazonaws.com/[^<]+),
           $1
         else
