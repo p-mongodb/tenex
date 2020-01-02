@@ -54,7 +54,7 @@ Routes.included do
     @version = Evergreen::Version.new(eg_client, version_id)
     if @version.pr_info
       @newest_version = system.newest_evergreen_version(@version)
-      if @newest_version.id == @version.id
+      if @newest_version && @newest_version.id == @version.id
         @newest_version = nil
       end
     end

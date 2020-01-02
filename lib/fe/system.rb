@@ -14,6 +14,7 @@ class System
     return nil unless version
     project = evergreen_project_for_github_repo(
       version.pr_info[:owner_name], version.pr_info[:repo_name])
+    # Sometimes the version appears to not be in the recent patch list
     project.recent_patches.detect do |patch|
       patch.description == version.message
     end
