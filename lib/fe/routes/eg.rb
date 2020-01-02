@@ -200,6 +200,8 @@ Routes.included do
         'n/a'
       end
     end
+    k, v = @urls.first
+    @template = v.sub(k, "`host_arch`").sub(k, "`host_arch |tr - _`")
     slim :version_toolchain_urls
   end
 end
