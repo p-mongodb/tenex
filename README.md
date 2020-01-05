@@ -146,6 +146,8 @@ spawned host.
 
 ### Jira operations
 
+- More intelligent smart querying
+  - Text is matched in summary in addition to description
 - View tickets in a version, export list to Markdown for changelog drafting
 - Exclude ticket from being in changelog
 

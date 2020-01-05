@@ -1,5 +1,29 @@
 Routes.included do
 
+  get '/jira/query' do
+    slim :jira_query
+  end
+
+  post '/jira/query' do
+    smart_query = params[:query]
+    query = []
+    parts = smart_query.split(/\s+/)
+    until parts.empty?
+      part = parts.shift
+      if %w(ruby mongoid).include?(part.downcase)
+        query << "project=#{part}"
+      elsif %w(open).include?(part.downcase)
+        query << "resolution=unresolved"
+      else
+        text = ([part] + parts).join(' ')
+        query << %Q,(summary ~ "#{text}" or description ~ "#{text}"),
+        parts = []
+      end
+    end
+    query = query.join(' and ')
+    redirect "https://jira.mongodb.org/issues/?jql=#{CGI.escape(query)}"
+  end
+
   get '/jira/:project' do |project_name|
     @project_name = project_name.upcase
     @versions = jirra_client.project_versions(@project_name)
