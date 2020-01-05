@@ -5,3 +5,10 @@ form method='post'
   div
     textarea name='query' rows=5 cols=100
   input type='submit' value='Go'
+
+- if @queries.any?
+  p Recent
+  ul
+    - @queries.each do |query|
+      li
+        a href="/jira/query?query=#{CGI.escape(query.input_text)}"= query.input_text

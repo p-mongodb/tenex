@@ -1,10 +1,19 @@
 Routes.included do
 
   get '/jira/query' do
-    slim :jira_query
+    if params[:query]
+      do_query
+    else
+      @queries = JiraQuery.recent
+      slim :jira_query
+    end
   end
 
   post '/jira/query' do
+    do_query
+  end
+
+  def do_query
     smart_query = params[:query]
     query = []
     parts = smart_query.split(/\s+/)
@@ -21,6 +30,8 @@ Routes.included do
       end
     end
     query = query.join(' and ')
+    jq = JiraQuery.find_or_create_by(input_text: smart_query)
+    jq.save!
     redirect "https://jira.mongodb.org/issues/?jql=#{CGI.escape(query)}"
   end
 

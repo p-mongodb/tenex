@@ -148,6 +148,7 @@ spawned host.
 
 - More intelligent smart querying
   - Text is matched in summary in addition to description
+- Recent smart query list
 - View tickets in a version, export list to Markdown for changelog drafting
 - Exclude ticket from being in changelog
 
