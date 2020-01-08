@@ -20,9 +20,11 @@ Routes.included do
     until parts.empty?
       part = parts.shift
       if %w(ruby mongoid).include?(part.downcase)
-        query << "project=#{part}"
+        query << "project in (#{part})"
       elsif %w(open).include?(part.downcase)
-        query << "resolution=unresolved"
+        query << "resolution in (unresolved)"
+      elsif %w(bson).include?(part.downcase)
+        query << "component in (#{part})"
       else
         text = ([part] + parts).join(' ')
         query << %Q,(summary ~ "#{text}" or description ~ "#{text}"),
