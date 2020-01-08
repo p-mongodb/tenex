@@ -39,7 +39,7 @@ class Orchestrator
     if texts.any? { |text| text.include?(url) }
       # already added
     else
-      if pull.body.nil?
+      if pull.body.nil? || pull.body.empty?
         pull.update(body: url)
       else
         pull.add_comment(url)
