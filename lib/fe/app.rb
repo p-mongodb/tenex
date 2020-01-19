@@ -58,14 +58,17 @@ class App < Sinatra::Base
       raise ArgumentError, "Invalid which value #{which}"
     end
     build = Evergreen::Build.new(eg_client, build_id)
+    #build.task_log
     log, log_url = EvergreenCache.build_log(build, which)
     do_log(log, log_url, title)
   end
 
   private def do_log(log, log_url, title)
+=begin
     if log.encoding.name == 'ASCII-8BIT'
       log = log.force_encoding('utf-8')
     end
+=end
 
     # Evergreen provides logs in html and text formats.
     # Unfortunately text format drops each line's severity which indicates,

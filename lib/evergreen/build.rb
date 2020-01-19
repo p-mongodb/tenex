@@ -52,7 +52,13 @@ module Evergreen
         if resp.status != 200
           fail resp.status
         end
-        resp.body
+        body = resp.body
+        if content_type = resp.headers['content-type']
+          if content_type =~ /charset=utf-8/i
+            body.force_encoding('utf-8')
+          end
+        end
+        body
       end
     end
 
