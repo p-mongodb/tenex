@@ -17,6 +17,7 @@ require 'action_view/helpers/number_helper'
 require 'fe/globals'
 require 'fe/config'
 require 'fe/formatting_helpers'
+require 'fe/evergreen_cache'
 
 Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
   require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
@@ -57,7 +58,8 @@ class App < Sinatra::Base
       raise ArgumentError, "Invalid which value #{which}"
     end
     build = Evergreen::Build.new(eg_client, build_id)
-    do_log(build.send("#{which}_log"), build.send("#{which}_log_url"), title)
+    log, log_url = EvergreenCache.build_log(build, which)
+    do_log(log, log_url, title)
   end
 
   private def do_log(log, log_url, title)

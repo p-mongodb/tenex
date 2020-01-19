@@ -146,7 +146,7 @@ class EvergreenStatusPresenter
       return 0
     end
 
-    evergreen_version.builds.select { |build| !build.completed? }.length
+    evergreen_version.builds.select { |build| !build.finished? }.length
   end
 
   def running_build_count

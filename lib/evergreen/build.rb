@@ -23,6 +23,18 @@ module Evergreen
       end
     end
 
+    def created_at
+      info['create_time'] && Time.parse(info['create_time'])
+    end
+
+    def started_at
+      info['start_time'] && Time.parse(info['start_time'])
+    end
+
+    def finished_at
+      info['finish_time'] && Time.parse(info['finish_time'])
+    end
+
     %i(task all).each do |which|
       define_method("#{which}_log_url") do
         if info['tasks'].length != 1
@@ -68,7 +80,7 @@ module Evergreen
       info['status']
     end
 
-    def completed?
+    def finished?
       %w(success failed).include?(status)
     end
 

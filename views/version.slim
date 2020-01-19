@@ -16,7 +16,7 @@ p
   - if @newest_version
     '
     a href="/eg/#{@project_id}/versions/#{@newest_version.id}" Newest version
-  - if @builds.any? { |build| !build.completed? }
+  - if @builds.any? { |build| !build.finished? }
     '
     ' Bump priority to:
     a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=40" 40
