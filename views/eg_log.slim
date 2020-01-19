@@ -5,23 +5,23 @@ css:
   .severity-W { color: #ea9b09; }
   .severity-E { color: red; }
 
-- if @mo_curl_failure
+- if @cached_build.mo_curl_failure_index
   p
     ' mongo-orchestration curl failure:
-    pre= @mo_curl_failure
+    pre= @log_lines[cached_build.mo_curl_failure_index][:text]
 
-- if @bundler_failure
+- if @cached_build.bundler_failure_index
   p
     ' Bundler appears to have failed to install dependencies:
-    pre= @bundler_failure
+    pre= @log_lines[cached_build.bundler_failure_index][:text]
 
 p style='margin:1em;font-size:150%'
   a href="#{@eg_log_url}"
     | Log @ Evergreen
 
 pre
-  - @log_lines.each do |line|
-    - if line[:first_failure]
+  - @log_lines.each_with_index do |line, index|
+    - if index == @cached_build.first_failure_index
       a name='first-failure'
     span id="line-#{line[:num]}" class="severity-#{line[:severity].upcase}"
       = line[:html].html_safe + "\n"

@@ -63,6 +63,7 @@ class App < Sinatra::Base
     @title = title
     @log_lines = log_lines
     @eg_log_url = log_url
+    @cached_build = cached_build
     slim :eg_log
   end
 
