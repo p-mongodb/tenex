@@ -13,17 +13,28 @@ Routes.included do
     do_query
   end
 
+  PROJECT_ALIASES = {
+    'lmc' => 'libmongocrypt',
+  }.freeze
+
+  PROJECTS = %w(
+    ruby mongoid
+  ).freeze
+
   def do_query
     smart_query = params[:query]
     query = []
     parts = smart_query.split(/\s+/)
     until parts.empty?
       part = parts.shift
-      if %w(ruby mongoid).include?(part.downcase)
+      dpart = part.downcase
+      if PROJECT_ALIASES.key?(dpart)
+        query << "project in (#{PROJECT_ALIASES[dpart]})"
+      elsif PROJECTS.include?(dpart)
         query << "project in (#{part})"
-      elsif %w(open).include?(part.downcase)
+      elsif %w(open).include?(dpart)
         query << "resolution in (unresolved)"
-      elsif %w(bson).include?(part.downcase)
+      elsif %w(bson).include?(dpart)
         query << "component in (#{part})"
       else
         text = ([part] + parts).join(' ')
