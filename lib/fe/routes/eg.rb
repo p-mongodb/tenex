@@ -13,6 +13,12 @@ Routes.included do
   # eg project log
   get "/eg/:project/versions/:version/evergreen-log/:build" do |project_id, version_id, build_id|
     title = 'Evergreen log'
+    version = eg_client.version_by_id(version_id)
+    if version.message =~ %r,https://github.com/([^/]+)/([^/]+)/pull/(\d+),
+      @owner_name = $1
+      @repo_name = $2
+      @pull_id = $3
+    end
     do_evergreen_log(build_id, title)
   end
 

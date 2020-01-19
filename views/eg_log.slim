@@ -15,7 +15,9 @@ css:
     ' Bundler appears to have failed to install dependencies:
     pre= @log_lines[cached_build.bundler_failure_index][:text]
 
-p style='margin:1em;font-size:150%'
+p
+  a href="/repos/#{@owner_name}/#{@repo_name}/pulls/#{@pull_id}" PR
+  '
   a href="#{@eg_log_url}"
     | Log @ Evergreen
 
