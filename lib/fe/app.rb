@@ -58,53 +58,10 @@ class App < Sinatra::Base
       raise ArgumentError, "Invalid which value #{which}"
     end
     build = Evergreen::Build.new(eg_client, build_id)
-    log, log_url = EvergreenCache.build_log(build, which)
-    do_log(log, log_url, title)
-  end
-
-  private def do_log(log, log_url, title)
-
-    # Evergreen provides logs in html and text formats.
-    # Unfortunately text format drops each line's severity which indicates,
-    # in particular, the output stream (stdout/stderr) that the
-    # line came from.
-    # Convert html logs to the underlying log structure.
-    #
-    # Nokogiri has special handling of escape characters, bypass it to allow
-    # us to run individual lines through ansi->html conversion.
-    doc = Nokogiri::HTML(log.gsub("\x1b", "\ufff9"))
-    lines = doc.xpath('//i').map do |line|
-      num = line.attr('id').sub(/.*-/, '').to_i + 1
-      span = line.xpath('./following-sibling::span[1]').first
-      severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }.sub(/.*-/, '').downcase
-      text = span.text.gsub("\ufff9", "\x1b")
-      html = Ansi::To::Html.new(CGI.escapeHTML(text)).to_html
-      {num: num, severity: severity, text: text, html: html}
-    end
-
-    lines.each do |line|
-      if line[:text] =~ %r,Failure/Error:,
-        line[:first_failure] = true
-        break
-      end
-    end
-
-    lines.each_with_index do |line, index|
-      if line[:text] =~ /\[.*?\] curl: \(\d+\) Recv failure:/
-        @mo_curl_failure = line
-      end
-      if line[:text] =~ /Unfortunately, an unexpected error occurred, and Bundler cannot continue./
-        @bundler_failure = 'Could not locate the failure in the log'
-        lines.each_with_index do |l, i|
-          if l[:text] =~ %r,https://github.com/bundler/bundler/issues/new,
-            @bundler_failure = lines[i+1]
-          end
-        end
-      end
-    end
+    cached_build, log_lines, log_url = EvergreenCache.build_log(build, which)
 
     @title = title
-    @log_lines = lines
+    @log_lines = log_lines
     @eg_log_url = log_url
     slim :eg_log
   end
