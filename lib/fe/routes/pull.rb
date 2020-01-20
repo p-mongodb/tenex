@@ -92,6 +92,9 @@ Routes.included do
         if meta_for_label.delete('storage-engine') == 'mmapv1'
           short_label << 'mmap'
         end
+        if meta_for_label.delete('bson') == 'master'
+          short_label << 'BM'
+        end
         if compressor = meta_for_label.delete('compressor')
           short_label << compressor[0].upcase
         end
