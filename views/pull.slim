@@ -164,3 +164,18 @@ table.status-table
           td
             - if status.restart_url
               a href=status.restart_url Restart
+
+small
+  ' Legend:
+    AS=with ActiveSupport;
+    BM=BSON master;
+    Bm=BSON min;
+    EA=enterprise auth;
+    FLE=field-level encryption;
+    K=Kerberos;
+    L=lint;
+    mmap=MMAPv1;
+    RR=legacy retryable reads;
+    RW=legacy retryable writes;
+    SM=single mongos;
+    Z=compression.
