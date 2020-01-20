@@ -8,12 +8,12 @@ css:
 - if @cached_build.mo_curl_failure_index
   p
     ' mongo-orchestration curl failure:
-    pre= @log_lines[cached_build.mo_curl_failure_index][:text]
+    pre= @log_lines[@cached_build.mo_curl_failure_index][:text]
 
 - if @cached_build.bundler_failure_index
   p
     ' Bundler appears to have failed to install dependencies:
-    pre= @log_lines[cached_build.bundler_failure_index][:text]
+    pre= @log_lines[@cached_build.bundler_failure_index][:text]
 
 p
   a href="/repos/#{@owner_name}/#{@repo_name}/pulls/#{@pull_id}" PR
