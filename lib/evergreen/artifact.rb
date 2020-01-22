@@ -31,6 +31,21 @@ module Evergreen
       File.join(client.cache_root, cache_basename).sub(/\.tar\.gz$/, '')
     end
 
+    def size
+      if File.exist?(cache_path)
+        File.size(cache_path)
+      else
+        resp = client.connection.head(url)
+        unless resp.status == 200
+          raise "Failed to HEAD #{url}"
+        end
+        unless cl = resp.headers['content-length']
+          raise "Missing content-length for #{url}"
+        end
+        cl.to_i
+      end
+    end
+
     def extract_tarball_with_cache(&block)
       cache_path = self.cache_path
       if File.exist?(cache_path)
