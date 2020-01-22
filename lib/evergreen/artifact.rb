@@ -155,6 +155,10 @@ module Evergreen
     def yield_tarball
       fetch_into_cache
 
+      if File.size(cache_path) == 0
+        raise "Tarball is zero length - this is not good"
+      end
+
       rv = nil
       Zlib::GzipReader.open(cache_path) do |gz|
         Gem::Package::TarReader.new(gz) do |tar|

@@ -1,6 +1,6 @@
 module Evergreen
   module Utils
-    def convert_time(time_str)
+    module_function def convert_time(time_str)
       time = nil
       if time_str
         time = Time.parse(time_str)
