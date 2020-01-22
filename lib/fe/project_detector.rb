@@ -52,6 +52,12 @@ PROJECT_CONFIGS = {
     'RUBY',
     'mongo-ruby-driver-toolchain',
   ),
+  'libmongocrypt' => ProjectConfig.new(
+    'mongodb',
+    'libmongocrypt',
+    'MONGOCRYPT',
+    nil,
+  ),
 }
 
 class ProjectDetector
@@ -60,7 +66,7 @@ class ProjectDetector
 
     until @repo_name || %w(. /).include?(path)
       case basename = File.basename(path)
-      when 'mongoid', 'specifications', 'bson-ruby'
+      when 'mongoid', 'specifications', 'bson-ruby', 'libmongocrypt'
         key = basename
         break
       when 'ruby-driver'
@@ -78,7 +84,7 @@ class ProjectDetector
           break
         end
       end
-      dir = File.dirname(dir)
+      path = File.dirname(path)
     end
 
     @project_config = PROJECT_CONFIGS[key]
