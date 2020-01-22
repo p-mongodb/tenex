@@ -97,22 +97,17 @@ module Evergreen
     end
 
     def artifacts
-      tasks.map(&:artifacts)
+      tasks.map(&:artifacts).flatten
     end
 
     def artifact(basename)
-      task = tasks.first
-      artifact = task.artifacts.detect do |artifact|
+      artifact = artifacts.detect do |artifact|
         artifact.name == basename
       end
     end
 
     def artifact?(basename)
-      task = tasks.first
-      artifact = task.artifacts.detect do |artifact|
-        artifact.name == basename
-      end
-      !!artifact
+      !!artifact(basename)
     end
 
     # in seconds
