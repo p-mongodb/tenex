@@ -24,15 +24,15 @@ module Evergreen
     end
 
     def created_at
-      info['create_time'] && Time.parse(info['create_time'])
+      Utils.convert_time(info['create_time'])
     end
 
     def started_at
-      info['start_time'] && Time.parse(info['start_time'])
+      Utils.convert_time(info['start_time'])
     end
 
     def finished_at
-      info['finish_time'] && Time.parse(info['finish_time'])
+      Utils.convert_time(info['finish_time'])
     end
 
     %i(task all).each do |which|
