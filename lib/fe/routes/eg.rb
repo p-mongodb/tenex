@@ -189,6 +189,24 @@ Routes.included do
   end
 
   def results_fallback(project_id, version_id, build)
+    logs = build.detect_artifact('mongodb-logs.tar.gz')
+    if logs
+      logs.tarball_each do |entry|
+        contents = entry.read
+        next unless contents
+        if entry.full_name =~ /\.log$/
+          contents.force_encoding('utf-8')
+        end
+        if start = (contents =~ /(Got signal: (\d+)(.|\n)*----- BEGIN BACKTRACE -----(.|\n)*-----  END BACKTRACE  -----)/)
+          @log_name = entry.full_name
+          @log_url = "/eg/#{project_id}/versions/#{version_id}/builds/#{build.id}/artifact-log/#{@log_name}"
+          @fragment = contents[start-5000...contents.length]
+          @fragment = @fragment[@fragment.index("\n")...@fragment.length]
+          return slim :server_crash
+        end
+      end
+    end
+
     redirect "/eg/#{project_id}/versions/#{version_id}/evergreen-log/#{build.id}"
   end
 

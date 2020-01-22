@@ -150,6 +150,12 @@ module Evergreen
       end
     end
 
+    def tarball_each(&block)
+      yield_tarball do |tar|
+        tar.each(&block)
+      end
+    end
+
     private
 
     def yield_tarball
@@ -166,12 +172,6 @@ module Evergreen
         end
       end
       rv
-    end
-
-    def tarball_each(&block)
-      yield_tarball do |tar|
-        tar.each(&block)
-      end
     end
 
     def fetch_into_cache
