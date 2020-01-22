@@ -1,3 +1,9 @@
+p
+  ' Contents of
+  a href="#{@artifact.url}"= @artifact.name
+  '
+  ' (#{number_to_human_size(@artifact.size)}):
+
 ul
   - @files.each do |info|
     li

@@ -1,3 +1,7 @@
+module Gem
+  autoload :Package, 'rubygems/package'
+end
+
 module Evergreen
   class Artifact
     def initialize(client, info:, task:)
@@ -132,18 +136,58 @@ module Evergreen
       nil
     end
 
+    def tarball_entry(full_name, &block)
+      yield_tarball do |tar|
+        tar.seek(full_name, &block)
+      end
+    end
+
     def tarball_file_infos
       [].tap do |infos|
-        extract_tarball do |root|
-          Find.find(root) do |path|
-            next unless File.file?(path)
-            rel = path[root.length+1...path.length]
-            if rel
-              infos << ArtifactFileInfo.new(rel, path)
-            end
-          end
+        tarball_each do |entry|
+          infos << ArtifactFileInfo.new(entry.full_name, size: entry.size)
         end
       end
+    end
+
+    private
+
+    def yield_tarball
+      fetch_into_cache
+
+      rv = nil
+      Zlib::GzipReader.open(cache_path) do |gz|
+        Gem::Package::TarReader.new(gz) do |tar|
+          rv = yield tar
+        end
+      end
+      rv
+    end
+
+    def tarball_each(&block)
+      yield_tarball do |tar|
+        tar.each(&block)
+      end
+    end
+
+    def fetch_into_cache
+      if client.cache_root && File.exist?(cache_path)
+        return
+      end
+
+      FileUtils.mkdir_p(File.dirname(cache_path))
+      File.open(cache_path + '.part', 'w') do |f|
+        stream = URI.open(url)
+        begin
+          while chunk = stream.read(1048576)
+            f.write(chunk)
+          end
+        ensure
+          stream.close
+        end
+      end
+
+      FileUtils.mv(cache_path + '.part', cache_path)
     end
   end
 end

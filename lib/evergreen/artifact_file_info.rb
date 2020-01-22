@@ -1,8 +1,7 @@
 class ArtifactFileInfo
-  def initialize(name, path)
+  def initialize(name, size:)
     @name = name
-    stat = File.stat(path)
-    @size = stat.size
+    @size = size
   end
 
   attr_reader :name, :size
