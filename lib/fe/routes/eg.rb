@@ -173,21 +173,23 @@ Routes.included do
     @build = Evergreen::Build.new(eg_client, build_id)
     artifact = @build.artifact('rspec.json')
     unless artifact
-      redirect "/eg/#{project_id}/versions/#{version_id}/evergreen-log/#{build_id}"
-      return
+      return results_fallback(project_id, version_id, @build)
     end
     @raw_artifact_url = url = artifact.url
     local_path = ArtifactCache.instance.fetch_artifact(url)
     content = File.read(local_path)
     if content.empty?
       # Happens sometimes
-      redirect "/eg/#{project_id}/versions/#{version_id}/evergreen-log/#{build_id}"
-      return
+      return results_fallback(project_id, version_id, @build)
     end
     @result = RspecResult.new(url, content)
 
     @branch_name = params[:branch]
     slim :results
+  end
+
+  def results_fallback(project_id, version_id, build)
+    redirect "/eg/#{project_id}/versions/#{version_id}/evergreen-log/#{build.id}"
   end
 
   get '/eg/:project/versions/:version/tasks/:task/bump' do |project_id, version_id, task_id|
