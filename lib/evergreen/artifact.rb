@@ -1,11 +1,23 @@
 module Evergreen
   class Artifact
-    def initialize(client, info:)
+    def initialize(client, info:, task:)
       @client = client
       @info = info
+      @task = task
     end
 
     attr_reader :client, :info
+
+    # An artifact does not record which execution of a task it is associated
+    # with. It is possible to deduce task id from artifact url, but it is
+    # dangerous to simply query a task by this id because the task's
+    # execution may be a different one than the one which created the artifact
+    # (e.g. the task may be in progress which doesn't make sense since the
+    # task must have finished to produce the artifact).
+    # The task referenced here is always written into the artifact during
+    # the artifact's construction, when the artifact is retrieved for a
+    # particular (execution of a) task.
+    attr_reader :task
 
     %w(name url visibility ignore_for_fetch).each do |m|
       define_method(m) do
@@ -28,11 +40,18 @@ module Evergreen
     end
 
     def cache_path
-      File.join(client.cache_root, cache_basename).sub(/\.tar\.gz$/, '')
+      parts = [client.cache_root, 'artifacts']
+      if task
+        if task.started_at
+          parts << task.started_at.to_i.to_s
+        end
+      end
+      parts << cache_basename
+      File.join(parts)
     end
 
     def size
-      if File.exist?(cache_path)
+      if client.cache_root && File.exist?(cache_path)
         File.size(cache_path)
       else
         resp = client.connection.head(url)

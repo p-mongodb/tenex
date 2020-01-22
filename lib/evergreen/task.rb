@@ -116,7 +116,9 @@ module Evergreen
     end
 
     def artifacts
-      (info['artifacts'] || []).map { |artifact| Artifact.new(client, info: artifact) }
+      (info['artifacts'] || []).map do |artifact|
+        Artifact.new(client, info: artifact, task: self)
+      end
     end
 
     # in seconds
