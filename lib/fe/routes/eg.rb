@@ -111,13 +111,13 @@ Routes.included do
   get '/eg/:project/versions/:version/builds/:build/log' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     title = "EG log"
-    do_log(build.task_log, build.task_log_url, title)
+    do_evergreen_log(build.id, title, :task)
   end
 
   get '/eg/:project/versions/:version/builds/:build/log/all' do |project_id, version_id, build_id|
     build = Evergreen::Build.new(eg_client, build_id)
     title = "All EG log"
-    do_log(build.all_log, build.all_log_url, title)
+    do_evergreen_log(build.id, title, :all)
   end
 
   # eg log
