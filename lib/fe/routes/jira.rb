@@ -36,6 +36,12 @@ Routes.included do
         query << "resolution in (unresolved)"
       elsif %w(bson).include?(dpart)
         query << "component in (#{part})"
+      elsif parts.length > 0 &&
+        (bits = [dpart, parts.first.downcase]) == %w(spec compliance)
+      then
+        parts.shift
+        component = bits.join(' ')
+        query << "component in ('#{component}')"
       else
         text = ([part] + parts).join(' ')
         query << %Q,(summary ~ "#{text}" or description ~ "#{text}"),
