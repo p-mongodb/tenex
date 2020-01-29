@@ -79,7 +79,7 @@ class ProjectDetector
         key = 'mongo-ruby-toolchain'
         break
       when 'source'
-        if File.basename(File.dirname(dir)) == 'specifications'
+        if File.basename(File.dirname(path)) == 'specifications'
           key = 'specifications'
           break
         end
