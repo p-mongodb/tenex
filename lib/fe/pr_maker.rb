@@ -103,11 +103,13 @@ class CurrentPrMaker < BranchPrMaker
       raise ArgumentError, "Cannot figure out branch name"
     end
 
+=begin
     if @branch_name =~ /^spec-\d+$/i
       config = PROJECT_CONFIGS['specifications']
     elsif @branch_name =~ /^writing-\d+$/i
       config = PROJECT_CONFIGS['writing']
     end
+=end
 
     if @branch_name =~ /^(\d+)/
       @num = $1
