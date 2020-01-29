@@ -51,6 +51,8 @@ p
     a href="https://jira.mongodb.org/browse/#{@pull.jira_issue_key!}" Jira
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-validate" Validate EG config
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/in-progress" In progress
 
 p
   - if (eg_status = @pull.top_evergreen_status) && @pull.evergreen_version_id
