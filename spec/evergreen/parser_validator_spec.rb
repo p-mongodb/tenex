@@ -34,4 +34,29 @@ describe Evergreen::ParserValidator do
       error_msg.should =~ /contains a space in its name/
     end
   end
+
+  context 'ok function' do
+    let(:config_path) { CONFIG_ROOT.join('function_ok.yml') }
+
+    it 'succeeds' do
+      error_msg.should == ''
+    end
+  end
+
+  context 'function containing data of wrong type' do
+    let(:config_path) { CONFIG_ROOT.join('function_wrong_type.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Function.*contains data of wrong type/
+    end
+  end
+
+  context 'function without a command' do
+    let(:config_path) { CONFIG_ROOT.join('function_no_command.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Function.*does not have the.*command.*key/
+    end
+  end
+
 end

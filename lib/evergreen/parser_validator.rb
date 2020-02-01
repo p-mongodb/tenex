@@ -21,7 +21,7 @@ module Evergreen
 
       errors = []
 
-      doc['tasks'].each do |task|
+      doc['tasks']&.each do |task|
         if task['name'].include?(' ')
           # Spaces in task names are not expilcitly prohibited, but, per
           # the Evergreen team, Evergreen's handling of task names with spaces
@@ -42,6 +42,21 @@ module Evergreen
                 errors << %Q`Task "#{task['name']}" references undefined function "#{command['func']}"`
               end
             end
+          end
+        end
+      end
+
+      doc['functions']&.each do |name, function|
+        unless function.is_a?(Array)
+          errors << %Q`Function "#{name}" contains data of wrong type: expected Array, found #{function.class}`
+        end
+        function.each_with_index do |command, index|
+          unless command.is_a?(Hash)
+            errors << %Q`Function "#{name}" command #{index+1} contains data of wrong type: expected Hash, found #{command.class}: #{command}`
+            next
+          end
+          unless command['command']
+            errors << %Q`Function "#{name}" command #{index+1} does not have the "command" key:\n#{command.to_yaml}`
           end
         end
       end

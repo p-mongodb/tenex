@@ -1,0 +1,9 @@
+functions:
+  "install dependencies":
+    type: test
+    params:
+      working_dir: "src"
+      script: |
+        ${PREPARE_SHELL}
+        file="${PROJECT_DIRECTORY}/.evergreen/install-dependencies.sh"
+        [ -f ${file} ] && sh ${file} || echo "${file} not available, skipping"
