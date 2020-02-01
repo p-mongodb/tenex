@@ -12,3 +12,7 @@ h1 Evergreen project file validation
     pre
       = summary.ruby_error
       = summary.evergreen_error
+
+p
+  ' Evergreen binary updated #{Taw.time_ago_in_words(@eg_binary_mtime, approx: 2)} ago.
+  a href='/eg/update-binary' Update now

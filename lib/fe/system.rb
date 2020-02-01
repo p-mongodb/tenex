@@ -78,12 +78,13 @@ class System
           path = nil
         end
       else
-        # Prioritize a binary in path if one exists, fall back to local.
-        # Do not update.
-        path = evergreen_binary_in_path
-        if !path && File.exist?(local_evergreen_binary_path)
-          path = local_evergreen_binary_path
+        # Take the most recent one available between the binary in path
+        # and the local one, do not update.
+        paths = [evergreen_binary_in_path]
+        if File.exist?(local_evergreen_binary_path)
+          paths << local_evergreen_binary_path
         end
+        path = paths.compact.sort_by { |path| File.stat(path).mtime }.last
       end
 
       unless path
@@ -99,16 +100,18 @@ class System
   end
 
   def local_evergreen_binary_path
-    TMP_DIR.join('bin/evergreen')
+    TMP_DIR.join('bin/evergreen').to_s
   end
 
   def fetch_evergreen_binary
     FileUtils.mkdir_p(File.dirname(local_evergreen_binary_path))
-    contents = open(EVERGREEN_BINARY_URL).read
-    File.open(local_evergreen_binary_path + '.part', 'w') do |f|
+    contents = URI.open(EVERGREEN_BINARY_URL).read
+    part_path = local_evergreen_binary_path.to_s + '.part'
+    File.open(part_path, 'w') do |f|
       f << contents
     end
-    FileUtils.mv(local_evergreen_binary_path + '.part', local_evergreen_binary_path)
+    FileUtils.chmod(0755, part_path)
+    FileUtils.mv(part_path, local_evergreen_binary_path)
   end
 
   def evergreen_global_config_path

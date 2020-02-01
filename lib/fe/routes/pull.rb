@@ -433,6 +433,7 @@ Routes.included do
     end
 
     @summaries = summaries
+    @eg_binary_mtime = File.stat(eg_path).mtime
     slim :eg_validate
   end
 

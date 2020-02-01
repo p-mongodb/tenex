@@ -4,6 +4,11 @@ require 'fe/rspec_result'
 
 Routes.included do
 
+  get '/eg/update-binary' do
+    system.fetch_evergreen_binary
+    redirect return_path || '/'
+  end
+
   get '/eg/distros' do
     hosts = eg_client.hosts
     @distros = hosts.map(&:distro).sort.uniq(&:id)
