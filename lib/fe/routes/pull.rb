@@ -386,7 +386,6 @@ Routes.included do
   get '/repos/:org/:repo/pulls/:id/eg-validate' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
 
-    system.fetch_evergreen_binary_if_needed
     system.create_global_evergreen_config_if_needed
 
     eg_path = system.evergreen_binary_path

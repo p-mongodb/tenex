@@ -47,19 +47,54 @@ class System
     repo
   end
 
+  def eagerly_update_evergreen_binary?
+    %w(yes true 1).include?(ENV['UPDATE_EG_BINARY']&.downcase)
+  end
+
+  def evergreen_binary_in_path
+    found_path = nil
+    ENV['PATH'].split(':').each do |dir|
+      if File.executable?(path = File.join(dir, 'evergreen'))
+        found_path = path
+        break
+      end
+    end
+    found_path
+  end
+
   def evergreen_binary_path
     @evergreen_binary_path ||= begin
-      found_path = nil
-      ENV['PATH'].split(':').each do |dir|
-        if File.executable?(path = File.join(dir, 'evergreen'))
-          found_path = path
-          break
+      if eagerly_update_evergreen_binary?
+        # Prioritize local binary over the one in path.
+        # If the binary is over a week old, update it.
+
+        path = if File.exist?(local_evergreen_binary_path)
+          local_evergreen_binary_path
+        else
+          evergreen_binary_in_path
+        end
+
+        if path && File.stat(path).mtime < Time.now - 1.week
+          path = nil
+        end
+      else
+        # Prioritize a binary in path if one exists, fall back to local.
+        # Do not update.
+        path = evergreen_binary_in_path
+        if !path && File.exist?(local_evergreen_binary_path)
+          path = local_evergreen_binary_path
         end
       end
-      if found_path.nil? && File.exist?(local_evergreen_binary_path)
-        found_path = local_evergreen_binary_path
+
+      unless path
+        fetch_evergreen_binary
+        path = local_evergreen_binary_path
+        unless File.exist?(path)
+          raise "Missing evergreen binary after update"
+        end
       end
-      found_path
+
+      path
     end
   end
 
@@ -67,15 +102,13 @@ class System
     TMP_DIR.join('bin/evergreen')
   end
 
-  def fetch_evergreen_binary_if_needed
-    if evergreen_binary_path.nil?
-      FileUtils.mkdir_p(File.dirname(local_evergreen_binary_path))
-      contents = open(EVERGREEN_BINARY_URL).read
-      File.open(local_evergreen_binary_path + '.part', 'w') do |f|
-        f << contents
-      end
-      FileUtils.mv(local_evergreen_binary_path + '.part', local_evergreen_binary_path)
+  def fetch_evergreen_binary
+    FileUtils.mkdir_p(File.dirname(local_evergreen_binary_path))
+    contents = open(EVERGREEN_BINARY_URL).read
+    File.open(local_evergreen_binary_path + '.part', 'w') do |f|
+      f << contents
     end
+    FileUtils.mv(local_evergreen_binary_path + '.part', local_evergreen_binary_path)
   end
 
   def evergreen_global_config_path
