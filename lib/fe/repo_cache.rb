@@ -178,7 +178,8 @@ CMD
       elsif branch_name =~ /^(\d+)($|-)/
         ticket = "#{project}-#{$1}"
       else
-        ticket = pull.jira_ticket!
+        ticket = pull.jira_ticket_number
+        ticket = "#{project}-#{ticket}"
       end
 
       unless ticket
