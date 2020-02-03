@@ -1,5 +1,3 @@
-require 'fe/pull_ext'
-
 class Orchestrator
   include Env::Access
 

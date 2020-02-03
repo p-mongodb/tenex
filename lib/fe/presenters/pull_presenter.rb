@@ -1,4 +1,3 @@
-require 'fe/pull_ext'
 require 'fe/artifact_cache'
 require 'fe/aggregate_rspec_result'
 require 'fe/mappings'
