@@ -54,7 +54,7 @@ ul
       | #{result[:id]} #{result[:description]} (<b>#{'%.1f' % result[:time]} s</b>)
       = sdam_log_entries(result)
 
-- if @result.respond_to?(:always_skipped_examples) && (results = @result.always_skipped_examples) && !results.empty?
+- if !@filtered && @result.respond_to?(:always_skipped_examples) && (results = @result.always_skipped_examples) && !results.empty?
   h2 Always skipped
   ul
     - @result.always_skipped_examples.each do |result|

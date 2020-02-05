@@ -347,6 +347,7 @@ Routes.included do
         raise NotImplemented
       end
     else
+      @filtered = true
       slim :results
     end
   end
@@ -358,6 +359,7 @@ Routes.included do
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
     @pull.fetch_results
     @result = @pull.aggregate_result { |result| result.jruby? }
+    @filtered = true
     slim :results
   end
 
