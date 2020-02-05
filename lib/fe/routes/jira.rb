@@ -18,7 +18,7 @@ Routes.included do
   }.freeze
 
   PROJECTS = %w(
-    ruby mongoid
+    ruby mongoid server
   ).freeze
 
   def do_query
@@ -28,7 +28,9 @@ Routes.included do
     until parts.empty?
       part = parts.shift
       dpart = part.downcase
-      if PROJECT_ALIASES.key?(dpart)
+      if dpart == 'rme'
+        query << 'reporter = currentUser()'
+      elsif PROJECT_ALIASES.key?(dpart)
         query << "project in (#{PROJECT_ALIASES[dpart]})"
       elsif PROJECTS.include?(dpart)
         query << "project in (#{part})"
