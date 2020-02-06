@@ -119,9 +119,12 @@ Routes.included do
           end
         end
         if map[short_label]
-          raise "overwrite for #{id}: #{short_label} #{meta.inspect}"
+          #raise "overwrite for #{id}: #{short_label} #{meta.inspect}"
+          #map["x-#{short_label}"] = status
+          @untaken_statuses << status
+        else
+          map[short_label] = status
         end
-        map[short_label] = status
       else
         @untaken_statuses << status
       end

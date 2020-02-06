@@ -20,6 +20,7 @@ class PullPresenter
     :jira_project, :jira_ticket_number, :jira_issue_key!
 
   def statuses
+    # Sometimes statuses in github are duplicated, work around
     @statuses ||= @pull.statuses.map do |status|
       status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
       if status.travis? && @repo.project && !@repo.project.travis?
@@ -27,7 +28,7 @@ class PullPresenter
       else
         status
       end
-    end.compact
+    end.compact.sort_by(&:updated_at).reverse.uniq { |item| item.build_id }
   end
 
   def take_status(label)

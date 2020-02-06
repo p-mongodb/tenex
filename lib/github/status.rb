@@ -18,5 +18,9 @@ module Github
         @info[meth]
       end
     end
+
+    def updated_at
+      Time.parse(info['updated_at'])
+    end
   end
 end

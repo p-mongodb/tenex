@@ -10,7 +10,7 @@ class EvergreenStatusPresenter
 
   attr_reader :status
   attr_reader :eg_client, :system
-  def_delegators :@status, :[], :context
+  def_delegators :@status, :[], :context, :updated_at
 
   def evergreen?
     !!(@status.context =~ %r,evergreen\b,)
