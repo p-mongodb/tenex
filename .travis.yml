@@ -1,0 +1,15 @@
+language: ruby
+
+sudo: false
+
+rvm:
+  - 2.7
+
+branches:
+  only:
+    - master
+
+script: bundle exec rspec
+
+notifications:
+  email: false
