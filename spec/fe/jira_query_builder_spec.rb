@@ -14,6 +14,7 @@ describe JiraQueryBuilder do
       'ruby bson' => 'project in (ruby) and component in (bson)',
       'ruby freeform' => 'project in (ruby) and (summary ~ "freeform" or description ~ "freeform")',
       'ruby many terms' => 'project in (ruby) and (summary ~ "many terms" or description ~ "many terms")',
+      'ruby and component not in (bson)' => 'project in (ruby) and component not in (bson)',
     }
 
     CASES.each do |smart_query, expected_expanded_query|

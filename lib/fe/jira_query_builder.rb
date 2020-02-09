@@ -25,6 +25,7 @@ class JiraQueryBuilder
       dpart = part.downcase
       if dpart == 'and'
         query << parts.join(' ')
+        parts = []
       elsif dpart == 'rme'
         query << 'reporter = currentUser()'
       elsif PROJECT_ALIASES.key?(dpart)
