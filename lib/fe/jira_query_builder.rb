@@ -7,6 +7,10 @@ class JiraQueryBuilder
     ruby mongoid server
   ).freeze
 
+  COMPONENTS = %w(
+    bson
+  ).freeze
+
   def initialize(query)
     @smart_query = query
   end
@@ -29,7 +33,7 @@ class JiraQueryBuilder
         query << "project in (#{part})"
       elsif %w(open).include?(dpart)
         query << "resolution in (unresolved)"
-      elsif %w(bson).include?(dpart)
+      elsif COMPONENTS.include?(dpart)
         query << "component in (#{part})"
       elsif parts.length > 0 &&
         (bits = [dpart, parts.first.downcase]) == %w(spec compliance)

@@ -10,6 +10,8 @@ describe JiraQueryBuilder do
       'ruby open' => 'project in (ruby) and resolution in (unresolved)',
       'mongoid open' => 'project in (mongoid) and resolution in (unresolved)',
       'server rme' => 'project in (server) and reporter = currentUser()',
+      'lmc open' => 'project in (libmongocrypt) and resolution in (unresolved)',
+      'ruby bson' => 'project in (ruby) and component in (bson)',
     }
 
     CASES.each do |smart_query, expected_expanded_query|
