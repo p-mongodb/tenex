@@ -1,7 +1,7 @@
 Routes.included do
 
   get '/jira/query' do
-    if params[:query]
+    if params[:q]
       do_query
     else
       @queries = JiraQuery.recent
