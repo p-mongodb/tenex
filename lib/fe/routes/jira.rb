@@ -1,3 +1,5 @@
+autoload :JiraQueryBuilder, 'fe/jira_query_builder'
+
 Routes.included do
 
   get '/jira/query' do
