@@ -12,6 +12,8 @@ describe JiraQueryBuilder do
       'server rme' => 'project in (server) and reporter = currentUser()',
       'lmc open' => 'project in (libmongocrypt) and resolution in (unresolved)',
       'ruby bson' => 'project in (ruby) and component in (bson)',
+      'ruby freeform' => 'project in (ruby) and (summary ~ "freeform" or description ~ "freeform")',
+      'ruby many terms' => 'project in (ruby) and (summary ~ "many terms" or description ~ "many terms")',
     }
 
     CASES.each do |smart_query, expected_expanded_query|
