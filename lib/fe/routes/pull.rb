@@ -428,7 +428,11 @@ Routes.included do
       proc, output = ChildProcessHelper.get_output(cmd)
       if proc.exit_code != 0
         summary.status = 'failed'
-        summary.evergreen_error = output
+        if output.empty?
+          summary.evergreen_error = "Process exited with code #{proc.exit_code} but produced no output"
+        else
+          summary.evergreen_error = "#{output}\nProcess exited with code #{proc.exit_code}"
+        end
       elsif output == ''
         summary.status = 'failed'
         summary.evergreen_error = "Evergreen tool validation produced no output (but exited successfully). This generally indicates a bug in the tool (EVG-6417)."
