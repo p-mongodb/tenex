@@ -28,7 +28,6 @@ module ChildProcessHelper
   module_function def get_output(cmd, env: nil, cwd: nil)
     process = ChildProcess.new(*cmd)
     process.io.inherit!
-    process.io.stdout = Tempfile.new("child-output")
     if cwd
       process.cwd = cwd
     end
@@ -37,10 +36,30 @@ module ChildProcessHelper
         process.environment[k.to_s] = v
       end
     end
-    process.start
-    process.wait
-    process.io.stdout.rewind
-    [process, process.io.stdout.read]
+
+    output = ''
+    r, w = IO.pipe
+
+    begin
+      process.io.stdout = w
+      process.start
+
+      Thread.new do
+        begin
+          loop do
+            output << r.readpartial(16384)
+          end
+        rescue EOFError
+        end
+      end
+
+      process.wait
+    ensure
+      r.close
+      w.close
+    end
+
+    [process, output]
   end
 
   module_function def check_output(*args)
