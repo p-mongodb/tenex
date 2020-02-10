@@ -43,8 +43,9 @@ module ChildProcessHelper
     begin
       process.io.stdout = w
       process.start
+      w.close
 
-      Thread.new do
+      thread = Thread.new do
         begin
           loop do
             output << r.readpartial(16384)
@@ -54,9 +55,9 @@ module ChildProcessHelper
       end
 
       process.wait
+      thread.join
     ensure
       r.close
-      w.close
     end
 
     [process, output]
