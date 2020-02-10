@@ -86,8 +86,10 @@ module Evergreen
             if axis_value == '*'
               next
             end
-            unless axes[axis_name].include?(axis_value)
-              errors << %Q`Build variant #{variant['matrix_name']} references nonexistent value '#{axis_value}' for axis '#{axis_name}'`
+            Array(axis_value).each do |axis_value|
+              unless axes[axis_name].include?(axis_value)
+                errors << %Q`Build variant #{variant['matrix_name']} references nonexistent value '#{axis_value}' for axis '#{axis_name}'`
+              end
             end
           end
         end

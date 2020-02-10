@@ -93,4 +93,24 @@ describe Evergreen::ParserValidator do
     it_behaves_like 'succeeds'
   end
 
+  context 'good string as axis value' do
+    let(:config_path) { CONFIG_ROOT.join('axis_value_string.yml') }
+
+    it_behaves_like 'succeeds'
+  end
+
+  context 'good array as axis value' do
+    let(:config_path) { CONFIG_ROOT.join('axis_value_array.yml') }
+
+    it_behaves_like 'succeeds'
+  end
+
+  context 'axis value with one array element missing' do
+    let(:config_path) { CONFIG_ROOT.join('axis_value_array_missing.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Build variant.*references nonexistent value.*for axis/
+    end
+  end
+
 end

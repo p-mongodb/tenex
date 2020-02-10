@@ -1,0 +1,15 @@
+axes:
+  - id: "mongodb-version"
+    display_name: MongoDB Version
+    values:
+      - id: "latest"
+        display_name: "latest"
+        variables:
+           VERSION: "latest"
+
+buildvariants:
+  -
+    matrix_name: "no-retry-reads"
+    matrix_spec:
+      mongodb-version: latest
+    display_name: "${mongodb-version} ${topology} ${retry-reads} ${ruby}"
