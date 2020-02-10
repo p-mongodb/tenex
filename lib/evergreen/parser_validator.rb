@@ -48,7 +48,7 @@ module Evergreen
 
       doc['functions']&.each do |name, function|
         unless function.is_a?(Array)
-          errors << %Q`Function "#{name}" contains data of wrong type: expected Array, found #{function.class}`
+          errors << %Q`Function "#{name}" contains data of wrong type: expected Array, found #{function.class}. A function is expected to contain a list of commands to be run.`
         end
         function.each_with_index do |command, index|
           unless command.is_a?(Hash)
@@ -57,6 +57,38 @@ module Evergreen
           end
           unless command['command']
             errors << %Q`Function "#{name}" command #{index+1} does not have the "command" key:\n#{command.to_yaml}`
+          end
+        end
+      end
+
+      axes = {}
+      doc['axes']&.each do |axis|
+        values = axis['values']
+        if values.nil?
+          errors << %Q`Axis #{axis['id']} does not have any values`
+          next
+        end
+        values.each_with_index do |value, index|
+          unless value['id']
+            errors << %Q`Axis #{axis['id']} value #{index+1} does not have an id: #{value.inspect}`
+          end
+        end
+        axes[axis['id']] = values.map { |value| value['id'] }.compact
+      end
+
+      doc['buildvariants']&.each do |variant|
+        if spec = variant['matrix_spec']
+          spec.each do |axis_name, axis_value|
+            unless axes[axis_name]
+              errors << %Q`Build variant #{variant['matrix_name']} references nonexistent axis '#{axis_name}'`
+              next
+            end
+            if axis_value == '*'
+              next
+            end
+            unless axes[axis_name].include?(axis_value)
+              errors << %Q`Build variant #{variant['matrix_name']} references nonexistent value '#{axis_value}' for axis '#{axis_name}'`
+            end
           end
         end
       end

@@ -10,6 +10,12 @@ describe Evergreen::ParserValidator do
 
   let(:error_msg) { validator.errors.join("\n") }
 
+  shared_examples_for 'succeeds' do
+    it 'succeeds' do
+      error_msg.should == ''
+    end
+  end
+
   context 'invalid yaml' do
     let(:config_path) { CONFIG_ROOT.join('invalid_yaml.yml') }
 
@@ -46,9 +52,7 @@ describe Evergreen::ParserValidator do
   context 'ok function' do
     let(:config_path) { CONFIG_ROOT.join('function_ok.yml') }
 
-    it 'succeeds' do
-      error_msg.should == ''
-    end
+    it_behaves_like 'succeeds'
   end
 
   context 'function containing data of wrong type' do
@@ -65,6 +69,28 @@ describe Evergreen::ParserValidator do
     it 'fails' do
       error_msg.should =~ /Function.*does not have the.*command.*key/
     end
+  end
+
+  context 'axis name missing' do
+    let(:config_path) { CONFIG_ROOT.join('axis_name_missing.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Build variant.*references nonexistent axis/
+    end
+  end
+
+  context 'axis value missing' do
+    let(:config_path) { CONFIG_ROOT.join('axis_value_missing.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Build variant.*references nonexistent value.*for axis/
+    end
+  end
+
+  context 'axis value of *' do
+    let(:config_path) { CONFIG_ROOT.join('axis_value_asterisk.yml') }
+
+    it_behaves_like 'succeeds'
   end
 
 end
