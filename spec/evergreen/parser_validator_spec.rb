@@ -10,6 +10,14 @@ describe Evergreen::ParserValidator do
 
   let(:error_msg) { validator.errors.join("\n") }
 
+  context 'invalid yaml' do
+    let(:config_path) { CONFIG_ROOT.join('invalid_yaml.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Failed to parse project file:.*SyntaxError:.*did not find expected node content.*at line 1/
+    end
+  end
+
   context 'task referencing missing function' do
     let(:config_path) { CONFIG_ROOT.join('task_ref_missing_fn.yml') }
 

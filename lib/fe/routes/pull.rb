@@ -410,17 +410,17 @@ Routes.included do
     paths.sort.each do |project_eg_config_path = rc.cached_repo_path|
       summary = OpenStruct.new(status: 'ok')
 
-      # Since evergreen tool provides wrong line numbers
-      # (https://jira.mongodb.org/browse/EVG-6413), using its validator
-      # is often a frustrating experience. YAML validators seem to in
-      # general have poor error reporting (https://jira.mongodb.org/browse/EVG-6657),
-      # but at least Ruby's one reports the line numbers properly which is
-      # often all that is needed to close in on the problem.
+      contents = File.read(project_eg_config_path)
+
+      # Validate evergreen configuration internally since the evergreen tool
+      # provides wrong line numbers (https://jira.mongodb.org/browse/EVG-6413)
+      # and its error messages are often cryptic and do not clearly indicate
+      # what the problem is/how to fix it.
       begin
-        YAML.load(File.read(project_eg_config_path))
-      rescue Psych::SyntaxError => e
+        Evergreen::ParserValidator.new(contents).validate!
+      rescue Evergreen::ProjectFileInvalid => e
         summary.status = 'failed'
-        summary.ruby_error = "#{e.class}: #{e}"
+        summary.ruby_error = e.to_s
       end
 
       cmd = [eg_path, '-c', system.evergreen_global_config_path.to_s,

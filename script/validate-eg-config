@@ -6,4 +6,9 @@ ENV['MONGOID_ENV'] = 'development'
 
 require 'evergreen/parser_validator'
 
-Evergreen::ParserValidator.new(File.read(ARGV.shift)).validate!
+begin
+  Evergreen::ParserValidator.new(File.read(ARGV.shift)).validate!
+rescue Evergreen::ProjectFileInvalid => e
+  puts e.to_s
+  exit 1
+end
