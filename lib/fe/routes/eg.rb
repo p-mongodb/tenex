@@ -226,9 +226,10 @@ Routes.included do
     version.builds.each do |build|
       @urls[build.build_variant] = case build.status
       when 'success'
-        log = build.tasks.first.task_log
-        if log =~ %r,Putting mongo-ruby-toolchain/ruby-toolchain.tar.gz into (https://s3.amazonaws.com/[^<]+),
-          $1
+        log = build.tasks.first.task_log.dup.force_encoding('utf-8')
+        log.sub!(/\A(.|\n)+?Running command.*s3\.put/, '')
+        if log =~ %r,Putting (mongo-ruby-toolchain/ruby-toolchain.tar.gz|src/python.tar.gz) into (https://s3.amazonaws.com/[^<]+),
+          $2
         else
           'missing url'
         end
