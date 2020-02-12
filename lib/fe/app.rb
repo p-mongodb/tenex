@@ -68,6 +68,17 @@ class App < Sinatra::Base
     slim :eg_log
   end
 
+  private def do_simple_evergreen_log(log, log_url, title)
+    num = 0
+    log_lines = log.split("\n").map do |line|
+      {num: num += 1, severity: 'info', text: line, html: line}
+    end
+    @title = title
+    @log_lines = log_lines
+    @eg_log_url = log_url
+    slim :eg_log
+  end
+
   private def do_bump(version, priority)
     if priority == 0
       raise "Bumping to 0?"
