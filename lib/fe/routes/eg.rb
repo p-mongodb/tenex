@@ -238,7 +238,8 @@ Routes.included do
       end
     end
     k, v = @urls.first
-    @template = v.sub(k, "`host_arch`").sub(k, "`host_arch |tr - _`")
+    @shell_template = v.sub(k, "`host_arch`").sub(k, "`host_arch |tr - _`")
+    @ruby_template = v.sub(k, '#{distro}').sub(k, %q`#{distro.gsub('-', '_')}`)
     slim :version_toolchain_urls
   end
 end
