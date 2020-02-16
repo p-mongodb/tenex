@@ -9,7 +9,21 @@ table
           = url
 
 p Shell template:
-pre= @shell_template
+pre
+  ' toolchain_upper=#{@toolchain_upper}
+  = "\n"
+  ' toolchain_lower=#{@toolchain_lower}
+  = "\n"
+  = "\n"
+
+  = @shell_template
 
 p Ruby template:
-pre= @ruby_template
+pre
+  ' toolchain_upper='#{@toolchain_upper}'
+  = "\n"
+  ' toolchain_lower='#{@toolchain_lower}'
+  = "\n"
+  = "\n"
+
+  = @ruby_template

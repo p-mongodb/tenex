@@ -238,8 +238,14 @@ Routes.included do
       end
     end
     k, v = @urls.first
-    @shell_template = v.sub(k, "`host_arch`").sub(k, "`host_arch |tr - _`")
-    @ruby_template = v.sub(k, '#{distro}').sub(k, %q`#{distro.gsub('-', '_')}`)
+    path = URI.parse(v).path.sub(%r,^//,, '/')
+    _, mciuploads, @toolchain_project_name, distro, version_id, basename = path.split('/')
+    @toolchain_upper = version_id
+    @toolchain_lower = basename.sub(/.+#{version_id}_/, '').sub(/\.tar\.gz$/, '')
+    @shell_template = v.sub(k, "`host_arch`").sub(k, "`host_arch |tr - _`").
+      gsub(@toolchain_upper, '$toolchain_upper').sub(@toolchain_lower, '$toolchain_lower')
+    @ruby_template = v.sub(k, '#{distro}').sub(k, %q`#{distro.gsub('-', '_')}`).
+      gsub(@toolchain_upper, '#{toolchain_upper}').sub(@toolchain_lower, '#{toolchain_lower}')
     slim :version_toolchain_urls
   end
 end
