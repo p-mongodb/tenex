@@ -289,7 +289,7 @@ Routes.included do
     rc.add_remote(@pull.head_owner_name, @pull.head_repo_name)
     diff = rc.diff_to_master(@pull.head_sha)
     repo = system.hit_repo(org_name, repo_name)
-    rv = eg_client.create_patch(
+    eg_patch = eg_client.create_patch(
       project_id: repo.evergreen_project_id,
       diff_text: diff,
       base_sha: rc.master_sha,
@@ -299,7 +299,7 @@ Routes.included do
       finalize: true,
     )
 
-    patch_id = rv['patch'].id
+    patch_id = eg_patch.id
 
     patch = Patch.create!(
       id: patch_id,
@@ -309,7 +309,7 @@ Routes.included do
       eg_project_id: repo.evergreen_project_id,
       repo_id: repo.id,
       head_sha: @pull.head_sha,
-      eg_submission_result: rv,
+      eg_submission_result: eg_patch.info,
     )
 
     redirect return_path || "/repos/#{@pull.repo_full_name}/pulls/#{pull_id}"
