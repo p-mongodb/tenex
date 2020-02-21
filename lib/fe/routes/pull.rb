@@ -299,7 +299,7 @@ Routes.included do
       finalize: true,
     )
 
-    patch_id = rv['patch']['Id']
+    patch_id = rv['patch'].id
 
     patch = Patch.create!(
       id: patch_id,

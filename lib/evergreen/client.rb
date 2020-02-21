@@ -178,6 +178,33 @@ module Evergreen
       Host.new(self, payload['host_id'], info: payload)
     end
 
+=begin
+  The endpoint that create_patch uses is undocumented.
+  As of this writing it replaced buildvariants with buildvariants_new key.
+
+  Current structure:
+        data := struct {
+                Description string   `json:"desc"`
+                Project     string   `json:"project"`
+                PatchBytes  []byte   `json:"patch_bytes"`
+                PatchString string   `json:"patch"`
+                Githash     string   `json:"githash"`
+                Variants    []string `json:"buildvariants_new"`
+                Tasks       []string `json:"tasks"`
+                Finalize    bool     `json:"finalize"`
+                Alias       string   `json:"alias"`
+        }{
+                incomingPatch.description,
+                incomingPatch.projectId,
+                []byte(incomingPatch.patchData),
+                incomingPatch.patchData,
+                incomingPatch.base,
+                incomingPatch.variants,
+                incomingPatch.tasks,
+                incomingPatch.finalize,
+                incomingPatch.alias,
+        }
+=end
     def create_patch(project_id:, description: nil,
       diff_text:, base_sha:, variant_ids: %w(all), task_ids: %w(all),
       finalize: nil
@@ -187,7 +214,7 @@ module Evergreen
         desc: description,
         patch: diff_text,
         githash: base_sha,
-        buildvariants: variant_ids.join(','),
+        buildvariants_new: variant_ids,
         tasks: task_ids,
         finalize: finalize,
       }, version: 1)
