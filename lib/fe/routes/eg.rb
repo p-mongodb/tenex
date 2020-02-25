@@ -189,6 +189,13 @@ Routes.included do
     end
     @result = RspecResult.new(url, content)
 
+    cached_build, log_lines, log_url = EvergreenCache.build_log(@build, :task)
+    log_lines.each_with_index do |line, index|
+      if line[:text] =~ /To test this configuration locally:/
+        @local_test_command = log_lines[index+1][:text].sub(/.*?\[[^\]]+\] /, '')
+      end
+    end
+
     @branch_name = params[:branch]
     slim :results
   end
