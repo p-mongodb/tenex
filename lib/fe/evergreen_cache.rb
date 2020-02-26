@@ -1,12 +1,13 @@
 require 'fileutils'
 require 'pathname'
+require 'digest/sha1'
 
 module EvergreenCache
 
   module_function def build_log(build, which)
     cached_build = EgBuild.find_or_create_by(id: build.id)
     log_url = build.send("#{which}_log_url")
-    log_path = logs_path.join("#{build.id}--#{which}.log.json")
+    log_path = logs_path.join("#{Digest::SHA1.new.update(build.id).hexdigest}--#{which}.log.json")
     if build.finished? && build.finished_at == cached_build.finished_at && log_path.exist?
       lines = JSON.parse(File.read(log_path)).map!(&:symbolize_keys)
     else
