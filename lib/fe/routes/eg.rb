@@ -192,7 +192,20 @@ Routes.included do
     cached_build, log_lines, log_url = EvergreenCache.build_log(@build, :task)
     log_lines.each_with_index do |line, index|
       if line[:text] =~ /To test this configuration locally:/
-        @local_test_command = log_lines[index+1][:text].sub(/.*?\[[^\]]+\] /, '')
+        loop do
+          index += 1
+          text = text = log_lines[index][:text]
+          if text =~ /test-on-docker/ && text !~ /\+ echo/
+            @local_test_command = text.sub(/.*?\[[^\]]+\] /, '')
+
+            failed_file_paths = @result.failed_files.map do |spec|
+              spec[:file_path]
+            end
+            @local_failed_test_command = %Q`#{@local_test_command} TEST_CMD="rspec #{failed_file_paths.join(' ')}"`
+            break
+          end
+        end
+        break
       end
     end
 

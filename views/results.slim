@@ -5,6 +5,9 @@
     p
       ' Local test command:
       pre= @local_test_command
+      
+      ' Failing tests only:
+      pre= @local_failed_test_command
   
   ul
     - @result.failed_files.each do |file|
