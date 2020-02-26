@@ -3,6 +3,10 @@ class JiraQueryBuilder
     'lmc' => 'libmongocrypt',
   }.freeze
 
+  TYPES = %w(
+    epic bug
+  ).freeze
+
   PROJECTS = %w(
     ruby mongoid server
   ).freeze
@@ -36,6 +40,10 @@ class JiraQueryBuilder
         query << "resolution in (unresolved)"
       elsif COMPONENTS.include?(dpart)
         query << "component in (#{part})"
+      elsif TYPES.include?(dpart)
+        query << "type in (#{part})"
+      elsif dpart == 'imp'
+        query << "type in (improvement, \"new feature\")"
       elsif parts.length > 0 &&
         (bits = [dpart, parts.first.downcase]) == %w(spec compliance)
       then

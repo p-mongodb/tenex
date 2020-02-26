@@ -15,6 +15,8 @@ describe JiraQueryBuilder do
       'ruby freeform' => 'project in (ruby) and (summary ~ "freeform" or description ~ "freeform")',
       'ruby many terms' => 'project in (ruby) and (summary ~ "many terms" or description ~ "many terms")',
       'ruby and component not in (bson)' => 'project in (ruby) and component not in (bson)',
+      'ruby epic' => 'project in (ruby) and type in (epic)',
+      'ruby imp' => 'project in (ruby) and type in (improvement, "new feature")',
     }
 
     CASES.each do |smart_query, expected_expanded_query|
