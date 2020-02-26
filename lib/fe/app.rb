@@ -20,8 +20,10 @@ require 'fe/config'
 require 'fe/formatting_helpers'
 require 'fe/evergreen_cache'
 
-Dir[File.join(File.dirname(__FILE__), 'presenters', '*.rb')].each do |path|
-  require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
+%w(models presenters).each do |subdir|
+  Dir[File.join(File.dirname(__FILE__), subdir, '*.rb')].each do |path|
+    require 'fe/'+path[File.dirname(__FILE__).length+1...path.length].sub(/\.rb$/, '')
+  end
 end
 
 Travis.access_token = ENV['TRAVIS_TOKEN']
