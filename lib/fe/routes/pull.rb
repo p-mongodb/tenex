@@ -36,7 +36,7 @@ Routes.included do
             meta[key] = value
           end
         end
-        if label =~ /kerberos-tests/
+        if label =~ /kerberos-tests|test-kerberos/
           meta['kerberos'] = true
         elsif label =~ /enterprise-auth-tests-ubuntu/
           meta['mongodb-version'] = 'EA'
