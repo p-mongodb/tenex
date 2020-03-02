@@ -1,5 +1,9 @@
 h2 #{@project.id} config
 
+p
+  a href="/eg/#{@project.id}/config.env"
+    | As .env
+
 - if @project.vars.any?
 
   h3 Vars

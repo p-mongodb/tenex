@@ -61,6 +61,21 @@ Routes.included do
     slim :eg_project_config
   end
 
+  # eg project config vars
+  get '/eg/:project/config.env' do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    out = ''
+    @project.vars.each do |k, v|
+      if v =~ /\s/
+        out << %Q`#{k}="#{v}"\n`
+      else
+        out << %Q`#{k}=#{v}\n`
+      end
+    end
+    response.header['content-type'] = 'text/plain'
+    out
+  end
+
   get '/eg/:project/patches/:patch_id' do |project_id, patch_id|
     patch = eg_client.patch_by_id(patch_id)
     version = patch.version
