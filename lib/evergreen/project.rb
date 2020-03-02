@@ -26,7 +26,7 @@ module Evergreen
 
     def recent_patches
       begin
-        payload = client.get_json("projects/#{id}/patches?start_at=\"2020-01-01T00:00:00.000Z\"")
+        payload = client.get_json("projects/#{id}/patches")
       rescue Client::NotFound => e
         unless e.message =~ /no patches found/
           raise
