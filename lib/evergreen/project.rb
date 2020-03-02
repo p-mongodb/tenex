@@ -24,6 +24,14 @@ module Evergreen
       info['branch_name']
     end
 
+    def vars
+      info['variables']['vars']
+    end
+
+    def private_vars
+      info['variables']['private_vars']
+    end
+
     def recent_patches
       begin
         payload = client.get_json("projects/#{id}/patches")

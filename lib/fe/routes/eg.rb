@@ -55,6 +55,12 @@ Routes.included do
     slim :patches
   end
 
+  # eg project config vars
+  get '/eg/:project/config' do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    slim :eg_project_config
+  end
+
   get '/eg/:project/patches/:patch_id' do |project_id, patch_id|
     patch = eg_client.patch_by_id(patch_id)
     version = patch.version
