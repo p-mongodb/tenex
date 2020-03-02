@@ -58,9 +58,6 @@ Routes.included do
         end
         @table_keys.each do |key|
           value = meta[key]
-          if value.nil?
-            raise "Missing #{key} in #{meta}"
-          end
           @category_values[key] ||= []
           (@category_values[key] << value).uniq!
         end
