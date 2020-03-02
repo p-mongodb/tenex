@@ -11,9 +11,9 @@ class JiraQueryBuilder
     ruby mongoid server
   ).freeze
 
-  COMPONENTS = %w(
-    bson
-  ).freeze
+  COMPONENTS = {
+    'ruby' => %w(bson),
+  }.freeze
 
   def initialize(query)
     @smart_query = query
@@ -24,6 +24,7 @@ class JiraQueryBuilder
   def expanded_query
     query = []
     parts = smart_query.split(/\s+/)
+    project = nil
     until parts.empty?
       part = parts.shift
       dpart = part.downcase
@@ -33,12 +34,14 @@ class JiraQueryBuilder
       elsif dpart == 'rme'
         query << 'reporter = currentUser()'
       elsif PROJECT_ALIASES.key?(dpart)
-        query << "project in (#{PROJECT_ALIASES[dpart]})"
+        project = PROJECT_ALIASES[dpart]
+        query << "project in (#{project})"
       elsif PROJECTS.include?(dpart)
         query << "project in (#{part})"
+        project = dpart
       elsif %w(open).include?(dpart)
         query << "resolution in (unresolved)"
-      elsif COMPONENTS.include?(dpart)
+      elsif project && COMPONENTS[project]&.include?(dpart)
         query << "component in (#{part})"
       elsif TYPES.include?(dpart)
         query << "type in (#{part})"

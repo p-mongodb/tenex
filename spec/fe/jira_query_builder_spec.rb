@@ -17,6 +17,8 @@ describe JiraQueryBuilder do
       'ruby and component not in (bson)' => 'project in (ruby) and component not in (bson)',
       'ruby epic' => 'project in (ruby) and type in (epic)',
       'ruby imp' => 'project in (ruby) and type in (improvement, "new feature")',
+      'ruby bson' => 'project in (ruby) and component in (bson)',
+      'mongoid bson' => 'project in (mongoid) and (summary ~ "bson" or description ~ "bson")',
     }
 
     CASES.each do |smart_query, expected_expanded_query|
