@@ -1,0 +1,19 @@
+css:
+  pre { overflow: initial; }
+  .severity-D { color: #666; }
+  .severity-I { color: #222; }
+  .severity-W { color: #ea9b09; }
+  .severity-E { color: red; }
+
+p
+  a href="/eg/#{@project_id}/versions/#{@version_id}" EG build
+  '
+  a href="#{@artifact.url}"
+    | Artifact
+  '
+  ' (#{number_to_human_size(@artifact.size)})
+
+pre
+  - @log_lines.each_with_index do |line, index|
+    span id="line-#{line[:num]}" class="severity-#{line[:severity].upcase}"
+      = line[:text] + "\n"

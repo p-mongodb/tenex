@@ -161,17 +161,24 @@ Routes.included do
     end
   end
 
+  # artifact log
   get '/eg/:project/versions/:version/builds/:build/artifact-log/*rel_path' do |project_id, version_id, build_id, rel_path|
+    @project_id = project_id
+    @version_id = version_id
     build = Evergreen::Build.new(eg_client, build_id)
-    artifact = build.detect_artifact!('mongodb-logs.tar.gz')
+    @artifact = build.detect_artifact!('mongodb-logs.tar.gz')
 
-    contents = artifact.tarball_entry(rel_path) do |entry|
+    contents = @artifact.tarball_entry(rel_path) do |entry|
       entry.read
     end
 
     if contents
-      response.headers['content-type'] = 'text/plain'
-      contents
+      if File.basename(rel_path) =~ /^mongo[ds]\b.*log$/
+        colorize_server_log(contents)
+      else
+        response.headers['content-type'] = 'text/plain'
+        contents
+      end
     else
       "No log file found"
     end
@@ -288,5 +295,27 @@ Routes.included do
     @ruby_template = v.sub(k, '#{distro}').sub(k, %q`#{distro.gsub('-', '_')}`).
       gsub(@toolchain_upper, '#{toolchain_upper}').sub(@toolchain_lower, '#{toolchain_lower}')
     slim :version_toolchain_urls
+  end
+
+  private
+
+  SEVERITIES = %w(E W I D).freeze
+
+  def colorize_server_log(contents)
+    lines = contents.split("\n")
+    num = 0
+    @log_lines = lines.map do |line|
+      num += 1
+      severity = line.split(/\s+/, 3)[1]
+      unless severity && SEVERITIES.include?(severity)
+        severity = 'I'
+      end
+      {
+        num: num,
+        text: line,
+        severity: severity,
+      }
+    end
+    slim :eg_server_log
   end
 end
