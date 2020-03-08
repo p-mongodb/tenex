@@ -62,6 +62,7 @@ class App < Sinatra::Base
     end
     build = Evergreen::Build.new(eg_client, build_id)
     cached_build, log_lines, log_url = EvergreenCache.build_log(build, which)
+    set_local_test_command(log_lines)
 
     @title = title
     @log_lines = log_lines
@@ -75,6 +76,7 @@ class App < Sinatra::Base
     log_lines = log.split("\n").map do |line|
       {num: num += 1, severity: 'info', text: line, html: line}
     end
+    set_local_test_command(log_lines)
     @title = title
     @log_lines = log_lines
     @eg_log_url = log_url
@@ -137,6 +139,32 @@ class App < Sinatra::Base
       cache_state.keys_updated_at = Time.now
       cache_state.save!
       keys
+    end
+  end
+
+  private
+
+  def set_local_test_command(log_lines, result: nil)
+    log_lines.each_with_index do |line, index|
+      if line[:text] =~ /To test this configuration locally:/
+        loop do
+          index += 1
+          text = text = log_lines[index][:text]
+          if text =~ /test-on-docker/ && text !~ /\+ echo/
+            @local_test_command = text.sub(/.*?\[[^\]]+\] /, '')
+
+            if result
+              failed_file_paths = result.failed_files.map do |spec|
+                spec[:file_path]
+              end
+              @local_failed_test_command = %Q`#{@local_test_command} TEST_CMD="rspec #{failed_file_paths.join(' ')}"`
+            end
+
+            break
+          end
+        end
+        break
+      end
     end
   end
 end

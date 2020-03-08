@@ -22,6 +22,11 @@ p
   '
   a href="#{@eg_log_url}"
     | Log @ Evergreen
+  
+- if @local_test_command
+  p
+    ' Local test command:
+    pre= @local_test_command
 
 pre
   - @log_lines.each_with_index do |line, index|
