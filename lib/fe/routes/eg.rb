@@ -173,7 +173,7 @@ Routes.included do
     end
 
     if contents
-      if File.basename(rel_path) =~ /^mongo[ds]\b.*log$/
+      if File.basename(rel_path) =~ /^mongo[ds]\b.*\.log\b/
         colorize_server_log(contents)
       else
         response.headers['content-type'] = 'text/plain'
