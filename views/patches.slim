@@ -7,21 +7,23 @@ a href="https://evergreen.mongodb.com/waterfall/#{@project.id}"
 a href="https://evergreen.mongodb.com/projects###{@project.id}"
   | EG config
 
-h3 Patches
+- if @patches.any?
+  h3 Patches
 
-ul
-  - @patches.each do |patch|
-    li
-      - if patch.version_id
-        a href="/eg/#{@project.id}/versions/#{patch.version.id}"
-          = patch.description
-      - else
-        ' Patch without a version
+  ul
+    - @patches.each do |patch|
+      li
+        - if patch.version_id
+          a href="/eg/#{@project.id}/versions/#{patch.version.id}"
+            = patch.description
+        - else
+          ' Patch without a version
 
-h3 Versions
+- if @versions.any?
+  h3 Versions
 
-ul
-  - @versions.each do |version|
-    li
-      a href="/eg/#{@project.id}/versions/#{version.id}"
-        = version.message
+  ul
+    - @versions.each do |version|
+      li
+        a href="/eg/#{@project.id}/versions/#{version.id}"
+          = version.message
