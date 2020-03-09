@@ -25,14 +25,14 @@ presented in a similar fashion.
 
 ![PR list](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/pr-list.png) 
 
-### Pull Request Status
+### Pull Request View
 
 Tenex merges Evergreen and Travis CI statuses on a single page.
 Travis statuses are expanded to job level.
 Evergreen statuses are arranged in a matrix for supported projects
 (Ruby driver).
 
-PR status page features:
+Pull request view features:
 
 #### General CI Operations
 
@@ -41,34 +41,52 @@ PR status page features:
 - View CI logs for each build (task log for Evergreen, build log for Travis).
 - Smart failure counting: top level Evergreen build is not included in
 the number of the failing builds, and if Travis is ignored then Travis
-failures also are not included in the number of failures.
+failures also are not included in the number of failures. This makes the
+number of failures shown accurate.
+- Show individual failed examples based on the RSpec report, optionally
+filtered only to MRI or JRuby configurations.
 
-#### Evergreen Operations
+#### Evergreen-Specific Operations
 
-- Jump to Evergreen version view for the PR
-(which has individual task priorities, for instance).
-- Set task priority (also activates/schedules the task).
-- Bulk bump Evergreen task priority for all pending builds.
-- Jump to parsed test suite results (RSpec/JUnit XML) for each build.
-- Authorize patch build for externally submitted PRs.
-- View individual server log files when all log files are packaged in a tarball.
-- Server log files are colorized based on each line's severity.
-- Get a list of all known distros based on currently running hosts.
+- Show detailed test suite execution results for each failed configuration
+(specific failed tests, longest tests, etc.).
+- Validate Evergreen configuration in the PR's branch. This uses a
+local validator that produces accurate line numbers for errors and much
+easier to understand and act on error messages, as well as the
+Evergreen command line tool validator (which sends the configuration to
+the Evergreen server, and should thus always produce the same set of errors
+as the Evergreen server would).
+- One-click restart of failed or all builds.
+- One-click bump of task priority to predefined levels which also
+activates/schedules the task.
+- One-click bulk bump of task priorities for all pending builds in a PR.
+- Authorize Evergreen's build for externally submitted PRs.
+- Show individual server logs from the build with log level colorization.
+- Submit the PR's diff to Evergreen as a patch build. Useful when Evergreen
+is not processing pull requests or when the PR is to a non-master branch,
+which Evergreen generally does not build.
 
-#### Github Operations
+#### Git/Github Operations
 
-- Jump to PR diff.
-- Request PR review.
-- Rebase branch on top of master.
-- Reword branch - squash all commits in the branch into a single commit and
-replace commit messsages with the respective ticket title.
+- One-click jump to PR diff.
+- Request PR review using the configured set of reviewers, bypassing Github's
+reviewer selection UI.
+- One-click PR approval.
+- Rebase PR's branch on top of master.
+- Reword PR's branch - squash all commits in the branch into a single commit
+and replace commit messsages with the respective ticket title.
 Ticket is automatically detected/inferred from branch name, PR
 description and PR comments.
 - Replace title and description of the PR with that of the head commit.
+- Replace title of the PR with the title of the respective Jira ticket.
+- One-click edit title and description of the PR.
+- One-click edit of the commit message of the most recent commit in the PR's
+branch, with the option to reset PR title and description to those derived from
+the new commit message.
 
 #### Performance Information
 
-- Time taken for each build to run.
+- Time taken for each configuration to run.
 - Builds ordered from slowest to fastest.
 - Slowest 20 RSpec examples for each build.
 
@@ -145,6 +163,13 @@ Adds an SSH command copy-pastable to the terminal to connect to each
 spawned host.
 
 ![Spawn page](https://raw.githubusercontent.com/wiki/p-mongo/tenex/screenshots/spawn.png) 
+
+### Non-Project-Specific Evergreen Operations
+
+- Get a list of all known distros based on currently running hosts.
+Evergreen generally does not prevent configurations from referencing
+nonexistent distros; such configurations end up sitting in the queue
+indefinitely. This feature is intended to provide a list of valid distros.
 
 ### Jira operations
 
