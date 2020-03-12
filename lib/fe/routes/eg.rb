@@ -202,6 +202,7 @@ Routes.included do
     do_simple_evergreen_log(task.task_log, task.task_log_url, title)
   end
 
+  # eg build results
   get '/eg/:project/versions/:version/results/:build' do |project_id, version_id, build_id|
     @build = Evergreen::Build.new(eg_client, build_id)
     artifact = @build.artifact('rspec.json')
