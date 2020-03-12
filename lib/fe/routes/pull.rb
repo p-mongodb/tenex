@@ -50,9 +50,6 @@ Routes.included do
         elsif label =~ /x509-tests/
           meta['mongodb-version'] = meta['mongodb-version']
           meta['auth-and-ssl'] = 'x509'
-        elsif label =~ /fle-tests/
-          meta['mongodb-version'] = meta['mongodb-version']
-          meta['auth-and-ssl'] = 'FLE'
         else
           meta['auth-and-ssl'] ||= 'noauth-and-nossl'
         end
@@ -70,6 +67,9 @@ Routes.included do
         short_label = ''
         if meta_for_label.delete('as')
           short_label << 'AS'
+        end
+        if meta_for_label.delete('fle')
+          short_label << 'E'
         end
         if meta_for_label.delete('kerberos')
           short_label << 'K'
