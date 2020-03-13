@@ -130,13 +130,13 @@ class PullPresenter
     version ||= EgVersion.new(id: api_version.id)
     urls = version.rspec_json_urls || Set.new
 
-    api_version.builds.each do |build|
-      build.tasks.each do |task|
-        task.artifacts.each do |artifact|
-          if artifact.name == 'rspec.json'
-            if options[:failed] && !task.failed?
-              next
-            end
+    # Do not fetch artifacts if only failed results are requested and the
+    # task we are presenting did not fail.
+    if !options[:failed] || task.failed?
+      api_version.builds.each do |build|
+        build.tasks.each do |task|
+          artifact = task.first_artifact_for_names(%w(rspec.json.gz rspec.json))
+          if artifact
             ArtifactCache.instance.fetch_artifact(artifact.url)
             urls << artifact.url
           end

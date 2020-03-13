@@ -121,6 +121,28 @@ module Evergreen
       end
     end
 
+    def artifact_for_name(desired_name)
+      artifacts.detect do |artifact|
+        desired_name == artifact.name
+      end
+    end
+
+    # Returns the first artifact that matches one of the desired names,
+    # in the order of the names. For example, if names are
+    # ['rspec.json.gz', 'rspec.json'], then if there is an artifact with
+    # the name of rspec.json.gz it is returned, even if there is also an
+    # artifact with the name of rspec.json and the rspec.json is earlier in
+    # the artifact list than the rspec.jzon.gz.
+    def first_artifact_for_names(desired_names)
+      desired_names.each do |desired_name|
+        artifact = artifact_for_name(desired_name)
+        if artifact
+          return artifact
+        end
+      end
+      nil
+    end
+
     # in seconds
     def time_taken
       info['time_taken_ms'] / 1000.0

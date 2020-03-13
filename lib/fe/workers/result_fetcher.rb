@@ -17,6 +17,7 @@ class ResultFetcher
         eg_version = Evergreen::Version.new(eg_client, eg_version_id)
         eg_version.builds.each do |build|
           if build.artifact?('rspec.json')
+            # TODO update for rspec.json.gz
             artifact = build.artifact('rspec.json')
             begin
               ArtifactCache.instance.fetch_artifact(artifact.url)

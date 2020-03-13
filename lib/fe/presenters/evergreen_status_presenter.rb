@@ -61,9 +61,7 @@ class EvergreenStatusPresenter
 
     unless @rspec_json_url_loaded
       task = evergreen_build.tasks.first
-      artifact = task.artifacts.detect do |artifact|
-        ['rspec.json'].include?(artifact.name)
-      end
+      artifact = task.first_artifact_for_names(%w(rspec.json.gz rspec.json))
       @rspec_json_url = artifact&.url
       @rspec_json_url_loaded = true
     end

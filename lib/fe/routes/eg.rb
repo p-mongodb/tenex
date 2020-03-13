@@ -220,13 +220,13 @@ Routes.included do
   # eg build results
   get '/eg/:project/versions/:version/results/:build' do |project_id, version_id, build_id|
     @build = Evergreen::Build.new(eg_client, build_id)
-    artifact = @build.artifact('rspec.json')
+    artifact = @build.first_artifact_for_names(%w(rspec.json.gz rspec.json))
     unless artifact
       return results_fallback(project_id, version_id, @build)
     end
     @raw_artifact_url = url = artifact.url
-    local_path = ArtifactCache.instance.fetch_artifact(url)
-    content = File.read(local_path)
+    local_path = ArtifactCache.instance.fetch_compressed_artifact(url)
+    content = ArtifactCache.instance.read_compressed_artifact(local_path)
     if content.empty?
       # Happens sometimes
       return results_fallback(project_id, version_id, @build)

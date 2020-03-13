@@ -118,6 +118,21 @@ module Evergreen
       !!artifact(basename)
     end
 
+    # Returns the first artifact whose name is in the desired names list,
+    # with the order of names in desired names defining the priority of
+    # artifacts. This method assumes that all of the artifacts specified by
+    # the desired names are produced by the same task, hence it can
+    # simply delegate to Task#first_artifact_for_names.
+    def first_artifact_for_names(desired_names)
+      tasks.each do |task|
+        artifact = task.first_artifact_for_names(desired_names)
+        if artifact
+          return artifact
+        end
+      end
+      nil
+    end
+
     # in seconds
     def time_taken
       info['time_taken_ms'] / 1000.0
