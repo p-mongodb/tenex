@@ -2,6 +2,7 @@ require 'fe/config'
 require 'open-uri'
 require 'singleton'
 autoload :Zlib, 'zlib'
+autoload :FileUtils, 'fileutils'
 
 class ArtifactCache
   include Singleton
@@ -30,7 +31,7 @@ class ArtifactCache
   # fetched already. Returns full local path to the fetched artifact.
   # If url does not end in .gz, this method compresses the contents at the
   # URL with gzip and stores it in compressed form.
-  def fetch_compressed_artifact(url)
+  def fetch_compressed_artifact(url, subdir:)
     basename = File.basename(url)
     if basename =~ /((?:\.\w{1,4})+)$/
       ext = $1
@@ -43,7 +44,8 @@ class ArtifactCache
         basename += '.' + ext
       end
     end
-    local_path = ARTIFACTS_LOCAL_PATH.join(basename)
+    FileUtils.mkdir_p(ARTIFACTS_LOCAL_PATH.join(subdir))
+    local_path = ARTIFACTS_LOCAL_PATH.join(subdir, basename)
     if ext.end_with?('.gz')
       compress = false
     else
