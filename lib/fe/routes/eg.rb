@@ -66,6 +66,13 @@ Routes.included do
     @project = Evergreen::Project.new(eg_client, project_id)
     out = ''
     @project.vars.each do |k, v|
+      k = k.upcase
+      # Evergreen variables are shell-escaped when entered because
+      # our evergreen configuration does not escape them when propagating
+      # them to shell. Undo the escaping for .env format.
+      # Seems like Dotenv has special handling for $, thus it needs to
+      # stay escaped also in .env files?
+      #v = v.gsub(/\\(.)/, '\1')
       if v =~ /\s/
         out << %Q`#{k}="#{v}"\n`
       else
