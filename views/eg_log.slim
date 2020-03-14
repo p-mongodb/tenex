@@ -15,6 +15,12 @@ css:
     ' Bundler appears to have failed to install dependencies:
     pre= @log_lines[@cached_build.bundler_failure_index][:text]
 
+- if @broken_utf8_logs
+  p
+    ' The following server log files contain invalid utf-8:
+    - @broken_utf8_logs.each do |full_name|
+      = full_name
+
 p
   a href="/repos/#{@owner_name}/#{@repo_name}/pulls/#{@pull_id}" PR
   '

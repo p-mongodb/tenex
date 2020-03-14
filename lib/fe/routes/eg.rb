@@ -174,6 +174,7 @@ Routes.included do
     @version_id = version_id
     build = Evergreen::Build.new(eg_client, build_id)
     @artifact = build.detect_artifact!('mongodb-logs.tar.gz')
+    @rel_path = rel_path
 
     contents = @artifact.tarball_entry(rel_path) do |entry|
       entry.read
@@ -241,6 +242,17 @@ Routes.included do
         if entry.full_name =~ /\.log$/
           contents.force_encoding('utf-8')
         end
+        begin
+          contents =~ /./
+        rescue ArgumentError => e
+          if e.to_s =~ /invalid byte sequence in UTF-8/
+            @broken_utf8_logs ||= []
+            @broken_utf8_logs << entry.full_name
+            contents = contents.encode('utf-16', invalid: :replace).encode('utf-8')
+          else
+            raise
+          end
+        end
         if start = (contents =~ /(Got signal: (\d+)(.|\n)*----- BEGIN BACKTRACE -----(.|\n)*-----  END BACKTRACE  -----)/)
           @log_name = entry.full_name
           @log_url = "/eg/#{project_id}/versions/#{version_id}/builds/#{build.id}/artifact-log/#{@log_name}"
@@ -297,6 +309,20 @@ Routes.included do
     num = 0
     @log_lines = lines.map do |line|
       num += 1
+
+      line.force_encoding('utf-8')
+      begin
+        line =~ /./
+      rescue ArgumentError => e
+        if e.to_s =~ /invalid byte sequence in UTF-8/
+          @invalid_utf8_lines ||= []
+          @invalid_utf8_lines << num
+          line = line.encode('utf-16', invalid: :replace).encode('utf-8')
+        else
+          raise
+        end
+      end
+
       severity = line.split(/\s+/, 3)[1]
       unless severity && SEVERITIES.include?(severity)
         severity = 'I'

@@ -5,6 +5,9 @@ css:
   .severity-W { color: #ea9b09; }
   .severity-E { color: red; }
 
+h2
+  code= @rel_path
+
 p
   a href="/eg/#{@project_id}/versions/#{@version_id}" EG build
   '
@@ -12,6 +15,13 @@ p
     | Artifact
   '
   ' (#{number_to_human_size(@artifact.size)})
+
+- if @invalid_utf8_lines
+  p
+    ' Invalid UTF-8 on the following lines:
+    = @invalid_utf8_lines.map do |line| \
+        %Q`<a href="#line-#{line}">#{line}</a>` \
+      end.join(', ').html_safe
 
 pre
   - @log_lines.each_with_index do |line, index|
