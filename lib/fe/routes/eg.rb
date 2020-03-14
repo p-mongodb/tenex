@@ -61,7 +61,7 @@ Routes.included do
     slim :eg_project_config
   end
 
-  # eg project config vars
+  # eg project config vars - dotenv
   get '/eg/:project/config.env' do |project_id|
     @project = Evergreen::Project.new(eg_client, project_id)
     out = ''
@@ -81,6 +81,13 @@ Routes.included do
     end
     response.header['content-type'] = 'text/plain'
     out
+  end
+
+  # eg project config vars - json for aws auth
+  get '/eg/:project/config.json' do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    response.header['content-type'] = 'application/json'
+    @project.vars.to_json
   end
 
   get '/eg/:project/patches/:patch_id' do |project_id, patch_id|
