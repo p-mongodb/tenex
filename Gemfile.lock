@@ -63,7 +63,7 @@ GEM
     htmlentities (4.3.4)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
-    jira-ruby (1.7.1)
+    jira-ruby (1.8.0)
       activesupport
       atlassian-jwt
       multipart-post
