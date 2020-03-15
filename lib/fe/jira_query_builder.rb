@@ -8,7 +8,7 @@ class JiraQueryBuilder
   ).freeze
 
   PROJECTS = %w(
-    ruby mongoid server
+    ruby mongoid server help
   ).freeze
 
   COMPONENTS = {
