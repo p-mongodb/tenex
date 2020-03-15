@@ -42,9 +42,15 @@ module Env
 
   module_function def confluence_client
     @confluence_client ||= begin
-      auth_token_url = ENV['CORP_AUTH_TOKEN_URL']
-      require 'open-uri'
-      auth_token = open(auth_token_url).read
+      if ENV['CONFLUENCE_AUTH_TOKEN']
+        auth_token = ENV['CONFLUENCE_AUTH_TOKEN']
+      elsif ENV['CORP_AUTH_TOKEN_URL'] && !ENV['CORP_AUTH_TOKEN_URL'].empty?
+        auth_token_url = ENV['CORP_AUTH_TOKEN_URL']
+        require 'open-uri'
+        auth_token = open(auth_token_url).read
+      else
+        raise "No auth token mechanism defined"
+      end
 
       options = {
         :username     => ENV['JIRA_USERNAME'],
