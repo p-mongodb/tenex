@@ -13,7 +13,7 @@ Routes.included do
     #@pull.aggregate_result
 
     @configs = {
-      'mongodb-version' => %w(4.0 3.6 3.4 3.2 3.0 2.6 latest),
+      'mongodb-version' => %w(4.2 4.0 3.6 3.4 3.2 3.0 2.6 latest krb),
       'topology' => %w(standalone replica-set sharded-cluster),
       'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
@@ -36,25 +36,34 @@ Routes.included do
             meta[key] = value
           end
         end
-        if label =~ /kerberos-tests|test-kerberos/
-          meta['kerberos'] = true
+        if label =~ /kerberos-tests|test-kerberos|kerberos-unit/
+          #meta['kerberos'] = true
+          meta['auth-and-ssl'] = 'krb-unit'
+        elsif label =~ /kerberos-integration-(.*)/
+          meta['mongodb-version'] = 'krb'
+          meta['topology'] = $1
+          meta['auth-and-ssl'] = 'krb-integration'
         elsif label =~ /enterprise-auth-tests-ubuntu/
-          meta['mongodb-version'] = 'EA'
+          meta['mongodb-version'] = 'krb'
           meta['topology'] = 'ubuntu'
         elsif label =~ /enterprise-auth-tests-rhel/
-          meta['mongodb-version'] = 'EA'
+          meta['mongodb-version'] = 'krb'
           meta['topology'] = 'rhel'
         elsif label =~ /local-tls/
-          meta['mongodb-version'] = meta['mongodb-version']
+          #meta['mongodb-version'] = meta['mongodb-version']
           meta['auth-and-ssl'] = 'TLS-verify'
         elsif label =~ /x509-tests/
-          meta['mongodb-version'] = meta['mongodb-version']
+          #meta['mongodb-version'] = meta['mongodb-version']
           meta['auth-and-ssl'] = 'x509'
         else
           meta['auth-and-ssl'] ||= 'noauth-and-nossl'
         end
         @table_keys.each do |key|
           value = meta[key]
+          if value.nil?
+            raise "Nil value for #{key} in #{status.status.context}"
+            #next
+          end
           @category_values[key] ||= []
           (@category_values[key] << value).uniq!
         end
@@ -116,7 +125,7 @@ Routes.included do
           end
         end
         if map[short_label]
-          #raise "overwrite for #{id}: #{short_label} #{meta.inspect}"
+          raise "overwrite for #{id}: #{short_label} #{meta.inspect}"
           #map["x-#{short_label}"] = status
           @untaken_statuses << status
         else
@@ -134,15 +143,9 @@ Routes.included do
           a <=> b
         end
       end
-      @category_values['mongodb-version']&.sort! do |a, b|
-        if a =~ /^[0-9]/ && b =~ /^[0-9]/
-          b <=> a
-        else
-          a <=> b
-        end
+      @category_values['mongodb-version'] = @configs['mongodb-version'].select do |v|
+        @category_values['mongodb-version'].include?(v)
       end
-      @category_values['mongodb-version']&.delete('EA')
-      @category_values['mongodb-version']&.push('EA')
       if @category_values['topology']
         @category_values['topology'] = %w(standalone replica-set sharded-cluster rhel ubuntu)
       end
