@@ -8,7 +8,7 @@ class JiraQueryBuilder
   ).freeze
 
   PROJECTS = %w(
-    ruby mongoid server help docs docsp drivers spec
+    ruby mongoid server help docs docsp drivers spec website
   ).freeze
 
   COMPONENTS = {
