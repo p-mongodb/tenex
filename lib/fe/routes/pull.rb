@@ -46,9 +46,11 @@ Routes.included do
         elsif label =~ /enterprise-auth-tests-ubuntu/
           meta['mongodb-version'] = 'krb'
           meta['topology'] = 'ubuntu'
+          meta['auth-and-ssl'] = 'krb-integration'
         elsif label =~ /enterprise-auth-tests-rhel/
           meta['mongodb-version'] = 'krb'
           meta['topology'] = 'rhel'
+          meta['auth-and-ssl'] = 'krb-integration'
         elsif label =~ /local-tls/
           #meta['mongodb-version'] = meta['mongodb-version']
           meta['auth-and-ssl'] = 'TLS-verify'
