@@ -68,6 +68,8 @@ class App < Sinatra::Base
     @log_lines = log_lines
     @eg_log_url = log_url
     @cached_build = cached_build
+    @project_id = build.project_id
+    @version_id = build.version_id
     slim :eg_log
   end
 

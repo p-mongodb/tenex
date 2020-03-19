@@ -15,6 +15,14 @@ module Evergreen
       @info ||= client.get_json("builds/#{id}")
     end
 
+    def project_id
+      info['project_id']
+    end
+
+    def version_id
+      info['version']
+    end
+
     def tasks
       @tasks ||= begin
         info['tasks'].map do |task|

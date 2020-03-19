@@ -196,6 +196,9 @@ Routes.included do
   get '/repos/:org/:repo/pulls/:id/evergreen-log/:build_id' do |org_name, repo_name, pull_id, build_id|
     pull = gh_repo(org_name, repo_name).pull(pull_id)
     title = "#{repo_name}/#{pull_id} by #{pull.creator_name} [#{pull.head_branch_name}]"
+    @owner_name = org_name
+    @repo_name = repo_name
+    @pull_id = pull_id
     do_evergreen_log(build_id, title)
   end
 
