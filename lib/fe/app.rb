@@ -153,7 +153,15 @@ class App < Sinatra::Base
           index += 1
           text = text = log_lines[index][:text]
           if text =~ /test-on-docker/ && text !~ /\+ echo/
-            @local_test_command = text.sub(/.*?\[[^\]]+\] /, '')
+            # The [P: 40] prefix is "log message priority".
+            # When added it is simply a duplicate of severity with the
+            # severities mapped to various integer values
+            # (30, 40 and 70 for debug, info and error).
+            # There may be other priorities added later and they could
+            # conceivably be useful, but for the purposes of test command
+            # extraction they can be ignored.
+            # The second bracketed bit is the timestamp.
+            @local_test_command = text.sub(/^(\[P: \d+\] )?\[[^\]]+\] /, '')
 
             if result
               failed_file_paths = result.failed_files.map do |spec|
