@@ -161,7 +161,8 @@ class App < Sinatra::Base
             # conceivably be useful, but for the purposes of test command
             # extraction they can be ignored.
             # The second bracketed bit is the timestamp.
-            @local_test_command = text.sub(/^(\[P: \d+\] )?\[[^\]]+\] /, '')
+            # The third bracketed bit is the egos timestamp.
+            @local_test_command = text.sub(/^(\[P: \d+\] )?\[[^\]]+\]( \[egos:[^\]]+\])?/, '')
 
             if result
               failed_file_paths = result.failed_files.map do |spec|
