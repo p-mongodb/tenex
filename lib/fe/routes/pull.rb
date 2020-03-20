@@ -145,8 +145,10 @@ Routes.included do
           a <=> b
         end
       end
-      @category_values['mongodb-version'] = @configs['mongodb-version'].select do |v|
-        @category_values['mongodb-version'].include?(v)
+      if @category_values['mongodb-version']
+        @category_values['mongodb-version'] = @configs['mongodb-version'].select do |v|
+          @category_values['mongodb-version'].include?(v)
+        end
       end
       if @category_values['topology']
         @category_values['topology'] = %w(standalone replica-set sharded-cluster rhel ubuntu)
