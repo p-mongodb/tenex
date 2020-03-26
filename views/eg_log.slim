@@ -25,8 +25,9 @@ p
   a href="/repos/#{@owner_name}/#{@repo_name}/pulls/#{@pull_id}" PR
   '
   a href="/eg/#{@project_id}/versions/#{@version_id}" EG build
-  '
-  a href="https://evergreen.mongodb.com/build/#{@cached_build.id}" @ Evergreen
+  - if @cached_build
+    '
+    a href="https://evergreen.mongodb.com/build/#{@cached_build.id}" @ Evergreen
   '
   a href="#{@eg_log_url}"
     | Log @ Evergreen
