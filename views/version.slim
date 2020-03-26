@@ -40,6 +40,9 @@ table
       td= build.build_variant
       td
         = build.status
+        - unless build.activated?
+          '
+          ' (X)
         = build_timing(build)
       td
         - if build.tasks.length == 1

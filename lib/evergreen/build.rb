@@ -98,6 +98,14 @@ module Evergreen
       %w(success failed).include?(status)
     end
 
+    def activated?
+      info['activated']
+    end
+
+    def order
+      info['order']
+    end
+
     # Returns expected duration of running task
     def expected_duration
       task = tasks.detect(&:running?)
