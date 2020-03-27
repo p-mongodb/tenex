@@ -15,13 +15,13 @@ module Evergreen
       @info ||= client.get_json("hosts/#{id}")
     end
 
-    %w(host_url provisioned started_by host_type user status user_host).each do |m|
+    %w(started_by host_type user status user_host).each do |m|
       define_method(m) do
         info[m]
       end
     end
 
-    def host_url
+    def address
       if value = info['host_url']
         if value == ''
           nil
@@ -31,6 +31,14 @@ module Evergreen
       else
         nil
       end
+    end
+
+    def distro_id
+      info['distro']['distro_id']
+    end
+
+    def provisioned?
+      info['provisioned']
     end
 
     # these fields are only returned by the server once the underlying
@@ -45,6 +53,10 @@ module Evergreen
 
     def distro
       Distro.new(client, info['distro']['distro_id'])
+    end
+
+    def running_task?
+      !!info['running_task']['task_id']
     end
 
     def terminate

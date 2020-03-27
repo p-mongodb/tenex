@@ -15,6 +15,17 @@ Routes.included do
     slim :distros
   end
 
+  get '/eg/hosts' do
+    hosts = eg_client.hosts.sort_by(&:id)
+    @distro_ids = hosts.map(&:distro_id).uniq.sort
+    @hosts_map = {}
+    hosts.each do |host|
+      @hosts_map[host.distro_id] ||= []
+      @hosts_map[host.distro_id] << host
+    end
+    slim :hosts
+  end
+
   # eg project log
   get "/eg/:project/versions/:version/evergreen-log/:build" do |project_id, version_id, build_id|
     @project_id = project_id

@@ -1,0 +1,21 @@
+h1 Hosts
+
+ul
+  - @distro_ids.each do |distro_id|
+    li
+      a href="##{distro_id}"
+        = distro_id
+      '
+      ' (#{@hosts_map[distro_id].length} hosts)
+
+table
+  - @distro_ids.each do |distro_id|
+    - hosts = @hosts_map[distro_id]
+    th colspan=2
+      a id=distro_id
+        = distro_id
+    - hosts.each do |host|
+      tr
+        td= host.id
+        td= host.status
+        td= host.running_task? ? 'R' : 'I'

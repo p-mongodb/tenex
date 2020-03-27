@@ -38,8 +38,8 @@ form method='post'
           = host.status
           '
           a href="/spawn/#{host.id}/terminate" Terminate
-        - if host.host_url
+        - if host.address
           pre
-            | ssh -A -l #{host.user} -o StrictHostKeyChecking=no #{host.host_url}
+            | ssh -A -l #{host.user} -o StrictHostKeyChecking=no #{host.address}
 
 a href='/spawn/terminate-all' Terminate all running hosts
