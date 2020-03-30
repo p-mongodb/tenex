@@ -1,0 +1,5 @@
+.git
+.env*
+config/mongoid.yml
+frontend
+spec
