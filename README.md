@@ -14,6 +14,14 @@ See README.features.md for a detailed list.
 
 ## Installation
 
+### Using Docker
+
+To use the Docker image:
+
+    docker pull pmongo/tenex
+
+### Local
+
 Tenex uses MongoDB for persistence, Redis for background job storage
 and is implemented in Ruby, therefore you'll need reasonably recent versions
 of these dependencies installed. Then:
@@ -45,6 +53,17 @@ Redis address is currently not configurable (the default 127.0.0.1:6379 is used)
 
 ## Running
 
+### Using Docker
+
+The Docker image of Tenex contains all needed dependencies, including a
+self-contained MongoDB installation. The simplest possible configuration
+provides the config file to the container and exposes port 80 to the
+host system, as follows:
+
+    docker run -itp 9000:80 -e DOTENV="`cat .env`" pmongo/tenex
+
+This invocation will reset the database on each run.
+
 ### In Production
 
     puma .config.ru -b tcp://127.0.0.1:9393 -e production
@@ -65,7 +84,8 @@ leading dot).
 
 Docker launch:
 
-    docker build -t pmongo/tenex . && docker run -itp 9000:80 pmongo/tenex
+    docker build -t pmongo/tenex . &&
+      docker run -itp 9000:80 -e DOTENV="`cat .env`" pmongo/tenex
 
 ## Building
 
