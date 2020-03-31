@@ -71,7 +71,7 @@ Docker launch:
 
 Docker build & push:
 
-    docker build -t pmongo/tenex . && docker pmongo/tenex
+    docker build -t pmongo/tenex . && docker push pmongo/tenex
 
 ## License
 
