@@ -45,7 +45,16 @@ Redis address is currently not configurable (the default 127.0.0.1:6379 is used)
 
 ## Running
 
+### In Production
+
+    puma .config.ru -b tcp://127.0.0.1:9393 -e production
+
+Tenex presently does not perform authentication itself, therefore it should be
+reverse-proxied to by a web server that has authentication configured.
+
 ### In Development
+
+Local launch:
 
     ./script/server
 
@@ -54,12 +63,15 @@ This launches a self-reloading web server on port 9393.
 In production, use your favorite web server to run `.config.ru` (note the
 leading dot).
 
-### In Production
+Docker launch:
 
-    puma .config.ru -b tcp://127.0.0.1:9393 -e production
+    docker build -t pmongo/tenex . && docker run -itp 9000:80 pmongo/tenex
 
-Tenex presently does not perform authentication itself, therefore it should be
-reverse-proxied to by a web server that has authentication configured.
+## Building
+
+Docker build & push:
+
+    docker build -t pmongo/tenex . && docker pmongo/tenex
 
 ## License
 
