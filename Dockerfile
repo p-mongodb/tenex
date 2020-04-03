@@ -3,7 +3,7 @@ FROM debian:10
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-  apt-get -y install ruby-dev libxml2-dev libxslt-dev \
+  apt-get -y install git ruby-dev libxml2-dev libxslt-dev \
     gcc zlib1g-dev patch pkg-config make curl gnupg
 
 RUN curl -sfL https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add - && \
