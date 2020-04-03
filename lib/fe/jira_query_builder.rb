@@ -12,7 +12,7 @@ class JiraQueryBuilder
   ).freeze
 
   COMPONENTS = {
-    'ruby' => %w(bson),
+    'ruby' => %w(bson kerberos),
   }.freeze
 
   def initialize(query)
