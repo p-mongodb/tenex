@@ -13,6 +13,9 @@ OptionParser.new do |opts|
   opts.on('-p', '--project=PROJECT', 'Evergreen project to patch into') do |v|
     options[:eg_project_id] = v
   end
+  opts.on('-f', '--force', 'Force submission') do |v|
+    options[:force] = true
+  end
 end.parse!
 
 PatchBuildMaker.new.run(options)
