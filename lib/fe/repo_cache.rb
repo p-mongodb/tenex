@@ -37,9 +37,11 @@ class RepoCache
           ChildProcessHelper.check_call(%w(git reset --hard origin/master))
         end
       else
-        ChildProcessHelper.check_call(%W(git clone git@github.com:#{full_name}) + [cached_repo_path.to_s])
+        ChildProcessHelper.check_call(%W(git clone https://github.com/#{full_name}) + [cached_repo_path.to_s])
         Dir.chdir(cached_repo_path) do
-          ChildProcessHelper.check_call(%W(git remote add p git@github.com:p-mongo/#{name} -f))
+          ChildProcessHelper.check_call(%w(git remote set-url --push origin git@github.com:#{full_name}))
+          ChildProcessHelper.check_call(%W(git remote add p https://github.com/p-mongo/#{name} -f))
+          ChildProcessHelper.check_call(%w(git remote set-url --push p git@github.com:p-mongo/#{name}))
         end
       end
       true
@@ -196,7 +198,8 @@ CMD
         git checkout master &&
         git pull &&
         if ! git remote |grep -qx p; then
-          get remote add p git@github.com:p-mongo/#{name}
+          git remote add p https://github.com/p-mongo/#{name} &&
+          git remote set-url --push p git@github.com:p-mongo/#{name}
         fi &&
         git fetch p &&
         (git branch -D #{branch_name} || true) &&
@@ -221,7 +224,8 @@ CMD
           git checkout master &&
           git pull &&
           if ! git remote |grep -qx p; then
-            get remote add p git@github.com:p-mongo/#{name}
+            git remote add p https://github.com/p-mongo/#{name} &&
+            git remote set-url --push p git@github.com:p-mongo/#{name}
           fi &&
           git fetch p &&
           (git branch -D #{branch_name} || true) &&
