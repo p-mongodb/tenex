@@ -6,5 +6,13 @@ ENV['MONGOID_ENV'] = 'development'
 
 require 'fe/boot_lite'
 require 'fe/patch_build_maker'
+require 'optparse'
 
-PatchBuildMaker.new.run
+options = {}
+OptionParser.new do |opts|
+  opts.on('-p', '--project=PROJECT', 'Evergreen project to patch into') do |v|
+    options[:eg_project_id] = v
+  end
+end.parse!
+
+PatchBuildMaker.new.run(options)
