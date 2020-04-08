@@ -58,6 +58,12 @@ PROJECT_CONFIGS = {
     'MONGOCRYPT',
     nil,
   ),
+  'cloud-docs' => ProjectConfig.new(
+    '10gen',
+    'cloud-docs',
+    'DOCSP',
+    nil,
+  ),
 }
 
 class ProjectDetector
@@ -77,6 +83,9 @@ class ProjectDetector
         break
       when 'toolchain'
         key = 'mongo-ruby-toolchain'
+        break
+      when 'cloud-docs'
+        key = 'cloud-docs'
         break
       when 'source'
         if File.basename(File.dirname(path)) == 'specifications'
