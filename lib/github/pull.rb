@@ -41,15 +41,24 @@ module Github
     end
 
     def statuses
-      @statuses ||= begin
+      (@statuses ||= begin
         payload = client.paginated_get("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
 
         # sometimes the statuses are duplicated?
         payload.delete_if do |status|
           payload.any? do |other_status|
             other_status['context'] == status['context'] &&
-            other_status['id'] != status['id'] &&
+            # The ids are different for duplicated statuses.
+            #other_status['id'] != status['id'] &&
             other_status['updated_at'] > status['updated_at']
+          end
+        end
+        # Sometimes statuses are still duplicated, with identical update
+        # times. Take one with the biggest id.
+        payload.delete_if do |status|
+          payload.any? do |other_status|
+            other_status['context'] == status['context'] &&
+            other_status['id'] > status['id']
           end
         end
         payload.sort_by! { |a| a['context'] }
@@ -57,7 +66,7 @@ module Github
         payload.map do |info|
           Status.new(client, info: info)
         end
-      end
+      end).dup
     end
 
     def number

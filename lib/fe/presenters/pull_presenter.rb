@@ -21,14 +21,17 @@ class PullPresenter
 
   def statuses
     # Sometimes statuses in github are duplicated, work around
-    @statuses ||= @pull.statuses.map do |status|
-      status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
-      if status.travis? && @repo.project && !@repo.project.travis?
-        nil
-      else
-        status
+    @statuses ||= begin
+      statuses = @pull.statuses.map do |status|
+        status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
+        if status.travis? && @repo.project && !@repo.project.travis?
+          nil
+        else
+          status
+        end
       end
-    end.compact.sort_by(&:updated_at).reverse.uniq { |item| item.build_id }
+      statuses.compact.sort_by(&:updated_at).reverse#.uniq { |item| item.build_id }
+    end
   end
 
   def take_status(label)

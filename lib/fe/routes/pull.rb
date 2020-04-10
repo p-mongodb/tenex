@@ -7,7 +7,7 @@ Routes.included do
     @repo = system.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
     @pull = PullPresenter.new(pull, eg_client, system, @repo)
-    @statuses = @pull.statuses
+    @statuses = pull.statuses
 
     #@pull.fetch_results
     #@pull.aggregate_result
