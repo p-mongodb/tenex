@@ -121,7 +121,7 @@ class App < Sinatra::Base
       end
       cache_state.distros_updated_at = Time.now
       cache_state.save!
-      distros
+      distros.sort_by { |d| d.name }
     end
   end
 
