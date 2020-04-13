@@ -4,7 +4,9 @@ Routes.included do
   get '/spawn' do
     @distros = distros_with_cache
     @keys = keys_with_cache
-    @hosts = eg_client.user_hosts
+    @hosts = eg_client.user_hosts.sort_by do |host|
+      [host.distro_id, host.started_at]
+    end
     @config = SpawnConfig.first || SpawnConfig.new
     @recent_distros = SpawnedHost.recent_distros
     slim :spawn
