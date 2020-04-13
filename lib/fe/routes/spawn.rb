@@ -37,4 +37,27 @@ Routes.included do
     end
     redirect "/spawn"
   end
+
+  get '/spawn/update-dns' do
+    hosts = eg_client.user_hosts.sort_by do |host|
+      [host.distro_id, host.started_at]
+    end
+
+    tokens = ENV.fetch('FREEDNS_TOKENS').split(',')
+
+    hosts.each_with_index do |host, index|
+      ais = Socket.getaddrinfo(host.address, 22)
+      ai = ais.detect do |ai|
+        ai.first == 'AF_INET'
+      end
+      ip = ai[2]
+      token = tokens[index]
+      url = "https://freedns.afraid.org/dynamic/update.php?#{token}&address=#{ip}"
+
+      # TODO use Faraday here
+      puts open(url).read
+    end
+
+    redirect '/spawn'
+  end
 end

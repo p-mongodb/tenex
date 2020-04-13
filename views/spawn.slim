@@ -42,4 +42,7 @@ form method='post'
           pre
             | ssh -A -l #{host.login_user} -o StrictHostKeyChecking=no #{host.address}
 
-a href='/spawn/terminate-all' Terminate all running hosts
+p
+  a href='/spawn/terminate-all' Terminate all running hosts
+  '
+  a href='/spawn/update-dns' Update dynamic DNS
