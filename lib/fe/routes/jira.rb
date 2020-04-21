@@ -55,6 +55,11 @@ Routes.included do
     @version = version
     extra_conds = ''
     all_versions = jirra_client.project_versions(@project_name)
+    unreleased_versions = all_versions.reject(&:released?)
+    index = unreleased_versions.map(&:name).index(version)
+    if index && index > 0
+      @lower_fix_version = unreleased_versions[index-1].name
+    end
     if params[:exclusive]
       exclude_versions = all_versions.select(&:released?).sort_by(&:release_date).
         reverse[0..4].map(&:name)

@@ -28,6 +28,10 @@ table.issue-table
       td style='width:10%'
         a href="/jira/#{@project_name}/#{issue.key}/no-changelog"
           ' Remove
+      - if @lower_fix_version
+        td style='width:10%'
+          a href="/jira/#{@project_name}/#{issue.key}/move-fix-version/#{@lower_fix_version}"
+            ' Move to #{@lower_fix_version}
 
 textarea rows='40' cols='100'
   - @issues.each do |issue|
