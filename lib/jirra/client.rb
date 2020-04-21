@@ -110,9 +110,9 @@ module Jirra
     end
 
     def project_versions(project_name)
-      get_json("project/#{project_name}/versions").sort_by do |version|
-        version['name']
-      end
+      get_json("project/#{project_name}/versions").map do |info|
+        Version.new(info: info)
+      end.sort_by(&:name)
     end
 
     def transition_issue(issue_key, target_status_name, set_fields = {})
@@ -194,4 +194,6 @@ module Jirra
       payload['issues']
     end
   end
+
+  autoload :Version, 'jirra/version'
 end

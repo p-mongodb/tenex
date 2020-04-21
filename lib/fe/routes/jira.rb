@@ -54,11 +54,10 @@ Routes.included do
     @project_name = project_name.upcase
     @version = version
     extra_conds = ''
+    all_versions = jirra_client.project_versions(@project_name)
     if params[:exclusive]
-      all_versions = jirra_client.project_versions(@project_name)
-      exclude_versions = all_versions.select { |v| v['released'] }.sort_by do |version|
-        version['releaseDate'] || '-'
-      end.reverse[0..4].map { |v| v['name'] }
+      exclude_versions = all_versions.select(&:released?).sort_by(&:release_date).
+        reverse[0..4].map(&:name)
       # Remove version being looked at in case we look at it after it
       # has been released
       exclude_versions.delete(version)
@@ -77,14 +76,11 @@ Routes.included do
       lb = Gem::Version.new(lb_parts.map(&:to_s).join('.'))
       hb = Gem::Version.new(version.split('.')[0..2].join('.'))
 
-      all_versions = jirra_client.project_versions(@project_name)
-      exclude_versions = all_versions.select do |info|
-        info['released']
-      end.map do |info|
+      exclude_versions = all_versions.select(&:released?).map do |version|
         begin
-          v = Gem::Version.new(info['name'])
+          v = version.gem_version
           if v >= lb && v < hb
-            info['name']
+            version.name
           end
         rescue ArgumentError
           nil
