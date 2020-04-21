@@ -151,4 +151,11 @@ jql
     jirra_client.edit_issue(@issue_key, add_labels: %w(no-changelog))
     redirect return_path
   end
+
+  get '/jira/:project/:issue_key/set-fix-version/:fix_version' do |project_name, issue_key, new_fix_version|
+    @project_name = project_name.upcase
+    @issue_key = issue_key.upcase
+    jirra_client.edit_issue(@issue_key, set_fix_versions: [new_fix_version])
+    redirect return_path
+  end
 end

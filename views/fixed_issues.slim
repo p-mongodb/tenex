@@ -27,10 +27,10 @@ table.issue-table
         div= truncate(issue.fields['description'], 240)
       td style='width:10%'
         a href="/jira/#{@project_name}/#{issue.key}/no-changelog"
-          ' Remove
+          ' No changelog
       - if @lower_fix_version
         td style='width:10%'
-          a href="/jira/#{@project_name}/#{issue.key}/move-fix-version/#{@lower_fix_version}"
+          a href="/jira/#{@project_name}/#{issue.key}/set-fix-version/#{@lower_fix_version}"
             ' Move to #{@lower_fix_version}
 
 textarea rows='40' cols='100'

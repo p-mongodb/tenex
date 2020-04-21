@@ -138,7 +138,7 @@ module Jirra
       post_json("issue/#{issue_key}/transitions", payload)
     end
 
-    def edit_issue(issue_key, add_labels: nil)
+    def edit_issue(issue_key, add_labels: nil, set_fix_versions: nil)
       payload = {}
       if add_labels
         payload[:update] ||= {}
@@ -146,6 +146,12 @@ module Jirra
         add_labels.each do |label|
           payload[:update][:labels] << {add: label}
         end
+      end
+      if set_fix_versions
+        payload[:update] ||= {}
+        payload[:update][:fixVersions] = [{
+          set: set_fix_versions.map { |name| { name: name } },
+        }]
       end
       request_json(:put, "issue/#{issue_key}", payload)
     end
