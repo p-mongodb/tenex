@@ -23,6 +23,24 @@ Routes.included do
     redirect "https://jira.mongodb.org/issues/?jql=#{CGI.escape(query)}"
   end
 
+  get '/jira/editmeta' do
+    @heading = 'Edit Meta'
+    @payload = jirra_client.get_issue_editmeta('RUBY-1690')
+    slim :editmeta
+  end
+
+  get '/jira/transitions' do
+    @heading = 'Transitions'
+    @payload = jirra_client.get_issue_transitions('RUBY-1690')
+    slim :editmeta
+  end
+
+  get '/jira/statuses' do
+    @heading = 'Statuses'
+    @payload = jirra_client.project_statuses('RUBY')
+    slim :editmeta
+  end
+
   get '/jira/:project' do |project_name|
     @project_name = project_name.upcase
     @versions = jirra_client.project_versions(@project_name)
@@ -131,23 +149,5 @@ jql
     @issue_key = issue_key.upcase
     jirra_client.edit_issue(@issue_key, add_labels: %w(no-changelog))
     redirect return_path
-  end
-
-  get '/jira/editmeta' do
-    @heading = 'Edit Meta'
-    @payload = jirra_client.get_issue_editmeta('RUBY-1690')
-    slim :editmeta
-  end
-
-  get '/jira/transitions' do
-    @heading = 'Transitions'
-    @payload = jirra_client.get_issue_transitions('RUBY-1690')
-    slim :editmeta
-  end
-
-  get '/jira/statuses' do
-    @heading = 'Statuses'
-    @payload = jirra_client.project_statuses('RUBY')
-    slim :editmeta
   end
 end
