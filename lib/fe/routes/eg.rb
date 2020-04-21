@@ -1,3 +1,4 @@
+autoload :Utils, 'fe/utils'
 autoload :Find, 'find'
 autoload :ChildProcess, 'childprocess'
 require 'fe/rspec_result'
@@ -237,7 +238,7 @@ Routes.included do
     end
     @raw_artifact_url = url = artifact.url
     local_path = ArtifactCache.instance.fetch_compressed_artifact(url,
-      subdir: "#{build_id}-#{@build.started_at.to_i}")
+      subdir: "#{Utils.md5(build_id)}-#{@build.started_at.to_i}")
     content = ArtifactCache.instance.read_compressed_artifact(local_path)
     if content.empty?
       # Happens sometimes

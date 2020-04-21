@@ -3,6 +3,7 @@ require 'open-uri'
 require 'singleton'
 autoload :Zlib, 'zlib'
 autoload :FileUtils, 'fileutils'
+autoload :Utils, 'fe/utils'
 
 class ArtifactCache
   include Singleton
@@ -38,8 +39,8 @@ class ArtifactCache
     else
       ext = nil
     end
-    if basename.length > 250
-      basename = Digest::MD5.new.update(basename).hexdigest
+    if basename.length > 200
+      basename = Utils.md5(basename)
       if ext
         basename += '.' + ext
       end
