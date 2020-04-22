@@ -1,3 +1,11 @@
+p
+  a href="/eg/#{@build.project_id}/versions/#{@build.version_id}/builds/#{@build.id}/log" Log
+  '
+  a href="/eg/#{@build.project_id}/versions/#{@build.version_id}" EG build
+  - if @cached_build
+    '
+    a href="https://evergreen.mongodb.com/build/#{@cached_build.id}" @ Evergreen
+
 - if @result.summary[:failure_count] > 0
   h2= @result.render_failure_count
   

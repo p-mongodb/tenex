@@ -246,7 +246,7 @@ Routes.included do
     end
     @result = RspecResult.new(url, content)
 
-    cached_build, log_lines, log_url = EvergreenCache.build_log(@build, :task)
+    @cached_build, log_lines, log_url = EvergreenCache.build_log(@build, :task)
     set_local_test_command(log_lines, result: @result)
 
     @branch_name = params[:branch]
