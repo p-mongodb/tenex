@@ -250,6 +250,17 @@ Routes.included do
     set_local_test_command(log_lines, result: @result)
 
     @branch_name = params[:branch]
+    @branch_name ||= begin
+      project = Evergreen::Project.new(eg_client, @build.project_id)
+      patch = project.recent_patches.detect do |patch|
+        patch.version_id == @build.version_id
+      end
+      pr_number = patch&.pr_number
+      if pr_number
+        pull = gh_client.repo(*patch.repo_full_name.split('/')).pull(pr_number)
+        @branch_name = pull.head_branch_name
+      end
+    end
     slim :results
   end
 

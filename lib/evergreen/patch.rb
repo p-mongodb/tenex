@@ -31,6 +31,26 @@ module Evergreen
       client.version_by_id(version_id)
     end
 
+    # Heuristic method to determine the likely PR number using the description,
+    # assuming the standard generated description.
+    def pr_number
+      if info['description'] && info['description'] =~ /\A'([^']+?)' pull request #(\d+) by/
+        $2.to_i
+      else
+        nil
+      end
+    end
+
+    # Heuristic method to determine the likely GH repo using the description,
+    # assuming the standard generated description.
+    def repo_full_name
+      if info['description'] && info['description'] =~ /\A'([^']+?)' pull request #(\d+) by/
+        $1
+      else
+        nil
+      end
+    end
+
     def authorize!
       client.patch_json("patches/#{id}", activated: true)
     end
