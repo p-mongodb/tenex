@@ -36,7 +36,7 @@ module EvergreenCache
         end
         FileUtils.move(log_path.to_s + '.part', log_path)
       else
-        cached_build.send("#{which}_log_url=", nil)
+        cached_obj.send("#{which}_log_url=", nil)
       end
       cached_obj.save!
     end
