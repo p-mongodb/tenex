@@ -8,6 +8,10 @@ module Evergreen
 
     attr_reader :client, :id, :info
 
+    def status
+      info['status']
+    end
+
     def description
       if info['description'] && !info['description'].empty?
         info['description']
@@ -49,6 +53,18 @@ module Evergreen
       else
         nil
       end
+    end
+
+=begin What is in info['builds']?
+    def builds
+      info['builds'].map do |build_id|
+        Build.new(client, build_id)
+      end
+    end
+=end
+
+    def finished?
+      !%w(created started).include?(status)
     end
 
     def authorize!
