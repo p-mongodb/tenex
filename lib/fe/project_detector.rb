@@ -64,6 +64,12 @@ PROJECT_CONFIGS = {
     'DOCSP',
     nil,
   ),
+  'astrolabe' => ProjectConfig.new(
+    'mongodb-labs',
+    'drivers-atlas-testing',
+    nil,
+    nil,
+  ),
 }
 
 class ProjectDetector
@@ -86,6 +92,9 @@ class ProjectDetector
         break
       when 'cloud-docs'
         key = 'cloud-docs'
+        break
+      when 'astrolabe'
+        key = 'astrolabe'
         break
       when 'source'
         if File.basename(File.dirname(path)) == 'specifications'

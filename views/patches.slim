@@ -16,6 +16,10 @@ a href="https://evergreen.mongodb.com/projects###{@project.id}"
         - if patch.version_id
           a href="/eg/#{@project.id}/versions/#{patch.version.id}"
             = patch.description
+          '
+          ' &middot;
+          a href="/eg/#{@project.id}/versions/#{patch.version.id}/abort"
+            ' Abort
         - else
           ' Patch without a version
 
