@@ -67,9 +67,27 @@ class App < Sinatra::Base
     @title = title
     @log_lines = log_lines
     @eg_log_url = log_url
-    @cached_build = cached_build
+    @cached_obj = cached_build
+    @eg_build_id = cached_build.id
     @project_id = build.project_id
     @version_id = build.version_id
+    slim :eg_log
+  end
+
+  private def do_evergreen_task_log(task, title, which = :task)
+    unless %i(task all).include?(which)
+      raise ArgumentError, "Invalid which value #{which}"
+    end
+    cached_task, log_lines, log_url = EvergreenCache.task_log(task, which)
+    set_local_test_command(log_lines)
+
+    @title = title
+    @log_lines = log_lines
+    @eg_log_url = log_url
+    @cached_obj = cached_task
+    @eg_build_id = cached_task.build_id
+    @project_id = task.project_id
+    @version_id = task.version_id
     slim :eg_log
   end
 
@@ -91,7 +109,7 @@ class App < Sinatra::Base
     end
     version.builds.each do |build|
       build.tasks.each do |task|
-        unless task.completed?
+        unless task.finished?
           task.set_priority(priority)
         end
       end

@@ -226,7 +226,7 @@ Routes.included do
   get '/eg/:project/versions/:version/builds/:build/tasks/:task/log' do |project_id, version_id, build_id, task_id|
     task = Evergreen::Task.new(eg_client, task_id)
     title = "EG task log"
-    do_simple_evergreen_log(task.task_log, task.task_log_url, title)
+    do_evergreen_task_log(task, title, :task)
   end
 
   # eg build results

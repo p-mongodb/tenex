@@ -5,16 +5,31 @@ require 'digest/sha1'
 module EvergreenCache
 
   module_function def build_log(build, which)
-    cached_build = EgBuild.find_or_create_by(id: build.id)
-    log_url = build.send("#{which}_log_url")
-    log_path = logs_path.join("#{Digest::SHA1.new.update(build.id).hexdigest}--#{which}.log.json")
-    if build.finished? && build.finished_at == cached_build.finished_at && log_path.exist?
+    log_impl(EgBuild, build, which)
+  end
+
+  module_function def task_log(task, which)
+    log_impl(EgTask, task, which).tap do |cached_obj, lines, log_url|
+      unless cached_obj.build_id
+        cached_obj.build_id = task.build_id
+        cached_obj.save!
+      end
+    end
+  end
+
+  private
+
+  module_function def log_impl(model_cls, eg_obj, which)
+    cached_obj = model_cls.find_or_create_by(id: eg_obj.id)
+    log_url = eg_obj.send("#{which}_log_url")
+    log_path = logs_path.join("#{Digest::SHA1.new.update(eg_obj.id).hexdigest}--#{which}.log.json")
+    if eg_obj.finished? && eg_obj.finished_at == cached_obj.finished_at && log_path.exist?
       lines = JSON.parse(File.read(log_path)).map!(&:symbolize_keys)
     else
-      cached_build.finished_at = build.finished_at
-      lines = retrieve_log(build, cached_build, which)
-      if build.finished?
-        cached_build.send("#{which}_log_url=", log_url)
+      cached_obj.finished_at = eg_obj.finished_at
+      lines = retrieve_log(eg_obj, cached_obj, which)
+      if eg_obj.finished?
+        cached_obj.send("#{which}_log_url=", log_url)
         FileUtils.mkdir_p(log_path.dirname)
         File.open(log_path.to_s + '.part', 'w') do |f|
           f << lines.to_json
@@ -23,12 +38,10 @@ module EvergreenCache
       else
         cached_build.send("#{which}_log_url=", nil)
       end
-      cached_build.save!
+      cached_obj.save!
     end
-    [cached_build, lines, log_url]
+    [cached_obj, lines, log_url]
   end
-
-  private
 
   module_function def retrieve_log(build, cached_build, which)
     log = build.send("#{which}_log")

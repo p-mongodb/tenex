@@ -5,15 +5,15 @@ css:
   .severity-W { color: #ea9b09; }
   .severity-E { color: red; }
 
-- if @cached_build&.mo_curl_failure_index
+- if @cached_obj&.mo_curl_failure_index
   p
     ' mongo-orchestration curl failure:
-    pre= @log_lines[@cached_build.mo_curl_failure_index][:text]
+    pre= @log_lines[@cached_obj.mo_curl_failure_index][:text]
 
-- if @cached_build&.bundler_failure_index
+- if @cached_obj&.bundler_failure_index
   p
     ' Bundler appears to have failed to install dependencies:
-    pre= @log_lines[@cached_build.bundler_failure_index][:text]
+    pre= @log_lines[@cached_obj.bundler_failure_index][:text]
 
 - if @broken_utf8_logs
   p
@@ -25,9 +25,9 @@ p
   a href="/repos/#{@owner_name}/#{@repo_name}/pulls/#{@pull_id}" PR
   '
   a href="/eg/#{@project_id}/versions/#{@version_id}" EG build
-  - if @cached_build
+  - if @eg_build_id
     '
-    a href="https://evergreen.mongodb.com/build/#{@cached_build.id}" @ Evergreen
+    a href="https://evergreen.mongodb.com/build/#{@eg_build_id}" @ Evergreen
   '
   a href="#{@eg_log_url}"
     | Log @ Evergreen
@@ -39,7 +39,7 @@ p
 
 pre
   - @log_lines.each_with_index do |line, index|
-    - if index == @cached_build&.first_failure_index
+    - if index == @cached_obj&.first_failure_index
       a name='first-failure'
     span id="line-#{line[:num]}" class="severity-#{line[:severity].upcase}"
       = line[:html].html_safe + "\n"

@@ -23,7 +23,7 @@ module FormattingHelpers
   end
 
   def task_runtime(task)
-    if task.completed?
+    if task.finished?
       Taw.time_ago_in_words(Time.now - task.time_taken, approx: 2)
     elsif task.started_at
       "Running for #{Taw.time_ago_in_words(task.started_at, approx: 2)}"
@@ -33,7 +33,7 @@ module FormattingHelpers
   end
 
   def short_task_runtime(task)
-    if task.completed?
+    if task.finished?
       render_time_delta(task.time_taken)
     elsif task.started_at
       render_time_delta(Time.now - task.started_at)

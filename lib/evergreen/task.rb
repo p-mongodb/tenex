@@ -64,10 +64,14 @@ module Evergreen
       end
     end
 
-    %w(display_name status build_id).each do |m|
+    %w(display_name status project_id build_id version_id).each do |m|
       define_method(m) do
         info[m]
       end
+    end
+
+    def build
+      Build.new(client, build_id)
     end
 
     {
@@ -96,7 +100,7 @@ module Evergreen
       %w(undispatched).include?(status)
     end
 
-    def completed?
+    def finished?
       %w(success failed).include?(status)
     end
 

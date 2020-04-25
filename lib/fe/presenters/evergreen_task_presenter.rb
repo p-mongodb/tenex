@@ -11,7 +11,7 @@ class EvergreenTaskPresenter
   attr_reader :task
   attr_reader :eg_client, :system
   def_delegators :@task, :normalized_status, :id, :ui_url, :build_id,
-    :task_log_url, :time_taken, :completed?, :started_at, :created_at
+    :task_log_url, :time_taken, :finished?, :started_at, :created_at
 
   def configuration_id
     id.sub(/_test(|s|_mlaunch)_patch_.*/, '').sub(/^.*__/, '')
