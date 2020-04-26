@@ -237,6 +237,7 @@ Routes.included do
       return results_fallback(project_id, version_id, @build)
     end
     @raw_artifact_url = url = artifact.url
+    @raw_artifact_url&.sub!(/\.gz$/, '')
     local_path = ArtifactCache.instance.fetch_compressed_artifact(url,
       subdir: "#{Utils.md5(build_id)}-#{@build.started_at.to_i}")
     content = ArtifactCache.instance.read_compressed_artifact(local_path)

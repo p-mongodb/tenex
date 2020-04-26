@@ -51,7 +51,8 @@ class ArtifactCache
       compress = false
     else
       compress = true
-      local_path += '.gz'
+      # TODO this changes local_path from Path to a string, don't do that.
+      local_path = local_path.to_s + '.gz'
     end
     unless File.exist?(local_path)
       puts "Fetching #{url}"
