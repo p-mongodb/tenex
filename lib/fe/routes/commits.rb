@@ -22,12 +22,9 @@ Routes.included do
     jira_ticket = pull_p.jira_ticket_number
     if jira_ticket
       orchestrator = Orchestrator.new
-      orchestrator.link_pr_in_issue(org_name: org_name, repo_name: repo_name,
-        pr_num: pull_id, jira_issue_key: pull_p.jira_issue_key!,
-        pr_title: subject)
 
       orchestrator.transition_issue_to_in_progress(pull_p.jira_issue_key!)
-      orchestrator.link_issue_and_pr(pull: @pull,
+      orchestrator.link_issue_and_pr(pull: @pull, pr_title: subject,
         org_name: org_name, repo_name: repo_name,
         jira_issue_key: pull_p.jira_issue_key!)
     end

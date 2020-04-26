@@ -45,11 +45,14 @@ class Orchestrator
     end
   end
 
-  def link_issue_and_pr(pull:, org_name:, repo_name:, jira_issue_key:)
+  def link_issue_and_pr(pull:, org_name:, repo_name:, jira_issue_key:,
+    pr_title: nil
+  )
     link_issue_in_pr(pull: pull, org_name: org_name, repo_name: repo_name,
       jira_issue_key: jira_issue_key)
     link_pr_in_issue(org_name: org_name, repo_name: repo_name,
-      pr_num: pull.number, pr_title: pull.title, jira_issue_key: jira_issue_key)
+      pr_num: pull.number, pr_title: pr_title || pull.title,
+      jira_issue_key: jira_issue_key)
   end
 
   def transition_issue_to_in_progress(jira_issue_key)
