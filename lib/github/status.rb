@@ -22,5 +22,9 @@ module Github
     def updated_at
       Time.parse(info['updated_at'])
     end
+
+    def finished?
+      %w(success failure error).include?(state)
+    end
   end
 end

@@ -123,7 +123,7 @@ p
                         - if status.restart_url
                           a href=status.restart_url
                             i.fa.fa-repeat title='Restart'
-                        - if status.failed? && @pull.have_rspec_json? && !status.top_level?
+                        - if status.finished? && @pull.have_rspec_json? && !status.top_level?
                           '
                           a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
                             i.fa.fa-bomb title='Results'
@@ -148,7 +148,7 @@ table.status-table
         td
           - if status.restart_url
             a href=status.restart_url Restart
-        - if status.failed? && @pull.have_rspec_json? && !status.top_level?
+        - if status.finished? && @pull.have_rspec_json? && !status.top_level?
           td
             a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
               | Results

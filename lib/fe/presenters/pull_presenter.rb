@@ -83,7 +83,7 @@ class PullPresenter
   def have_rspec_json?
     return @have_rspec_json unless @have_rspec_json.nil?
     @have_rspec_json = !!statuses.detect do |status|
-      status.failed? && status.rspec_json_url
+      status.finished? && status.rspec_json_url
     end
   end
 
