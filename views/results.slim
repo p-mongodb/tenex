@@ -79,3 +79,11 @@ ul
 - if @raw_artifact_url
   p
     a href=@raw_artifact_url Raw JSON (uncompressed)
+
+- if @build.artifacts.any?
+  h2 Artifacts
+  - @build.artifacts.each_with_index do |artifact, index|
+    - if index > 0
+      '
+      ' &middot;
+    a href=artifact.url = artifact.name
