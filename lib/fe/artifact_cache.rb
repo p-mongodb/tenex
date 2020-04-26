@@ -16,14 +16,14 @@ class ArtifactCache
       ext = basename.split('.').last
       basename = Digest::MD5.new.update(basename).hexdigest + '.' + ext
     end
-    local_path = ARTIFACTS_LOCAL_PATH.join(basename)
+    local_path = ARTIFACTS_LOCAL_PATH.join(basename).to_s
     unless File.exist?(local_path)
       puts "Fetching #{url}"
       content = open(url).read
-      File.open(local_path.to_s + '.tmp', 'w') do |f|
+      File.open(local_path + '.tmp', 'w') do |f|
         f << content
       end
-      FileUtils.mv(local_path.to_s + '.tmp', local_path)
+      FileUtils.mv(local_path + '.tmp', local_path)
     end
     local_path
   end
@@ -46,20 +46,19 @@ class ArtifactCache
       end
     end
     FileUtils.mkdir_p(ARTIFACTS_LOCAL_PATH.join(subdir))
-    local_path = ARTIFACTS_LOCAL_PATH.join(subdir, basename)
+    local_path = ARTIFACTS_LOCAL_PATH.join(subdir, basename).to_s
     if ext.end_with?('.gz')
       compress = false
     else
       compress = true
-      # TODO this changes local_path from Path to a string, don't do that.
-      local_path = local_path.to_s + '.gz'
+      local_path += '.gz'
     end
     unless File.exist?(local_path)
       puts "Fetching #{url}"
       content = open(url).read
-      tmp_path = local_path.to_s + '.tmp'
+      tmp_path = local_path + '.tmp'
       if compress
-        Zlib::GzipWriter.new(tmp_path) do |gz|
+        Zlib::GzipWriter.open(tmp_path) do |gz|
           gz << content
         end
       else
@@ -67,7 +66,7 @@ class ArtifactCache
           f << content
         end
       end
-      FileUtils.mv(local_path.to_s + '.tmp', local_path)
+      FileUtils.mv(local_path + '.tmp', local_path)
     end
     local_path
   end
