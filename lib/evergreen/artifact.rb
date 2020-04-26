@@ -1,3 +1,4 @@
+autoload :IceNine, 'ice_nine'
 module Gem
   autoload :Package, 'rubygems/package'
 end
@@ -6,7 +7,7 @@ module Evergreen
   class Artifact
     def initialize(client, info:, task:)
       @client = client
-      @info = info
+      @info = IceNine.deep_freeze(info)
       @task = task
     end
 
