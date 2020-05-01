@@ -6,7 +6,7 @@ source 'https://rubygems.org'
 gem 'mongo'
 gem 'mongoid'
 
-gem 'faraday'
+gem 'faraday', '~> 1.0'
 gem 'nokogiri'
 gem 'byebug'
 gem "faraday-detailed_logger"
@@ -16,7 +16,9 @@ gem 'sinatra-contrib'
 gem 'slim'
 gem 'shotgun'
 gem 'link_header'
-gem 'travis'
+# Cannot use travis with faraday 1.0 until the following is resolved:
+# https://github.com/travis-ci/gh/issues/41
+#gem 'travis'
 gem 'ansi-to-html'
 gem 'childprocess'
 gem 'puma'
@@ -31,3 +33,7 @@ gem 'pry'
 gem 'rspec'
 gem 'typhoeus'
 gem 'ice_nine'
+
+# version pins that we do not directly depend on
+
+gem 'activesupport', '~> 6.0'
