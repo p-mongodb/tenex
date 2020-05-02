@@ -12,7 +12,7 @@ require 'faraday/detailed_logger'
 require 'slim'
 require 'sinatra'
 require 'sinatra/reloader'
-require 'travis'
+autoload :Travis, 'travis'
 require 'taw'
 require 'action_view/helpers/number_helper'
 require 'fe/globals'
@@ -26,7 +26,9 @@ require 'fe/evergreen_cache'
   end
 end
 
-Travis.access_token = ENV['TRAVIS_TOKEN']
+if ENV['TRAVIS_TOKEN']
+  Travis.access_token = ENV['TRAVIS_TOKEN']
+end
 
 Slim::Engine.set_options pretty: true, sort_attrs: false
 
