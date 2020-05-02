@@ -188,7 +188,7 @@ class App < Sinatra::Base
               failed_file_paths = result.failed_files.map do |spec|
                 spec[:file_path]
               end
-              @local_failed_test_command = %Q`#{@local_test_command} TEST_CMD="rspec #{failed_file_paths.join(' ')}" -p`
+              @local_failed_test_command = %Q`#{@local_test_command} TEST_CMD="bundle exec rspec #{failed_file_paths.join(' ')}" -p`
             end
 
             break
