@@ -39,9 +39,9 @@ class RepoCache
       else
         ChildProcessHelper.check_call(%W(git clone https://github.com/#{full_name}) + [cached_repo_path.to_s])
         Dir.chdir(cached_repo_path) do
-          ChildProcessHelper.check_call(%w(git remote set-url --push origin git@github.com:#{full_name}))
+          ChildProcessHelper.check_call(%W(git remote set-url --push origin git@github.com:#{full_name}))
           ChildProcessHelper.check_call(%W(git remote add p https://github.com/p-mongo/#{name} -f))
-          ChildProcessHelper.check_call(%w(git remote set-url --push p git@github.com:p-mongo/#{name}))
+          ChildProcessHelper.check_call(%W(git remote set-url --push p git@github.com:p-mongo/#{name}))
         end
       end
       true
