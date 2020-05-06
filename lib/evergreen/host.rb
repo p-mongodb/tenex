@@ -76,6 +76,7 @@ module Evergreen
     end
 
     def started_at
+      return nil unless info['instance_tags']
       tag = info['instance_tags'].detect { |tag| tag['key'] == 'start-time' }
       if tag
         # Sample value: 20200413161520 (close to iso8601 but not it).
