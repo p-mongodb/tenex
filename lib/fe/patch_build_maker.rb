@@ -4,6 +4,7 @@ require 'fe/env'
 autoload :ProjectDetector, 'fe/project_detector'
 autoload :RepoCache, 'fe/repo_cache'
 autoload :Byebug, 'byebug'
+autoload :FileUtils, 'fileutils'
 
 class PatchBuildMaker
   include Env::Access
@@ -18,6 +19,16 @@ class PatchBuildMaker
     base_sha = rc.master_sha
     process, diff_text = ChildProcessHelper.get_output(%w(git diff upstream/master))
     diff_text.force_encoding('utf-8')
+
+    # Verify valid utf-8
+    diff_text.encode('utf-16')
+
+    patch_path = Pathname.new(File.expand_path('~/.cache/patches')).join(eg_project_id + '.patch')
+    FileUtils.mkdir_p(patch_path.dirname)
+    File.open(patch_path, 'w') do |f|
+      f << diff_text
+    end
+    puts "Saved patch to #{patch_path}"
 
 =begin
     if force
