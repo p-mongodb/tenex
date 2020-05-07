@@ -14,7 +14,7 @@ a href="https://evergreen.mongodb.com/projects###{@project.id}"
     - @patches.each do |patch|
       li
         - if patch.version_id
-          a href="/eg/#{@project.id}/versions/#{patch.version.id}"
+          a href="/eg/#{@project.id}/versions/#{patch.version_id}"
             = patch.description
           '
           ' &middot;
@@ -22,7 +22,7 @@ a href="https://evergreen.mongodb.com/projects###{@project.id}"
           '
           - unless patch.finished?
             ' &middot;
-            a href="/eg/#{@project.id}/versions/#{patch.version.id}/abort"
+            a href="/eg/#{@project.id}/versions/#{patch.version_id}/abort"
               ' Abort
         - else
           ' Patch without a version
