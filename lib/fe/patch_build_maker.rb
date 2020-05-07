@@ -17,6 +17,7 @@ class PatchBuildMaker
     rc.update_cache
 
     base_sha = rc.master_sha
+    ChildProcessHelper.check_call(%w(git fetch upstream))
     process, diff_text = ChildProcessHelper.get_output(%w(git diff upstream/master))
     diff_text.force_encoding('utf-8')
 
@@ -29,6 +30,15 @@ class PatchBuildMaker
       f << diff_text
     end
     puts "Saved patch to #{patch_path}"
+
+    # Occasionally the output of `git diff` does not apply back to the base
+    # using git apply, if the output was actually caculated against an old
+    # (e.g. outdated) base.
+    puts "Trying to apply the patch back to the base"
+    ChildProcessHelper.check_call(%W(
+      git apply --stat
+    ) + [patch_path.to_s])
+    rc.apply_patch(patch_path)
 
 =begin
     if force

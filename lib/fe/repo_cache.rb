@@ -155,6 +155,15 @@ class RepoCache
     end
   end
 
+  # Applies patch at the specified path the way Evergreen woud do it.
+  def apply_patch(path)
+    output = Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.check_output(%W(
+        git apply --binary --index
+      ) + [path.to_s])
+    end
+  end
+
   def rebase(pull)
     branch_name = pull.head_branch_name
     Dir.chdir(cached_repo_path) do
