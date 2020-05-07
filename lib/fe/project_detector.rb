@@ -68,7 +68,7 @@ PROJECT_CONFIGS = {
     'mongodb-labs',
     'drivers-atlas-testing',
     nil,
-    nil,
+    'drivers-atlas-testing',
   ),
 }
 
