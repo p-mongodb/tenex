@@ -53,6 +53,7 @@ module Evergreen
     end
 
     def request_json(meth, url, params=nil, options={})
+      puts "EG: #{meth} #{url}"
       unless url.start_with?('/')
         case options[:version]
         when 1
