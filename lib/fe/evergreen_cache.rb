@@ -66,7 +66,7 @@ module EvergreenCache
       if text =~ /\A\[.+?\] \[egos:(.) (.+?\d{3})\d{3}\]( .*)?\z/
         stream, time, rest = $1, $2, $3
         severity = {'O' => 'I', 'E' => 'E'}[stream] || 'E'
-        text = "[#{time.sub('T', ' ')}] #{rest}"
+        text = "[#{time.sub('T', ' ')}]#{rest}"
       end
       # The formatter outputs its own date/time, which is redundant with
       # egos date and time. Note that formatter does not output milliseconds
