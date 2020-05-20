@@ -1,4 +1,4 @@
-require 'json'
+autoload :Oj, 'oj'
 require 'faraday'
 require_relative '../paginated_get'
 require 'active_support/core_ext/string'
@@ -81,7 +81,7 @@ module Evergreen
         end
         req.url(url)
         if params
-          req.body = payload = JSON.dump(params)
+          req.body = payload = Oj.dump(params)
           puts "Sending payload: #{payload} for #{url}"
           req.headers['content-type'] = 'application/json'
         end
@@ -89,7 +89,7 @@ module Evergreen
       if response.status != 200 && response.status != 201
         error = nil
         begin
-          error = JSON.parse(response.body)['error']
+          error = Oj.load(response.body)['error']
         rescue
           error = response.body
         end
@@ -104,7 +104,7 @@ module Evergreen
         end
         raise cls.new(msg, status: response.status)
       end
-      JSON.parse(response.body)
+      Oj.load(response.body)
     end
 
     def projects

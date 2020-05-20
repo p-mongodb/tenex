@@ -1,3 +1,4 @@
+autoload :Oj, 'oj'
 autoload :LinkHeader, 'link_header'
 
 module PaginatedGet
@@ -20,7 +21,7 @@ module PaginatedGet
     if resp.status != 200
       raise "Bad status #{resp.status}"
     end
-    payload = JSON.parse(resp.body)
+    payload = Oj.load(resp.body)
 
     while true
       payload.each do |item|
@@ -42,7 +43,7 @@ module PaginatedGet
       if resp.status != 200
         raise "Bad status #{resp.status}"
       end
-      payload = JSON.parse(resp.body)
+      payload = Oj.load(resp.body)
     end
     nil
   end

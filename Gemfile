@@ -33,6 +33,7 @@ gem 'pry'
 gem 'rspec'
 gem 'typhoeus'
 gem 'ice_nine'
+gem 'oj'
 
 # version pins that we do not directly depend on
 

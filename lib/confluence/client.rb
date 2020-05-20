@@ -1,4 +1,4 @@
-autoload :JSON, 'json'
+autoload :Oj, 'oj'
 require 'faraday'
 require 'faraday/detailed_logger'
 
@@ -40,7 +40,7 @@ module Confluence
       response = connection.send(meth) do |req|
         req.url(url)
         if params
-          req.body = JSON.dump(params)
+          req.body = Oj.dump(params)
           req.headers['content-type'] = 'application/json'
         end
       end
@@ -50,7 +50,7 @@ module Confluence
       unless [200, 201].include?(response.status)
         error = nil
         begin
-          error = JSON.parse(response.body)['message']
+          error = Oj.load(response.body)['message']
         rescue
         end
         msg = "Jira #{meth.to_s.upcase} #{url} failed: #{response.status}"
@@ -62,7 +62,7 @@ module Confluence
         end
         raise ApiError.new(msg, status: response.status)
       end
-      JSON.parse(response.body)
+      Oj.load(response.body)
     end
 
     # endpoints

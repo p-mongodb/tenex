@@ -1,3 +1,5 @@
+autoload :Oj, 'oj'
+
 class RspecResult
   class EmptyContent < ArgumentError
   end
@@ -10,7 +12,7 @@ class RspecResult
     if content.empty?
       raise EmptyContent, 'Content is an empty string'
     end
-    @payload = JSON.parse(content)
+    @payload = Oj.load(content)
   end
 
   def jruby?

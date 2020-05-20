@@ -1,3 +1,5 @@
+autoload :Oj, 'oj'
+
 module Evergreen
   # When a task has {activated: true} in its info, this is rendered in UI as
   # the task being scheduled. {activated: false} is rendered as the task being
@@ -23,7 +25,7 @@ module Evergreen
           raise "Bad status #{resp.status}"
         end
         if resp.body =~ /task_data = (.*)/
-          JSON.parse($1)
+          Oj.load($1)
         else
           raise 'Did not find magic data in response'
         end

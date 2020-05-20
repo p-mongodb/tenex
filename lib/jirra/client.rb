@@ -1,4 +1,4 @@
-autoload :JSON, 'json'
+autoload :Oj, 'oj'
 require 'faraday'
 require 'faraday/detailed_logger'
 require 'oauthenticator'
@@ -71,7 +71,7 @@ module Jirra
       unless [200, 201].include?(response.status)
         error = nil
         begin
-          payload = JSON.parse(response.body)
+          payload = Oj.load(response.body)
           error = payload['error']
           if payload['errorMessages']
             error ||= payload['errorMessages'].join(', ')
@@ -84,7 +84,7 @@ module Jirra
         end
         raise ApiError.new(msg, status: response.status)
       end
-      JSON.parse(response.body)
+      Oj.load(response.body)
     end
 
     # endpoints

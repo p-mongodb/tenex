@@ -1,3 +1,4 @@
+autoload :Oj, 'oj'
 require 'fileutils'
 require 'pathname'
 require 'digest/sha1'
@@ -24,7 +25,7 @@ module EvergreenCache
     log_url = eg_obj.send("#{which}_log_url")
     log_path = logs_path.join("#{Digest::SHA1.new.update(eg_obj.id).hexdigest}--#{which}.log.json")
     if eg_obj.finished? && eg_obj.finished_at == cached_obj.finished_at && log_path.exist?
-      lines = JSON.parse(File.read(log_path)).map!(&:symbolize_keys)
+      lines = Oj.load(File.read(log_path)).map!(&:symbolize_keys)
     else
       cached_obj.finished_at = eg_obj.finished_at
       lines = retrieve_log(eg_obj, cached_obj, which)
