@@ -62,8 +62,8 @@ module EvergreenCache
       severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }.sub(/.*-/, '').downcase
       text = span.text.gsub("\ufff9", "\x1b")
       # Remove priority. https://jira.mongodb.org/browse/EVG-7615
-      text.sub!(/^\[P: \d+\] /, '')
-      if text =~ /^\[.+?\] \[egos:(.) (.+?\d{3})\d{3}\] (.*)/
+      text.sub!(/\A\[P: \d+\] /, '')
+      if text =~ /\A\[.+?\] \[egos:(.) (.+?\d{3})\d{3}\]( .*)?\z/
         stream, time, rest = $1, $2, $3
         severity = {'O' => 'I', 'E' => 'E'}[stream] || 'E'
         text = "[#{time.sub('T', ' ')}] #{rest}"
@@ -71,7 +71,7 @@ module EvergreenCache
       # The formatter outputs its own date/time, which is redundant with
       # egos date and time. Note that formatter does not output milliseconds
       # while egos does; keep egos timestamp
-      text.sub!(/^(\[[-0-9 :.]+\]) \[[-0-9 :+]+\]/, "\\1")
+      text.sub!(/\A(\[[-0-9 :.]+\]) \[[-0-9 :+]+\]/, "\\1")
       html = Ansi::To::Html.new(CGI.escapeHTML(text)).to_html
       {num: num, severity: severity, text: text, html: html}
     end
