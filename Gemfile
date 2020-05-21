@@ -18,7 +18,8 @@ gem 'shotgun'
 gem 'link_header'
 # Cannot use travis with faraday 1.0 until the following is resolved:
 # https://github.com/travis-ci/gh/issues/41
-#gem 'travis'
+gem 'travis', git: 'https://github.com/p-mongo/travis.rb'
+gem 'gh', git: 'https://github.com/p-mongo/gh'
 gem 'ansi-to-html'
 gem 'childprocess'
 gem 'puma'
