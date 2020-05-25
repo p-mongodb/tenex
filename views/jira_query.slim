@@ -11,4 +11,4 @@ form method='post'
   ul
     - @queries.each do |query|
       li
-        a href="/jira/query?query=#{CGI.escape(query.input_text)}"= query.input_text
+        a href="/jira/query?q=#{CGI.escape(query.input_text)}"= query.input_text
