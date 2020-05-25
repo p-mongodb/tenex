@@ -8,6 +8,7 @@ describe JiraQueryBuilder do
 
     CASES = {
       'ruby open' => 'project in (ruby) and resolution in (unresolved)',
+      ' ruby open' => 'project in (ruby) and resolution in (unresolved)',
       'mongoid open' => 'project in (mongoid) and resolution in (unresolved)',
       'server rme' => 'project in (server) and reporter = currentUser()',
       'lmc open' => 'project in (libmongocrypt) and resolution in (unresolved)',

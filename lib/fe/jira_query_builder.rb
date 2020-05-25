@@ -24,7 +24,7 @@ class JiraQueryBuilder
 
   def expanded_query
     query = []
-    parts = smart_query.split(/\s+/)
+    parts = smart_query.strip.split(/\s+/)
     project = nil
     until parts.empty?
       part = parts.shift
