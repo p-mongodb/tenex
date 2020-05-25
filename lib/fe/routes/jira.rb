@@ -16,7 +16,7 @@ Routes.included do
   end
 
   def do_query
-    smart_query = params[:q]
+    smart_query = params[:q].strip
     query = JiraQueryBuilder.new(smart_query).expanded_query
     jq = JiraQuery.find_or_create_by(input_text: smart_query)
     jq.save!
