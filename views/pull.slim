@@ -48,7 +48,7 @@ p
   | )
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/jruby-results" JRuby results
-  - if @pull.jira_ticket_number
+  - if (@pull.jira_ticket_number rescue nil)
     '
     a href="https://jira.mongodb.org/browse/#{@pull.jira_issue_key!}" Jira
   '
