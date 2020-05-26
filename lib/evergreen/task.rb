@@ -5,13 +5,14 @@ module Evergreen
   # the task being scheduled. {activated: false} is rendered as the task being
   # "unscheduled".
   class Task
-    def initialize(client, id, info: nil)
+    def initialize(client, id, info: nil, cached_info: nil)
       @client = client
       @id = id
       @info = info
+      @cached_info = cached_info
     end
 
-    attr_reader :client, :id
+    attr_reader :client, :id, :cached_info
 
     def info
       @info ||= client.get_json("tasks/#{id}")
@@ -68,7 +69,7 @@ module Evergreen
 
     %w(display_name status project_id build_id version_id).each do |m|
       define_method(m) do
-        info[m]
+        try_info(m)
       end
     end
 
@@ -85,13 +86,17 @@ module Evergreen
       finished_at: 'finish_time',
     }.each do |m, key|
       define_method(m) do
-        v = info[key]
+        v = try_info(key)
         if v
           Time.parse(v)
         else
           nil
         end
       end
+    end
+
+    def activated?
+      try_info('activated')
     end
 
     def running?
@@ -151,7 +156,9 @@ module Evergreen
 
     # in seconds
     def time_taken
-      info['time_taken_ms'] / 1000.0
+      # https://jira.mongodb.org/browse/EVG-8072
+      t = cached_info['time_taken'] && cached_info['time_taken'] / 1e9
+      t ||= info['time_taken_ms'] / 1e3
     end
 
     def queue_position
@@ -182,6 +189,16 @@ module Evergreen
 
     def restart
       resp = client.post_json("tasks/#{id}/restart")
+    end
+
+    private
+
+    def try_info(key)
+      if cached_info&.key?(key)
+        cached_info[key]
+      else
+        info[key]
+      end
     end
   end
 end

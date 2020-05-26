@@ -25,8 +25,9 @@ module Evergreen
 
     def tasks
       @tasks ||= begin
-        info['tasks'].map do |task|
-          Task.new(client, task)
+        info['tasks'].map do |task_id|
+          cached_info = info['task_cache']&.detect { |ti| ti['id'] == task_id }
+          Task.new(client, task_id, cached_info: cached_info)
         end
       end
     end
