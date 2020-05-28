@@ -59,7 +59,7 @@ module Evergreen
       if client.cache_root && File.exist?(cache_path)
         File.size(cache_path)
       else
-        resp = client.connection.head(url)
+        resp = client.request(:head, url)
         unless resp.status == 200
           raise "Failed to HEAD #{url}"
         end

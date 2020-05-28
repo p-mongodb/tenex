@@ -21,7 +21,7 @@ module Evergreen
     # Information that the evergreen UI shows, scraped from HTML output
     def ui_info
       @ui_info ||= begin
-        resp = client.connection.get("/task/#{id}")
+        resp = client.get_raw("/task/#{id}")
         if resp.status != 200
           raise "Bad status #{resp.status}"
         end
@@ -43,7 +43,7 @@ module Evergreen
       end
 
       define_method("#{kind}_log_html") do
-        resp = client.connection.get(send("#{kind}_log_html_url"))
+        resp = client.get_raw(send("#{kind}_log_html_url"))
         if resp.status != 200
           fail resp.status
         end
@@ -59,7 +59,7 @@ module Evergreen
       end
 
       define_method("#{kind}_log") do
-        resp = client.connection.get(send("#{kind}_log_url"))
+        resp = client.get_raw(send("#{kind}_log_url"))
         if resp.status != 200
           fail resp.status
         end
@@ -166,8 +166,10 @@ module Evergreen
     end
 
     def expected_duration
+      info['expected_duration_ms'] / 1e3
+      # Old:
       # value must be in nanoseconds
-      ui_info['expected_duration'] / 1_000_000_000
+      #ui_info['expected_duration'] / 1_000_000_000
     end
 
     def self.normalize_status(status)

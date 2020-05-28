@@ -57,7 +57,7 @@ module Evergreen
       end
 
       define_method("#{which}_log") do
-        resp = client.connection.get(send("#{which}_log_url"))
+        resp = client.get_raw(send("#{which}_log_url"))
         if resp.status != 200
           fail resp.status
         end

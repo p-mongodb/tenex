@@ -31,10 +31,22 @@ module Evergreen
       @cache_root = cache_root
     end
 
-    attr_reader :connection, :user_id
+    attr_reader :connection
+    private :connection
+
+    attr_reader :user_id
 
     # Where various files are to be stored
     attr_reader :cache_root
+
+    def get_raw(url)
+      request(:get, url)
+    end
+
+    def request(meth, url)
+      puts "EG: #{meth} #{url}"
+      connection.send(meth, url)
+    end
 
     def get_json(url, params=nil)
       request_json(:get, url, params)
