@@ -74,5 +74,9 @@ module Evergreen
     def abort!
       client.post_json("patches/#{id}/abort")
     end
+
+    def set_priority(priority)
+      client.patch_json("patches/#{id}", priority: priority, status: true)
+    end
   end
 end

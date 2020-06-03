@@ -64,9 +64,7 @@ class PatchBuildMaker
     if priority
       puts "Setting priority to #{priority}"
 
-      patch.version.tasks.each do |task|
-        task.set_priority(priority)
-      end
+      patch.set_priority(priority)
     end
   end
 end
