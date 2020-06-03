@@ -19,6 +19,12 @@ OptionParser.new do |opts|
   opts.on('-f', '--force', 'Force submission') do |v|
     options[:force] = true
   end
+  opts.on('-y', '--priority=PRIORITY', 'Specify priority') do |v|
+    if v.to_i.to_s != v
+      raise "Invalid priority (must be an integer): #{v}"
+    end
+    options[:priority] = v.to_i
+  end
 end.parse!
 
 PatchBuildMaker.new.run(**options)

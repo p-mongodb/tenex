@@ -9,7 +9,7 @@ autoload :FileUtils, 'fileutils'
 class PatchBuildMaker
   include Env::Access
 
-  def run(eg_project_id: nil, base_branch: nil, force: false)
+  def run(eg_project_id: nil, base_branch: nil, force: false, priority: nil)
     config = ProjectDetector.new.project_config
     eg_project_id ||= config.eg_project_name
     base_branch ||= 'origin/master'
@@ -60,5 +60,13 @@ class PatchBuildMaker
     )
 
     puts "Created #{patch.id}: #{patch.description}"
+
+    if priority
+      puts "Setting priority to #{priority}"
+
+      patch.version.tasks.each do |task|
+        task.set_priority(priority)
+      end
+    end
   end
 end
