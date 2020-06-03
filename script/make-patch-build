@@ -10,6 +10,9 @@ require 'optparse'
 
 options = {}
 OptionParser.new do |opts|
+  opts.on('-b', '--base=BASE', 'Specify base branch') do |v|
+    options[:base_branch] = v
+  end
   opts.on('-p', '--project=PROJECT', 'Evergreen project to patch into') do |v|
     options[:eg_project_id] = v
   end
@@ -18,4 +21,4 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-PatchBuildMaker.new.run(options)
+PatchBuildMaker.new.run(**options)

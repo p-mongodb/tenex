@@ -9,16 +9,17 @@ autoload :FileUtils, 'fileutils'
 class PatchBuildMaker
   include Env::Access
 
-  def run(eg_project_id: nil, force: false)
+  def run(eg_project_id: nil, base_branch: nil, force: false)
     config = ProjectDetector.new.project_config
     eg_project_id ||= config.eg_project_name
+    base_branch ||= 'origin/master'
 
     rc = RepoCache.new(config.gh_upstream_owner_name, config.gh_repo_name)
     rc.update_cache
 
-    base_sha = rc.master_sha
-    ChildProcessHelper.check_call(%w(git fetch upstream))
-    process, diff_text = ChildProcessHelper.get_output(%w(git diff upstream/master))
+    base_sha = rc.commitish_sha(base_branch)
+    ChildProcessHelper.check_call(%w(git fetch origin))
+    process, diff_text = ChildProcessHelper.get_output(%w(git diff) + [base_branch + '...'])
     diff_text.force_encoding('utf-8')
 
     # Verify valid utf-8
@@ -38,6 +39,7 @@ class PatchBuildMaker
     ChildProcessHelper.check_call(%W(
       git apply --stat
     ) + [patch_path.to_s])
+    rc.checkout(base_branch)
     rc.apply_patch(patch_path)
 
 =begin
