@@ -70,5 +70,9 @@ module Evergreen
     def authorize!
       client.patch_json("patches/#{id}", activated: true)
     end
+
+    def abort!
+      client.post_json("patches/#{id}/abort")
+    end
   end
 end
