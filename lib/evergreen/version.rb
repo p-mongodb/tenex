@@ -43,9 +43,7 @@ module Evergreen
     end
 
     def restart_all_builds
-      self.builds.each do |build|
-        build.restart
-      end
+      client.post_json("versions/#{id}/restart")
     end
 
     def tasks
