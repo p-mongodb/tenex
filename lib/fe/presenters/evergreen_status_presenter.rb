@@ -22,7 +22,7 @@ class EvergreenStatusPresenter
 
   def build_id
     if @status.context =~ %r,evergreen/,
-      File.basename(@status['target_url'])
+      @status.evergreen_version_id
     else
       # top level build
       nil
@@ -210,7 +210,7 @@ class EvergreenStatusPresenter
     if evergreen_version?
       raise NotImplemented
     else
-      File.basename(status['target_url'])
+      status.evergreen_version_id
     end
   end
 

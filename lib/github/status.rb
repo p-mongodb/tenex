@@ -26,5 +26,9 @@ module Github
     def finished?
       %w(success failure error).include?(state)
     end
+
+    def evergreen_version_id
+      File.basename(info['target_url']).sub(/\?.*/, '')
+    end
   end
 end

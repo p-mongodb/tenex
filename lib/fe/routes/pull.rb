@@ -232,7 +232,7 @@ Routes.included do
 
     status = @pull.top_evergreen_status
     if status
-      version_id = File.basename(status['target_url']).sub(/\?.*/, '')
+      version_id = status.evergreen_version_id
       version = Evergreen::Version.new(eg_client, version_id)
       version.restart_failed_builds
       restarted = true
@@ -250,7 +250,7 @@ Routes.included do
 
     status = @pull.top_evergreen_status
     if status
-      version_id = File.basename(status['target_url']).sub(/\?.*/, '')
+      version_id = status.evergreen_version_id
       version = Evergreen::Version.new(eg_client, version_id)
       version.restart_all_builds
       restarted = true
