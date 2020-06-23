@@ -135,7 +135,7 @@ class PullPresenter
 
     # Do not fetch artifacts if only failed results are requested and the
     # task we are presenting did not fail.
-    if !options[:failed] || task.failed?
+    if !options[:failed] || status.failed?
       api_version.builds.each do |build|
         build.tasks.each do |task|
           artifact = task.first_artifact_for_names(%w(rspec.json.gz rspec.json))
