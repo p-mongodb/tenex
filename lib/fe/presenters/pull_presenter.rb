@@ -123,7 +123,7 @@ class PullPresenter
     top_evergreen_status&.passed?
   end
 
-  def fetch_results(options={})
+  def fetch_results(**options)
     status = top_evergreen_status
     return unless status
 
@@ -131,30 +131,51 @@ class PullPresenter
 
     version = EgVersion.where(id: api_version.id).first
     version ||= EgVersion.new(id: api_version.id)
-    urls = version.rspec_json_urls || Set.new
 
-    # Do not fetch artifacts if only failed results are requested and the
-    # task we are presenting did not fail.
-    if !options[:failed] || status.failed?
-      api_version.builds.each do |build|
+    load_artifacts(version, api_version, %w(rspec.json.gz rspec.json),
+      failed: options[:failed])
+
+    version.save!
+  end
+
+  def load_artifacts(eg_version, api_version, names, **options)
+    dirty = false
+    api_version.builds.each do |build|
+      unless eg_version.eg_artifacts.where(build_id: build.id).any?
         build.tasks.each do |task|
-          artifact = task.first_artifact_for_names(%w(rspec.json.gz rspec.json))
+          if options[:failed] && !task.failed?
+            next
+          end
+          artifact = task.first_artifact_for_names(names)
           if artifact
-            ArtifactCache.instance.fetch_artifact(artifact.url)
-            urls << artifact.url
+            subdir = "#{Utils.md5(build.id)}-#{build.started_at.to_i}"
+            ArtifactCache.instance.fetch_compressed_artifact(
+              artifact.url, subdir: subdir)
+            eg_artifact = EgArtifact.new(
+              name: artifact.name,
+              url: artifact.url,
+              subdir: subdir,
+              build_id: build.id,
+              failed: build.failed?,
+            )
+            eg_version.eg_artifacts << eg_artifact
+            dirty = true
           end
         end
       end
     end
-
-    # must write the field due to mongoid limitation
-    version.rspec_json_urls = urls
-    version.save!
+    if dirty
+      eg_version.save!
+    end
   end
 
-  def aggregate_result(&block)
+  def aggregate_result(failed: nil, &block)
     version = EgVersion.find(top_evergreen_status.evergreen_version_id)
-    AggregateRspecResult.new(version.rspec_json_urls, &block)
+    artifacts = version.eg_artifacts
+    if failed
+      artifacts = artifacts.where(failed: true)
+    end
+    AggregateRspecResult.new(artifacts, &block)
   end
 
   def patch

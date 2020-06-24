@@ -1,0 +1,43 @@
+- if @result.summary[:failure_count] > 0
+  h2= @result.render_failure_count
+  
+  ul
+    - @result.failed_files.each do |file|
+      li
+        a href="##{file[:file_path].gsub(/\W/, '-')}" #{file[:file_path]}
+        '
+        | (#{file[:failure_count]})
+  
+  - prev_path = nil
+  - @result.failed_results.each_with_index do |failure, index|
+    - if prev_path != failure[:file_path]
+      a name=failure[:file_path].gsub(/\W/, '-')
+      - prev_path = failure[:file_path]
+    div
+      p
+        b= "#{index+1})"
+        '
+        b= failure[:id]
+      p= failure[:description]
+      pre
+        = failure[:failure][:class]
+        ' :
+        == Ansi::To::Html.new(CGI.escapeHTML(failure[:failure][:message])).to_html.gsub("\n", '<br>')
+      - if failure[:failure][:backtrace]
+        pre
+          = failure[:failure][:backtrace].join("\n")
+      - else
+        p No backtrace for this failure.
+
+      - if failure[:sdam_log_entries] && !failure[:sdam_log_entries].empty?
+        p SDAM log:
+        = sdam_log_entries(failure)
+
+- if @result.summary[:errors_outside_of_examples_count] > 0
+  h2 #{@result.summary[:errors_outside_of_examples_count]} errors outside of examples
+  
+  - @result.messages.each_with_index do |message, index|
+    div
+      p
+        b= "#{index+1})"
+      pre== Ansi::To::Html.new(CGI.escapeHTML(message)).to_html.gsub("\n", '<br>')

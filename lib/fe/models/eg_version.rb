@@ -1,5 +1,5 @@
 class EgVersion
   include Mongoid::Document
 
-  field :rspec_json_urls, type: Set
+  embeds_many :eg_artifacts
 end

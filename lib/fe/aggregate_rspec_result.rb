@@ -1,15 +1,23 @@
 class AggregateRspecResult
-  def initialize(urls)
-    @components = urls.map do |url|
-      local_path = ArtifactCache.instance.fetch_artifact(url)
-      content = File.open(local_path).read
+  def initialize(artifacts)
+    # artifact is a EgArtifact
+    @components = artifacts.map do |artifact|
+      local_path = ArtifactCache.instance.fetch_compressed_artifact(artifact.url,
+        subdir: artifact.subdir)
+      content = ArtifactCache.instance.read_compressed_artifact(local_path)
       if content.empty?
         # Some tests produce empty rspec.json files.
         # Since we also aggregate on partial test results, ignore empty files
         # too.
         nil
       else
-        result = RspecResult.new(url, content)
+        result = RspecResult.new(artifact.url, content)
+        unless result.payload.key?('examples')
+          # Have an rspec.json but it has no content
+          warn "rspec.json result which is non-empty but has no meaningful content: #{artifact.url}"
+          next
+        end
+        p result.failed_results.count
         if block_given?
           if yield result
             result

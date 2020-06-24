@@ -15,6 +15,8 @@ class RspecResult
     @payload = Oj.load(content)
   end
 
+  attr_reader :payload
+
   def jruby?
     !!(@url =~ /jruby/)
   end
