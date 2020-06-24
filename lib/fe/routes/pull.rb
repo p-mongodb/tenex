@@ -355,7 +355,7 @@ Routes.included do
       if params[:failed]
         slim :no_failures
       else
-        raise NotImplemented
+        raise NotImplementedError
       end
     else
       @filtered = true
