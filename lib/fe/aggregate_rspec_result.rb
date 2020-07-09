@@ -78,8 +78,9 @@ class AggregateRspecResult
     @failed_files ||= [].tap do |failed_files|
       failed_files_map = {}
       failed_results.each do |failure|
-        failed_files_map[failure[:file_path]] ||= 0
-        failed_files_map[failure[:file_path]] += 1
+        path = failure[:id].sub(/\[.*/, '')
+        failed_files_map[path] ||= 0
+        failed_files_map[path] += 1
       end
       failed_files_map.keys.each do |key|
         failed_files << {
