@@ -88,6 +88,7 @@ module Evergreen
         #curl.verbose = true
 
         status = nil
+        headers = {}
         curl.on_header do |data|
           if status.nil?
             if data =~ %r,\AHTTP/[0-9.]+ (\d+) ,
@@ -96,6 +97,9 @@ module Evergreen
                 raise "Failed to retrieve logs: status #{status} for #{url}"
               end
             end
+          elsif data =~ /:/
+            bits = data.split(':', 2)
+            headers[bits.first.strip.downcase] = bits.last.strip
           end
           data.length
         end
@@ -115,6 +119,13 @@ module Evergreen
         rescue BodyTooLarge
           truncated = true
         end
+
+        unless headers['content-type'] && headers['content-type'] =~ /charset=utf-8/i
+          warn "Missing content-type or not in UTF-8"
+        end
+
+        # Assume UTF-8 anyway otherwise we can't regexp match downstream
+        body.force_encoding('utf-8')
 
         [body, truncated]
       end
