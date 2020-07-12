@@ -28,7 +28,7 @@ module EvergreenCache
       lines = Oj.load(File.read(log_path)).map!(&:symbolize_keys)
     else
       cached_obj.finished_at = eg_obj.finished_at
-      lines = retrieve_log(eg_obj, cached_obj, which)
+      lines, truncated = retrieve_log(eg_obj, cached_obj, which)
       if eg_obj.finished?
         cached_obj.send("#{which}_log_url=", log_url)
         FileUtils.mkdir_p(log_path.dirname)
@@ -45,7 +45,7 @@ module EvergreenCache
   end
 
   module_function def retrieve_log(build, cached_build, which)
-    log = build.send("#{which}_log")
+    log, truncated = build.send("sensible_#{which}_log")
 
     # Evergreen provides logs in html and text formats.
     # Unfortunately text format drops each line's severity which indicates,
@@ -59,7 +59,16 @@ module EvergreenCache
     lines = doc.xpath('//i').map do |line|
       num = line.attr('id').sub(/.*-/, '').to_i + 1
       span = line.xpath('./following-sibling::span[1]').first
-      severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }.sub(/.*-/, '').downcase
+      # Truncated log lines may not have a severity
+      severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }&.sub(/.*-/, '')&.downcase
+      # If log line is truncated, set severity to error
+      if severity.nil?
+        if truncated
+          severity = 'E'
+        else
+          raise "Missing severity and log file not marked truncated"
+        end
+      end
       text = span.text.gsub("\ufff9", "\x1b")
       # Remove priority. https://jira.mongodb.org/browse/EVG-7615
       text.sub!(/\A\[P: \d+\] /, '')
@@ -97,7 +106,14 @@ module EvergreenCache
       end
     end
 
-    lines
+    if truncated
+      lines << {
+        num: lines.length, severity: 'E', text: 'LOG TRUNCATED',
+        html: %q,<span color='red'>LOG TRUNCATED</span>,,
+      }
+    end
+
+    [lines, truncated]
   end
 
   module_function def logs_path

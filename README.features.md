@@ -55,6 +55,7 @@ activates/schedules the task.
 - Submit the PR's diff to Evergreen as a patch build. Useful when Evergreen
 is not processing pull requests or when the PR is to a non-master branch,
 which Evergreen generally does not build.
+- Ability to partially retrieve huge logs from Evergreen
 
 ### Git/Github Operations
 

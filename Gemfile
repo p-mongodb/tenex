@@ -35,6 +35,7 @@ gem 'rspec'
 gem 'typhoeus'
 gem 'ice_nine'
 gem 'oj'
+gem 'curb'
 
 # version pins that we do not directly depend on
 

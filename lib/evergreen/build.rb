@@ -1,5 +1,9 @@
+autoload :Curl, 'curb'
+
 module Evergreen
   class Build
+    class BodyTooLarge < StandardError; end
+
     def initialize(client, id, info: nil)
       if id.nil?
         raise ArgumentError, 'nil build id'
@@ -57,7 +61,7 @@ module Evergreen
       end
 
       define_method("#{which}_log") do
-        resp = client.get_raw(send("#{which}_log_url"))
+        resp = client.get_raw(public_send("#{which}_log_url"))
         if resp.status != 200
           fail resp.status
         end
@@ -68,6 +72,51 @@ module Evergreen
           end
         end
         body
+      end
+
+      # Retrieves at most 10 mb of log data.
+      # Evergreen provides no indication of how big the log is, and
+      # simply closes the connection if any request takes over a minute.
+      # Currently log transfer rate is about 1 mb/s, thus retrieve up to
+      # 10 mb which should take about 10 seconds.
+      # https://jira.mongodb.org/browse/EVG-12428
+      define_method("sensible_#{which}_log") do
+        curl = Curl::Easy.new(public_send("#{which}_log_url"))
+        curl.headers['user-agent'] = 'EvergreenRubyClient'
+        curl.headers['api-user'] = client.username
+        curl.headers['api-key'] = client.api_key
+        #curl.verbose = true
+
+        status = nil
+        curl.on_header do |data|
+          if status.nil?
+            if data =~ %r,\AHTTP/[0-9.]+ (\d+) ,
+              status = $1.to_i
+              if status != 200
+                raise "Failed to retrieve logs: status #{status} for #{url}"
+              end
+            end
+          end
+          data.length
+        end
+
+        body = ''
+        curl.on_body do |chunk|
+          body += chunk
+          if body.length > 10_000_000
+            raise BodyTooLarge
+          end
+          chunk.length
+        end
+
+        begin
+          curl.perform
+          truncated = false
+        rescue BodyTooLarge
+          truncated = true
+        end
+
+        [body, truncated]
       end
     end
 

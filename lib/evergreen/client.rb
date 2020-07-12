@@ -19,7 +19,8 @@ module Evergreen
     include PaginatedGet
 
     def initialize(username:, api_key:, cache_root: nil)
-      @user_id = username
+      @username = username
+      @api_key = api_key
       @connection ||= Faraday.new('https://evergreen.mongodb.com/api') do |f|
         #f.request :url_encoded
         #f.response :detailed_logger
@@ -34,7 +35,8 @@ module Evergreen
     attr_reader :connection
     private :connection
 
-    attr_reader :user_id
+    attr_reader :username
+    attr_reader :api_key
 
     # Where various files are to be stored
     attr_reader :cache_root
@@ -180,7 +182,7 @@ module Evergreen
     end
 
     def user_hosts
-      payload = get_json("users/#{user_id}/hosts") || []
+      payload = get_json("users/#{username}/hosts") || []
       payload.map do |info|
         Host.new(self, info['host_id'], info: info)
       end
