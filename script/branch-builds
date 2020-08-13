@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require 'nokogiri'
+require 'byebug'
+require 'faraday'
+require 'faraday/detailed_logger'
+
+repo = 'p-mongo/mongo-ruby-driver'
+
+conn = Faraday.new('https://github.com') do |f|
+  f.request :url_encoded
+  f.response :detailed_logger
+  f.adapter  Faraday.default_adapter
+  f.headers['user-agent'] = 'Mozilla/5.0 (Linux; X11; rv:27.9) Gecko/20100101 Firefox/27.9 (Pale Moon)'
+end
+
+resp = conn.get()
+doc = Nokogiri::HTML(resp.body)
+
+resp.body =~ /"([^"]+pull_condensed)"/
+checks_url = $1
+
+resp = conn.get(checks_url)
+
+byebug
+1

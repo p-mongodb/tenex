@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require 'nokogiri'
+require 'byebug'
+require 'faraday'
+require 'faraday/detailed_logger'
+
+pr_url = ARGV.shift
+if pr_url.nil?
+  raise "Need a URL"
+end
+
+unless pr_url =~ %r,https://github.com/(.+)/(.+)/pull/(\d+),
+  raise 'URL malformed'
+end
+
+org = $1
+repo = $2
+pull = $3
+
+# Looks like api is turned off for the repo I am using,
+# scrape github html then
+
+conn = Faraday.new('https://github.com') do |f|
+  f.request :url_encoded
+  f.response :detailed_logger
+  f.adapter  Faraday.default_adapter
+  f.headers['user-agent'] = 'Mozilla/5.0 (Linux; X11; rv:27.9) Gecko/20100101 Firefox/27.9 (Pale Moon)'
+end
+resp = conn.get(pr_url)
+doc = Nokogiri::HTML(resp.body)
+
+resp.body =~ /"([^"]+pull_condensed)"/
+checks_url = $1
+
+resp = conn.get(checks_url)
+
+byebug
+1
