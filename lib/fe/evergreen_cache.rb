@@ -60,7 +60,7 @@ module EvergreenCache
       num = line.attr('id').sub(/.*-/, '').to_i + 1
       span = line.xpath('./following-sibling::span[1]').first
       # Truncated log lines may not have a severity
-      severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }&.sub(/.*-/, '')&.downcase
+      severity = span&.attr('class')&.split(/\s+/)&.detect { |c| c.start_with?('severity-') }&.sub(/.*-/, '')&.downcase
       # If log line is truncated, set severity to error
       if severity.nil?
         if truncated
