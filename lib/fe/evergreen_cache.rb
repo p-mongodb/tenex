@@ -56,11 +56,21 @@ module EvergreenCache
     # Nokogiri has special handling of escape characters, bypass it to allow
     # us to run individual lines through ansi->html conversion.
     doc = Nokogiri::HTML(log.gsub("\x1b", "\ufff9"))
-    lines = doc.xpath('//i').map do |line|
+    lines = []
+    elts = doc.xpath('//i')
+    elts.each_with_index do |line, index|
       num = line.attr('id').sub(/.*-/, '').to_i + 1
       span = line.xpath('./following-sibling::span[1]').first
+      # Truncated log lines may be missing the line number.
+      unless span
+        if index == elts.length - 1
+          break
+        else
+          raise "Malformed line: #{line.to_s}"
+        end
+      end
       # Truncated log lines may not have a severity
-      severity = span&.attr('class')&.split(/\s+/)&.detect { |c| c.start_with?('severity-') }&.sub(/.*-/, '')&.downcase
+      severity = span.attr('class').split(/\s+/).detect { |c| c.start_with?('severity-') }&.sub(/.*-/, '')&.downcase
       # If log line is truncated, set severity to error
       if severity.nil?
         if truncated
@@ -82,7 +92,7 @@ module EvergreenCache
       # while egos does; keep egos timestamp
       text.sub!(/\A(\[[-0-9 :.]+\]) \[[-0-9 :+]+\]/, "\\1")
       html = Ansi::To::Html.new(CGI.escapeHTML(text)).to_html
-      {num: num, severity: severity, text: text, html: html}
+      lines << {num: num, severity: severity, text: text, html: html}
     end
 
     cached_build.first_failure_index = nil
