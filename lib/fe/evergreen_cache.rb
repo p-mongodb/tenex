@@ -59,6 +59,14 @@ module EvergreenCache
     lines = []
     elts = doc.xpath('//i')
     elts.each_with_index do |line, index|
+      if index == elts.length - 1 && !line.attr('id')
+        # truncated line
+        if truncated
+          break
+        else
+          raise "Apparently truncated line but log is not marked truncated"
+        end
+      end
       num = line.attr('id').sub(/.*-/, '').to_i + 1
       span = line.xpath('./following-sibling::span[1]').first
       # Truncated log lines may be missing the line number.
