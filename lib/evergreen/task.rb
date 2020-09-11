@@ -5,6 +5,8 @@ module Evergreen
   # the task being scheduled. {activated: false} is rendered as the task being
   # "unscheduled".
   class Task
+    include SensibleLog
+
     def initialize(client, id, info: nil, cached_info: nil)
       @client = client
       @id = id

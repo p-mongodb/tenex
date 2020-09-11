@@ -1,5 +1,6 @@
 require 'evergreen/utils'
 require 'evergreen/client'
+require 'evergreen/sensible_log'
 require 'evergreen/build'
 require 'evergreen/version'
 require 'evergreen/project'
