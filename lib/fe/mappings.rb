@@ -27,6 +27,8 @@ module Mappings
       'spec'
     when '10gen/mongo-ruby-toolchain'
       'ruby'
+    when 'mongodb-labs/drivers-atlas-testing'
+      'drivers-atlas-testing'
     else
       raise "Bogus repo name: #{repo_full_name}"
     end.upcase
