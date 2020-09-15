@@ -2,7 +2,6 @@ autoload :Curl, 'curb'
 
 module Evergreen
   class Build
-    class BodyTooLarge < StandardError; end
 
     include SensibleLog
 
