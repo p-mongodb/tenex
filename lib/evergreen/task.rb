@@ -159,7 +159,7 @@ module Evergreen
     # in seconds
     def time_taken
       # https://jira.mongodb.org/browse/EVG-8072
-      t = cached_info['time_taken'] && cached_info['time_taken'] / 1e9
+      t = cached_info&.[]('time_taken') && cached_info['time_taken'] / 1e9
       t ||= info['time_taken_ms'] / 1e3
     end
 
