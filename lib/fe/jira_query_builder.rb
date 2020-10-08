@@ -34,6 +34,8 @@ class JiraQueryBuilder
         parts = []
       elsif dpart == 'rme'
         query << 'reporter = currentUser()'
+      elsif dpart == 'ame'
+        query << 'assignee = currentUser()'
       elsif dpart == 'doc'
         query << 'project in (docs,docsp,dop)'
       elsif dpart == 'rm'
