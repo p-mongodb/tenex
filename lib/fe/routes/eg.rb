@@ -352,6 +352,8 @@ Routes.included do
       role_session_name: "tenex",
     ).credentials
 
+    @uri = "mongodb://#{escape(@creds.access_key_id)}:#{escape(@creds.secret_access_key)}@localhost/?authmechanismproperties=aws_session_token:#{escape(@creds.session_token)}&authmechanism=mongodb-aws"
+
     slim :aws_assume_role
   end
 

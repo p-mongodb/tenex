@@ -9,3 +9,7 @@ pre style='max-width:100%;overflow:auto'
     export AWS_ACCESS_KEY_ID=#{@creds.access_key_id}
     export AWS_SECRET_ACCESS_KEY=#{@creds.secret_access_key}
     export AWS_SESSION_TOKEN=#{@creds.session_token}
+    
+    export MONGO_RUBY_DRIVER_AWS_AUTH_USER_ARN=#{@role_arn}
+    
+    export MONGODB_URI='#{@uri}'
