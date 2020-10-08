@@ -36,6 +36,7 @@ gem 'typhoeus'
 gem 'ice_nine'
 gem 'oj'
 gem 'curb'
+gem 'aws-sdk-core'
 
 # version pins that we do not directly depend on
 

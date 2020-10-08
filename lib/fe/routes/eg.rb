@@ -3,6 +3,10 @@ autoload :Find, 'find'
 autoload :ChildProcess, 'childprocess'
 require 'fe/rspec_result'
 
+module Aws
+  autoload :STS, 'aws-sdk-core'
+end
+
 Routes.included do
 
   get '/eg/update-binary' do
@@ -330,6 +334,25 @@ Routes.included do
     @ruby_template = v.sub(k, '#{distro}').sub(k, %q`#{distro.gsub('-', '_')}`).
       gsub(@toolchain_upper, '#{toolchain_upper}').sub(@toolchain_lower, '#{toolchain_lower}')
     slim :version_toolchain_urls
+  end
+
+  get '/eg/:project/aws-assume-role' do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    access_key_id = @project.vars.fetch('iam_auth_assume_aws_account')
+    secret_access_key = @project.vars.fetch('iam_auth_assume_aws_secret_access_key')
+    @role_arn = @project.vars.fetch('iam_auth_assume_role_name')
+
+    sts_client = Aws::STS::Client.new(
+      region: 'us-east-1',
+      credentials: Aws::Credentials.new(access_key_id, secret_access_key),
+    )
+
+    @creds = sts_client.assume_role(
+      role_arn: @role_arn,
+      role_session_name: "tenex",
+    ).credentials
+
+    slim :aws_assume_role
   end
 
   private

@@ -1,0 +1,11 @@
+h2 #{@project.id} AWS Assume Role
+
+p
+  ' Assumed
+  tt>= @role_arn
+
+pre style='max-width:100%;overflow:auto'
+  |
+    export AWS_ACCESS_KEY_ID=#{@creds.access_key_id}
+    export AWS_SECRET_ACCESS_KEY=#{@creds.secret_access_key}
+    export AWS_SESSION_TOKEN=#{@creds.session_token}

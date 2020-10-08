@@ -7,6 +7,11 @@ a href="https://evergreen.mongodb.com/waterfall/#{@project.id}"
 a href="https://evergreen.mongodb.com/projects###{@project.id}"
   | EG config
 
+- if @project.id == 'mongo-ruby-driver'
+  '
+  a href="/eg/#{@project.id}/aws-assume-role"
+    | AWS assume role
+
 - if @patches.any?
   h3 Patches
 
