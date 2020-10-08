@@ -11,20 +11,6 @@ GIT
       net-http-persistent (~> 2.9)
       net-http-pipeline
 
-GIT
-  remote: https://github.com/p-mongo/travis.rb
-  revision: 335774203a6e5631e89db672fb23defeece8cfbd
-  specs:
-    travis (1.9.1)
-      faraday (~> 1.0)
-      faraday_middleware (~> 1.0)
-      gh (~> 0.13)
-      highline (~> 2.0)
-      json (~> 2.3)
-      launchy (~> 2.1, < 2.5.0)
-      pusher-client (~> 0.4)
-      typhoeus (~> 1.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -101,6 +87,7 @@ GEM
       oauth (~> 0.5, >= 0.5.0)
     jmespath (1.4.0)
     json (2.3.1)
+    json_pure (2.3.1)
     jwt (2.1.0)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -194,6 +181,14 @@ GEM
     temple (0.8.2)
     thread_safe (0.3.6)
     tilt (2.0.10)
+    travis (1.10.0)
+      faraday (~> 1.0)
+      faraday_middleware (~> 1.0)
+      gh (~> 0.13)
+      highline (~> 2.0)
+      json_pure (~> 2.3)
+      launchy (~> 2.1, < 2.5.0)
+      pusher-client (~> 0.4)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
     tzinfo (1.2.7)
@@ -235,7 +230,7 @@ DEPENDENCIES
   sinatra-contrib
   slim
   taw
-  travis!
+  travis
   typhoeus
 
 BUNDLED WITH

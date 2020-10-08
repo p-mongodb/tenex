@@ -16,9 +16,11 @@ gem 'sinatra-contrib'
 gem 'slim'
 gem 'shotgun'
 gem 'link_header'
+# Per https://github.com/travis-ci/travis.rb/pull/747 patching travis
+# should not be necessary.
+gem 'travis'
 # Cannot use travis with faraday 1.0 until the following is resolved:
 # https://github.com/travis-ci/gh/issues/41
-gem 'travis', git: 'https://github.com/p-mongo/travis.rb'
 gem 'gh', git: 'https://github.com/p-mongo/gh'
 gem 'ansi-to-html'
 gem 'childprocess'
