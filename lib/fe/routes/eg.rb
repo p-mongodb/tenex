@@ -340,7 +340,7 @@ Routes.included do
     @project = Evergreen::Project.new(eg_client, project_id)
     access_key_id = @project.vars.fetch('iam_auth_assume_aws_account')
     secret_access_key = @project.vars.fetch('iam_auth_assume_aws_secret_access_key')
-    @role_arn = @project.vars.fetch('iam_auth_assume_role_name')
+    @assume_role_arn = @project.vars.fetch('iam_auth_assume_role_name')
 
     sts_client = Aws::STS::Client.new(
       region: 'us-east-1',
@@ -348,11 +348,22 @@ Routes.included do
     )
 
     @creds = sts_client.assume_role(
-      role_arn: @role_arn,
+      role_arn: @assume_role_arn,
       role_session_name: "tenex",
     ).credentials
 
     @uri = "mongodb://#{escape(@creds.access_key_id)}:#{escape(@creds.secret_access_key)}@localhost/?authmechanismproperties=aws_session_token:#{escape(@creds.session_token)}&authmechanism=mongodb-aws"
+
+    sts_client = Aws::STS::Client.new(
+      region: 'us-east-1',
+      credentials: Aws::Credentials.new(
+        @creds.access_key_id,
+        @creds.secret_access_key,
+        @creds.session_token,
+      ),
+    )
+
+    @assumed_identity = sts_client.get_caller_identity
 
     slim :aws_assume_role
   end

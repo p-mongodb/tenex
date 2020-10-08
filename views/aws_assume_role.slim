@@ -2,7 +2,9 @@ h2 #{@project.id} AWS Assume Role
 
 p
   ' Assumed
-  tt>= @role_arn
+  tt>= @assume_role_arn
+  ' ->
+  tt>= @assumed_identity.arn
 
 pre style='max-width:100%;overflow:auto'
   |
@@ -10,6 +12,6 @@ pre style='max-width:100%;overflow:auto'
     export AWS_SECRET_ACCESS_KEY=#{@creds.secret_access_key}
     export AWS_SESSION_TOKEN=#{@creds.session_token}
     
-    export MONGO_RUBY_DRIVER_AWS_AUTH_USER_ARN=#{@role_arn}
+    export MONGO_RUBY_DRIVER_AWS_AUTH_USER_ARN=#{@assumed_identity.arn}
     
     export MONGODB_URI='#{@uri}'
