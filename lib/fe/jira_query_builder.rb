@@ -36,6 +36,8 @@ class JiraQueryBuilder
         query << 'reporter = currentUser()'
       elsif dpart == 'doc'
         query << 'project in (docs,docsp,dop)'
+      elsif dpart == 'rm'
+        query << 'project in (ruby,mongoid)'
       elsif PROJECT_ALIASES.key?(dpart)
         project = PROJECT_ALIASES[dpart]
         query << "project in (#{project})"
