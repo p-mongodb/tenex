@@ -199,25 +199,35 @@ module Evergreen
 
   Current structure:
         data := struct {
-                Description string   `json:"desc"`
-                Project     string   `json:"project"`
-                PatchBytes  []byte   `json:"patch_bytes"`
-                PatchString string   `json:"patch"`
-                Githash     string   `json:"githash"`
-                Variants    []string `json:"buildvariants_new"`
-                Tasks       []string `json:"tasks"`
-                Finalize    bool     `json:"finalize"`
-                Alias       string   `json:"alias"`
+                Description       string             `json:"desc"`
+                Project           string             `json:"project"`
+                PatchBytes        []byte             `json:"patch_bytes"`
+                Githash           string             `json:"githash"`
+                Alias             string             `json:"alias"`
+                Variants          []string           `json:"buildvariants_new"`
+                Tasks             []string           `json:"tasks"`
+                SyncTasks         []string           `json:"sync_tasks"`
+                SyncBuildVariants []string           `json:"sync_build_variants"`
+                SyncStatuses      []string           `json:"sync_statuses"`
+                SyncTimeout       time.Duration      `json:"sync_timeout"`
+                Finalize          bool               `json:"finalize"`
+                BackportInfo      patch.BackportInfo `json:"backport_info"`
+                Parameters        []patch.Parameter  `json:"parameters"`
         }{
-                incomingPatch.description,
-                incomingPatch.projectId,
-                []byte(incomingPatch.patchData),
-                incomingPatch.patchData,
-                incomingPatch.base,
-                incomingPatch.variants,
-                incomingPatch.tasks,
-                incomingPatch.finalize,
-                incomingPatch.alias,
+                Description:       incomingPatch.description,
+                Project:           incomingPatch.projectId,
+                PatchBytes:        []byte(incomingPatch.patchData),
+                Githash:           incomingPatch.base,
+                Alias:             incomingPatch.alias,
+                Variants:          incomingPatch.variants,
+                Tasks:             incomingPatch.tasks,
+                SyncBuildVariants: incomingPatch.syncBuildVariants,
+                SyncTasks:         incomingPatch.syncTasks,
+                SyncStatuses:      incomingPatch.syncStatuses,
+                SyncTimeout:       incomingPatch.syncTimeout,
+                Finalize:          incomingPatch.finalize,
+                BackportInfo:      incomingPatch.backportOf,
+                Parameters:        incomingPatch.parameters,
         }
 =end
     def create_patch(project_id:, description: nil,
@@ -227,7 +237,7 @@ module Evergreen
       resp = request_json(:put, 'patches/', {
         project: project_id,
         desc: description,
-        patch: diff_text,
+        patch_bytes: Base64.encode64(diff_text),
         githash: base_sha,
         buildvariants_new: variant_ids,
         tasks: task_ids,
