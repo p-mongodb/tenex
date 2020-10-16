@@ -9,7 +9,7 @@ class JiraQueryBuilder
 
   PROJECTS = %w(
     ruby mongoid server help docs docsp dop drivers spec website evg init pm
-    node godriver
+    node godriver prodtriage mms
   ).freeze
 
   COMPONENTS = {
