@@ -30,6 +30,12 @@ p
     a href="/eg/#{@project_id}/versions/#{@version.id}/bump?priority=100" 100
   '
   a href="/eg/#{@project_id}/versions/#{@version.id}/abort" Abort
+  '
+  - if @version.patch?
+    a href="/eg/#{@project_id}/versions/latest-patch" Latest patch
+  - else
+    a href="/eg/#{@project_id}/versions/latest" Latest
+
   - if @project_id =~ /driver-toolchain/
     '
     a href="/eg/#{@project_id}/versions/#{@version.id}/toolchain-urls" Toolchain URLs

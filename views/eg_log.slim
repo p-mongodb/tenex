@@ -31,7 +31,13 @@ p
   '
   a href="#{@eg_log_url}"
     | Log @ Evergreen
-  
+  '
+  - if @cached_obj
+    - if @cached_obj.patch?
+      a href="/eg/#{@project_id}/versions/latest-patch" Latest patch
+    - else
+      a href="/eg/#{@project_id}/versions/latest" Latest
+
 - if @local_test_command
   p
     ' Local test command:

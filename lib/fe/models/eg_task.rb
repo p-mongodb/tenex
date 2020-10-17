@@ -17,4 +17,10 @@ class EgTask
   field :mo_curl_failure_index, type: Integer
   # Zero-based line index where detected bundler failure starts, if any
   field :bundler_failure_index, type: Integer
+
+  field :is_patch, type: Boolean
+
+  def patch?
+    is_patch
+  end
 end

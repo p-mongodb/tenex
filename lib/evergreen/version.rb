@@ -19,6 +19,10 @@ module Evergreen
       info['project']
     end
 
+    def patch?
+      info['requester'] == 'patch_request'
+    end
+
     def builds
       @builds ||= begin
         payload = client.get_json("versions/#{id}/builds")

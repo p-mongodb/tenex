@@ -13,6 +13,7 @@ module EvergreenCache
     log_impl(EgTask, task, which).tap do |cached_obj, lines, log_url|
       unless cached_obj.build_id
         cached_obj.build_id = task.build_id
+        cached_obj.is_patch = task.version.patch?
         cached_obj.save!
       end
     end

@@ -31,6 +31,20 @@ Routes.included do
     slim :hosts
   end
 
+  # latest version redirect
+  get "/eg/:project/versions/latest" do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    @version = @project.recent_versions.first
+    redirect "/eg/#{project_id}/versions/#{@patch.version_id}"
+  end
+
+  # latest patch version redirect
+  get "/eg/:project/versions/latest-patch" do |project_id|
+    @project = Evergreen::Project.new(eg_client, project_id)
+    @patch = @project.recent_patches.first
+    redirect "/eg/#{project_id}/versions/#{@patch.version_id}"
+  end
+
   # eg project log
   get "/eg/:project/versions/:version/evergreen-log/:build" do |project_id, version_id, build_id|
     @project_id = project_id
