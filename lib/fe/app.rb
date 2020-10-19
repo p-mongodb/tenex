@@ -59,7 +59,7 @@ class App < Sinatra::Base
   end
 
   private def do_evergreen_log(build_id, title, which = :task)
-    unless %i(task all).include?(which)
+    unless %i(task agent all).include?(which)
       raise ArgumentError, "Invalid which value #{which}"
     end
     build = Evergreen::Build.new(eg_client, build_id)
@@ -73,11 +73,12 @@ class App < Sinatra::Base
     @eg_build_id = cached_build.id
     @project_id = build.project_id
     @version_id = build.version_id
+    @which = which
     slim :eg_log
   end
 
   private def do_evergreen_task_log(task, title, which = :task)
-    unless %i(task all).include?(which)
+    unless %i(task agent all).include?(which)
       raise ArgumentError, "Invalid which value #{which}"
     end
     cached_task, log_lines, log_url = EvergreenCache.task_log(task, which)
@@ -90,6 +91,7 @@ class App < Sinatra::Base
     @eg_build_id = cached_task.build_id
     @project_id = task.project_id
     @version_id = task.version_id
+    @which = which
     slim :eg_log
   end
 

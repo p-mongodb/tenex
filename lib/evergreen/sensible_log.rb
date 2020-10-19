@@ -2,7 +2,7 @@ module Evergreen
   module SensibleLog
     class BodyTooLarge < StandardError; end
 
-    %i(task all).each do |which|
+    %i(task agent all).each do |which|
 
       # Retrieves at most 10 mb of log data.
       # Evergreen provides no indication of how big the log is, and
