@@ -6,7 +6,12 @@ require 'digest/sha1'
 module EvergreenCache
 
   module_function def build_log(build, which)
-    log_impl(EgBuild, build, which)
+    log_impl(EgBuild, build, which).tap do |cached_obj, lines, log_url|
+      unless cached_obj.id
+        cached_obj.is_patch = build.version.patch?
+        cached_obj.save!
+      end
+    end
   end
 
   module_function def task_log(task, which)
