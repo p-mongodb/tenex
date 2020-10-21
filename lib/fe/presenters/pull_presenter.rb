@@ -30,7 +30,8 @@ class PullPresenter
           status
         end
       end
-      statuses.compact.sort_by(&:updated_at).reverse#.uniq { |item| item.build_id }
+      #.uniq { |item| item.build_id }
+      statuses.compact.sort_by(&:name)
     end
   end
 

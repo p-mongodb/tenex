@@ -12,6 +12,10 @@ class EvergreenStatusPresenter
   attr_reader :eg_client, :system
   def_delegators :@status, :[], :context, :updated_at, :finished?
 
+  def name
+    build_id || 'Evergreen'
+  end
+
   def evergreen?
     !!(@status.context =~ %r,evergreen\b,)
   end
