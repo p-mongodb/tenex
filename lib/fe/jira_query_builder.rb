@@ -26,11 +26,15 @@ class JiraQueryBuilder
     query = []
     parts = smart_query.strip.split(/\s+/)
     project = nil
+    tail = nil
     until parts.empty?
       part = parts.shift
       dpart = part.downcase
       if dpart == 'and'
         query << parts.join(' ')
+        parts = []
+      elsif dpart == 'order'
+        tail = dpart + ' ' + parts.join(' ')
         parts = []
       elsif dpart == 'rme'
         query << 'reporter = currentUser()'
@@ -67,5 +71,9 @@ class JiraQueryBuilder
       end
     end
     query = query.join(' and ')
+    if tail
+      query += ' ' + tail
+    end
+    query
   end
 end
