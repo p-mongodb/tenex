@@ -6,7 +6,9 @@ module FormattingHelpers
         str << "#{h(result[:started_at])} | &lt;started&gt;\n"
       end
       result[:sdam_log_entries].each do |entry|
-        str << "#{h(entry)}\n"
+        if entry
+          str << "#{h(entry)}\n"
+        end
       end
       if result[:finished_at]
         str << "#{h(result[:finished_at])} | &lt;finished&gt;\n"
