@@ -1,4 +1,4 @@
-require 'active_support/core_ext/string'
+require 'active_support/concern'
 
 module Evergreen
   module ClientMethods
@@ -20,7 +20,7 @@ module Evergreen
     end
 
     def request(meth, url)
-      puts "EG: #{meth} #{url}"
+      STDERR.puts "EG: #{meth} #{url}"
       connection.send(meth, url)
     end
 
@@ -41,7 +41,7 @@ module Evergreen
     end
 
     def request_json(meth, url, params=nil, options={})
-      puts "EG: #{meth} #{url}"
+      STDERR.puts "EG: #{meth} #{url}"
       unless url.start_with?('/')
         case options[:version]
         when 1
