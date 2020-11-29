@@ -35,8 +35,12 @@ p
   - if @which == :task
     - if @cached_obj.is_a?(EgTask)
       a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@eg_build_id}/tasks/#{@cached_obj.id}/log/agent" Agent log
+      '
+      a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@eg_build_id}/tasks/#{@cached_obj.id}/log/buildlogger" Full log
     - else
       a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@eg_build_id}/log/agent" Agent log
+      '
+      a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@eg_build_id}/log/buildlogger" Complete log
     '
     
   - if @cached_obj

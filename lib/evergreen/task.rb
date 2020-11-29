@@ -202,6 +202,10 @@ module Evergreen
       resp = client.post_json("tasks/#{id}/restart")
     end
 
+    def buildlogger_log
+      client.buildlogger_client.task_log(id)
+    end
+
     private
 
     def try_info(key)

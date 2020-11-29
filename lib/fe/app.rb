@@ -107,6 +107,12 @@ class App < Sinatra::Base
     slim :eg_log
   end
 
+  private def do_buildlogger_log(task, title)
+    content = task.buildlogger_log
+    response.header['content-type'] = 'text/plain'
+    content
+  end
+
   private def do_bump(version, priority)
     if priority == 0
       raise "Bumping to 0?"

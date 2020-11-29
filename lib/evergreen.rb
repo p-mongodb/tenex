@@ -1,5 +1,8 @@
+require 'evergreen/error'
 require 'evergreen/utils'
+require 'evergreen/client_methods'
 require 'evergreen/client'
+require 'evergreen/buildlogger_client'
 require 'evergreen/sensible_log'
 require 'evergreen/build'
 require 'evergreen/version'
