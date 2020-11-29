@@ -109,8 +109,9 @@ class App < Sinatra::Base
 
   private def do_buildlogger_log(task, title)
     content = task.buildlogger_log
-    response.header['content-type'] = 'text/plain'
-    content
+    #response.header['content-type'] = 'text/plain'
+    content = Ansi::To::Html.new(content).to_html.split("\n").join("<br>\n")
+    "<code>#{content}</code>"
   end
 
   private def do_bump(version, priority)
