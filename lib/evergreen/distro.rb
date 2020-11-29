@@ -1,5 +1,4 @@
 module Evergreen
-  class DistroNotFound < StandardError; end
 
   class Distro
     def initialize(client, id, info: nil)

@@ -35,7 +35,7 @@ module Evergreen
     def recent_patches
       begin
         payload = client.get_json("projects/#{id}/patches")
-      rescue Client::NotFound => e
+      rescue NotFound => e
         # Evergreen returns 404 when the route is valid but there are no
         # patches: https://jira.mongodb.org/browse/EVG-5840
         # There used to be text "no patches found" in the response body that
@@ -43,7 +43,7 @@ module Evergreen
         # Hit the project endpoint to verify the project id is valid.
         begin
           client.get_json("projects/#{id}")
-        rescue Client::NotFound
+        rescue NotFound
           # project id likely invalid, raise original exception
           raise e
         end
