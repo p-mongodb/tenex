@@ -111,6 +111,7 @@ class App < Sinatra::Base
     content = task.buildlogger_log
     #response.header['content-type'] = 'text/plain'
     content = content.split("\n").map do |line|
+      line = CGI.escapeHTML(line)
       Ansi::To::Html.new(line).to_html
     end.join("<br>\n")
     "<code>#{content}</code>"
