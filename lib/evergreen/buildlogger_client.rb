@@ -17,7 +17,11 @@ module Evergreen
     end
 
     def task_log(task_id)
-      connection.get("task_id/#{task_id}").body
+      # task_log | agent_log | system_log
+      # https://jira.mongodb.org/browse/EVG-12398 or
+      # https://jira.mongodb.org/browse/EVG-13478
+      #connection.get("task_id/#{task_id}?proc_name=task_log&print_time=true&print_priority=true").body
+      connection.get("task_id/#{task_id}?proc_name=task_log").body
     end
 
   end
