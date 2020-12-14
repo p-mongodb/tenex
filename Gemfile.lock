@@ -41,8 +41,8 @@ GEM
     atlassian-jwt (0.2.0)
       jwt (~> 2.1.0)
     aws-eventstream (1.1.0)
-    aws-partitions (1.396.0)
-    aws-sdk-core (3.109.3)
+    aws-partitions (1.406.0)
+    aws-sdk-core (3.110.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -70,11 +70,12 @@ GEM
       faraday (>= 0.8, < 2)
     faraday_middleware (1.0.0)
       faraday (~> 1.0)
-    fugit (1.4.0)
+    fugit (1.4.1)
       et-orbi (~> 1.1, >= 1.1.8)
       raabro (~> 1.4)
     highline (2.0.3)
     htmlentities (4.3.4)
+    human_size (1.1.2)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
@@ -90,17 +91,17 @@ GEM
     launchy (2.4.3)
       addressable (~> 2.3)
     link_header (0.0.8)
-    loofah (2.7.0)
+    loofah (2.8.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
     mini_portile2 (2.4.0)
     minitest (5.14.2)
-    mongo (2.13.1)
+    mongo (2.14.0)
       bson (>= 4.8.2, < 5.0.0)
-    mongoid (7.1.5)
+    mongoid (7.2.0)
       activemodel (>= 5.1, < 6.1)
-      mongo (>= 2.7.0, < 3.0.0)
+      mongo (>= 2.10.5, < 3.0.0)
     multi_json (1.15.0)
     multipart-post (2.1.1)
     mustermann (1.1.1)
@@ -121,7 +122,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.6)
-    puma (5.0.4)
+    puma (5.1.1)
       nio4r (~> 2.0)
     pusher-client (0.6.2)
       json
@@ -190,7 +191,7 @@ GEM
     tzinfo (1.2.8)
       thread_safe (~> 0.1)
     websocket (1.2.8)
-    zeitwerk (2.4.1)
+    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
@@ -208,6 +209,7 @@ DEPENDENCIES
   faraday-detailed_logger
   gh!
   htmlentities
+  human_size
   ice_nine
   jira-ruby
   link_header

@@ -6,16 +6,33 @@ ENV['MONGOID_ENV'] = 'development'
 
 require 'fe/boot'
 require 'fe/env'
+require 'optparse'
+require 'human_size'
+
+options = {}
+OptionParser.new do |opts|
+  opts.on('-d', '--description=DESCRIPTION', 'Set gist description') do |v|
+    options[:description] = v
+  end
+end.parse!
 
 files = {}
+total_size = 0
 ARGV.each do |path|
+  size = File.stat(path).size
+  puts "#{path}: #{HumanSize::Size.human_size(size)}"
+  total_size += size
+  content = File.read(path)
   files[path.gsub('/', '?')] = {
-    content: File.read(path),
+    content: content,
   }
 end
 
+puts "Total size: #{HumanSize::Size.human_size(total_size)}"
+STDOUT.flush
+
 payload = {
-  description: 'File Paste',
+  description: options[:description] || 'File Paste',
   files: files,
 }
 rv = Env.gh_client.create_gist(payload)

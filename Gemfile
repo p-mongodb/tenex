@@ -38,6 +38,7 @@ gem 'ice_nine'
 gem 'oj'
 gem 'curb'
 gem 'aws-sdk-core'
+gem 'human_size'
 
 # version pins that we do not directly depend on
 
