@@ -21,7 +21,18 @@ module Evergreen
       # https://jira.mongodb.org/browse/EVG-12398 or
       # https://jira.mongodb.org/browse/EVG-13478
       #connection.get("task_id/#{task_id}?proc_name=task_log&print_time=true&print_priority=true").body
-      connection.get("task_id/#{task_id}?proc_name=task_log").body
+      resp = nil
+      10.times do
+        resp = connection.get("task_id/#{task_id}?proc_name=task_log")
+        if resp.status == 200
+          break
+        elsif resp.status == 500 && resp.body =~ /service unavailable/i
+          # retry
+        else
+          raise ApiError, "Bogus response: #{resp.status}: #{resp.body}"
+        end
+      end
+      resp.body
     end
 
   end
