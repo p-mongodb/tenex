@@ -37,6 +37,7 @@ class RepoCache
           ChildProcessHelper.check_call(%w(git reset --hard origin/master))
         end
       else
+        ENV['GIT_SSH'] = 'ssh -o StrictHostKeyChecking=no'
         if full_name =~ /10gen/
           ChildProcessHelper.check_call(%W(git clone git@github.com:#{full_name}) + [cached_repo_path.to_s])
         else
