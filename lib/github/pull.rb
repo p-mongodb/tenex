@@ -241,5 +241,10 @@ module Github
     def add_comment(text)
       client.post_json("repos/#{repo_full_name}/issues/#{number}/comments", body: text)
     end
+
+    def merge
+      client.request_json(:put, "repos/#{repo_full_name}/pulls/#{number}/merge",
+        params: {merge_method: :squash})
+    end
   end
 end
