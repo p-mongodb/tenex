@@ -49,19 +49,14 @@ module Evergreen
     end
 
     def project_for_github_repo(owner_name, repo_name)
-      projects.each do |project|
-        begin
-          patch = project.recent_patches.detect do |patch|
-            patch.description =~ /^'#{owner_name}\/#{repo_name}' pull request/
-          end
-          if patch
-            return project
-          end
-        rescue URI::InvalidURIError, ApiError => e
-          puts "Error retrieving recent patches for #{project.id}: #{e}"
-        end
+      projects.detect do |project|
+        project.owner_name == owner_name &&
+        project.repo_name == repo_name &&
+        project.pr_testing_enabled?
+      end || projects.detect do |project|
+        project.owner_name == owner_name &&
+        project.repo_name == repo_name
       end
-      nil
     end
 
     def patch_by_id(id)

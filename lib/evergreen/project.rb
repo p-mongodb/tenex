@@ -12,6 +12,14 @@ module Evergreen
       @info ||= client.get_json("projects/#{id}")
     end
 
+    def owner_name
+      info.fetch('owner_name')
+    end
+
+    def repo_name
+      info.fetch('repo_name')
+    end
+
     def display_name
       if info['display_name'] && !@info['display_name'].empty?
         info['display_name']
@@ -30,6 +38,10 @@ module Evergreen
 
     def private_vars
       info['variables']['private_vars']
+    end
+
+    def pr_testing_enabled?
+      info.fetch('pr_testing_enabled')
     end
 
     def recent_patches
