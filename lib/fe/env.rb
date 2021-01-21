@@ -1,3 +1,7 @@
+module Evergreen
+  autoload :Client, 'evergreen/client'
+end
+
 autoload :Jirra, 'jirra/client'
 autoload :Confluence , 'confluence/client'
 autoload :JIRA, 'jira-ruby'

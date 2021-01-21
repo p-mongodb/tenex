@@ -95,6 +95,34 @@ module Evergreen
         end
       end
 
+      # Online validators
+
+      distros = Env.eg_client.distros
+      distro_ids = distros.map(&:id)
+
+      doc['buildvariants']&.each do |variant|
+        if spec = variant['run_on']
+          spec.each do |distro_id|
+            found = false
+            distros.each do |distro|
+              if distro.id == distro_id
+                found = true
+                break
+              end
+              if distro.aliases&.include?(distro_id)
+                errors << %Q`Build variant '#{variant['name']}' references an alias '#{distro_id}' of distro #{distro.name}`
+                found = true
+                break
+              end
+            end
+            unless found
+              errors << %Q`Build variant '#{variant['name']}' references nonexistent distro '#{distro_id}'`
+              next
+            end
+          end
+        end
+      end
+
       @errors = errors
     end
 

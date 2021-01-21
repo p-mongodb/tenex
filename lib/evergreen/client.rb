@@ -1,9 +1,13 @@
 autoload :Oj, 'oj'
 require 'faraday'
 require_relative '../paginated_get'
+require_relative './client_methods'
+require_relative './error'
 require 'active_support/core_ext/string'
 
 module Evergreen
+  autoload :Distro, 'evergreen/distro'
+
   class Client
     include ClientMethods
     include PaginatedGet

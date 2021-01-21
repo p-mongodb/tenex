@@ -9,6 +9,10 @@ module Evergreen
 
     attr_reader :client, :id
 
+    def aliases
+      info.fetch('aliases')
+    end
+
     def info
       @info ||= begin
         # there is no distros/:id route.
