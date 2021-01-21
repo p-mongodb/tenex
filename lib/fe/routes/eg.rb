@@ -15,8 +15,14 @@ Routes.included do
   end
 
   get '/eg/distros' do
-    hosts = eg_client.hosts
-    @distros = hosts.map(&:distro).sort.uniq(&:id)
+    @distros = eg_client.distros.sort_by(&:id)
+    @hosts = eg_client.hosts
+    @distro_hosts = Hash.new do |hash, key|
+      hash[key] = []
+    end
+    @hosts.each do |host|
+      @distro_hosts[host.distro_id] << host
+    end
     slim :distros
   end
 

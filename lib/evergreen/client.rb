@@ -65,6 +65,13 @@ module Evergreen
     end
 
     def distros
+      payload = get_json("distros")
+      payload.map do |info|
+        Distro.new(self, info['name'], info: info)
+      end
+    end
+
+    def spawn_host_distros
       payload = get_json("/spawn/distros")
       payload.map do |info|
         Distro.new(self, info['name'], info: info)
