@@ -376,7 +376,7 @@ Routes.included do
 
   get '/repos/:org/:repo/pulls/:id/retitle-commit' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
-    rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
+    rc = RepoCache.new(@pull.head_owner_name, @pull.head_repo_name)
     rc.update_cache
     subject, message = rc.commitish_message(@pull.head_sha)
     @pull.update(title: subject, body: message)

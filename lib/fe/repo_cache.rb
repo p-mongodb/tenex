@@ -21,7 +21,7 @@ class RepoCache
   end
 
   def cached_repo_path
-    repos_path.join(name)
+    repos_path.join(full_name)
   end
 
   def update_cache
