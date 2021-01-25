@@ -246,5 +246,9 @@ module Github
       client.request_json(:put, "repos/#{repo_full_name}/pulls/#{number}/merge",
         params: {merge_method: :squash})
     end
+
+    def close
+      update(state: 'closed')
+    end
   end
 end

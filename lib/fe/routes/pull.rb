@@ -491,6 +491,14 @@ Routes.included do
 
     @pull.merge
 
-    redirect return_path || "/repos/#{@pull.repo_full_name}"
+    redirect "/repos/#{@pull.repo_full_name}"
+  end
+
+  get '/repos/:org/:repo/pulls/:id/close' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+
+    @pull.close
+
+    redirect "/repos/#{@pull.repo_full_name}"
   end
 end

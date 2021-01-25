@@ -57,6 +57,8 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/in-progress" In progress
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/merge" Merge
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/close" Close
 
 p
   - if (eg_status = @pull.top_evergreen_status) && @pull.evergreen_version_id
