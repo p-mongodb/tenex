@@ -110,7 +110,16 @@ Routes.included do
           meta_for_label['bson'] = bson
         end
         if compressor = meta_for_label.delete('compressor')
-          short_label << compressor[0].upcase
+          short_label << case compressor
+            when 'zlib'
+              'z'
+            when 'zstd'
+              'Z'
+            when 'snappy'
+              'S'
+            else
+              'C'
+            end
         end
         # We do not currently run the same test on multiple OSes
         meta_for_label.delete('os')
