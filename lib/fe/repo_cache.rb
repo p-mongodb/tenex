@@ -1,3 +1,4 @@
+autoload :Git, 'git'
 require 'tempfile'
 require 'pathname'
 require 'time'
@@ -157,11 +158,7 @@ class RepoCache
   end
 
   def diff_to_master(head)
-    output = Dir.chdir(cached_repo_path) do
-      ChildProcessHelper.check_output(%W(
-        git diff master..#{head}
-      ))
-    end
+    git.diff('master', head).patch
   end
 
   # Applies patch at the specified path the way Evergreen woud do it.
@@ -302,10 +299,10 @@ CMD
   end
 
   def checkout(commitish)
-    Dir.chdir(cached_repo_path) do
-      ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
-        git checkout #{commitish}
-CMD
-    end
+    git.checkout(commitish)
+  end
+
+  def git
+    @git ||= Git.open(cached_repo_path)
   end
 end
