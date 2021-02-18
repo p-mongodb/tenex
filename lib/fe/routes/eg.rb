@@ -94,6 +94,10 @@ Routes.included do
   # eg project config vars
   get '/eg/:project/config' do |project_id|
     @project = Evergreen::Project.new(eg_client, project_id)
+    @private_vars = {}
+    @project.private_vars.each do |k, v|
+      @private_vars[k] = v
+    end
     slim :eg_project_config
   end
 

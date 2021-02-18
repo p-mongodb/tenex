@@ -8,16 +8,15 @@ p
 
   h3 Vars
     
-  dl
+  table
     - @project.vars.each do |k, v|
-      dt= k
-      dd= v
-
-- if @project.private_vars.any?
-
-  h3 Private vars
-    
-  dl
-    - @project.private_vars.each do |k, v|
-      dt= k
-      dd= v
+      tr
+        td= k
+        td
+          - if @private_vars[k]
+            - if v && !v.empty?
+              i= v
+            - else
+              i Private
+          - else
+            = v
