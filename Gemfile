@@ -39,8 +39,7 @@ gem 'oj'
 gem 'curb'
 gem 'aws-sdk-core'
 gem 'human_size'
-# gem install rugged -- --use-system-libraries
-gem 'rugged'
+gem 'git'
 
 # version pins that we do not directly depend on
 

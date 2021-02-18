@@ -1,7 +1,6 @@
 require 'fe/child_process_helper'
 require 'fe/env'
 
-autoload :Rugged, 'rugged'
 autoload :ProjectDetector, 'fe/project_detector'
 autoload :EgProjectResolver, 'fe/project_detector'
 autoload :RepoCache, 'fe/repo_cache'

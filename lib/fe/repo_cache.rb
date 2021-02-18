@@ -309,9 +309,3 @@ CMD
     end
   end
 end
-
-=begin
-    repo = Rugged::Repository.new('.')
-    ref = repo.references['refs/remotes/origin/master']
-    base_sha = ref.target_id
-=end
