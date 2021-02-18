@@ -5,7 +5,7 @@ CONFIG_ROOT = Pathname.new(File.dirname(__FILE__)).join('fixtures/config')
 
 describe Evergreen::ParserValidator do
   let(:validator) do
-    described_class.new(File.read(config_path))
+    described_class.new(File.read(config_path), use_service: false)
   end
 
   let(:error_msg) { validator.errors.join("\n") }

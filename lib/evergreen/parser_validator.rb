@@ -5,11 +5,13 @@ module Evergreen
   end
 
   class ParserValidator
-    def initialize(project_file_contents)
+    def initialize(project_file_contents, **opts)
       @project_file_contents = project_file_contents
+      @options = {use_service: true}.update(opts).freeze
     end
 
     attr_reader :project_file_contents
+    attr_reader :options
 
     def validate
       begin
@@ -97,27 +99,29 @@ module Evergreen
 
       # Online validators
 
-      distros = Env.eg_client.distros
-      distro_ids = distros.map(&:id)
+      if options[:use_service]
+        distros = Env.eg_client.distros
+        distro_ids = distros.map(&:id)
 
-      doc['buildvariants']&.each do |variant|
-        if spec = variant['run_on']
-          spec.each do |distro_id|
-            found = false
-            distros.each do |distro|
-              if distro.id == distro_id
-                found = true
-                break
+        doc['buildvariants']&.each do |variant|
+          if spec = variant['run_on']
+            spec.each do |distro_id|
+              found = false
+              distros.each do |distro|
+                if distro.id == distro_id
+                  found = true
+                  break
+                end
+                if distro.aliases&.include?(distro_id)
+                  errors << %Q`Build variant '#{variant['name']}' references an alias '#{distro_id}' of distro #{distro.name}`
+                  found = true
+                  break
+                end
               end
-              if distro.aliases&.include?(distro_id)
-                errors << %Q`Build variant '#{variant['name']}' references an alias '#{distro_id}' of distro #{distro.name}`
-                found = true
-                break
+              unless found
+                errors << %Q`Build variant '#{variant['name']}' references nonexistent distro '#{distro_id}'`
+                next
               end
-            end
-            unless found
-              errors << %Q`Build variant '#{variant['name']}' references nonexistent distro '#{distro_id}'`
-              next
             end
           end
         end
