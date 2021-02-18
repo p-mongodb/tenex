@@ -1,7 +1,9 @@
 require 'fe/child_process_helper'
 require 'fe/env'
 
+autoload :Rugged, 'rugged'
 autoload :ProjectDetector, 'fe/project_detector'
+autoload :EgProjectResolver, 'fe/project_detector'
 autoload :RepoCache, 'fe/repo_cache'
 autoload :Byebug, 'byebug'
 autoload :FileUtils, 'fileutils'
@@ -9,51 +11,86 @@ autoload :FileUtils, 'fileutils'
 class PatchBuildMaker
   include Env::Access
 
-  def run(eg_project_id: nil, base_branch: nil, force: false, priority: nil)
-    config = ProjectDetector.new.project_config
-    eg_project_id ||= config.eg_project_name
-    base_branch ||= 'origin/master'
+  def initialize(**opts)
+    @options = opts.freeze
+  end
+
+  attr_reader :options
+
+  %i(eg_project_id force priority).each do |attr|
+    define_method(attr) do
+      options[attr]
+    end
+  end
+
+  def base_branch
+    options[:base_branch] || 'origin/master'
+  end
+
+  def eg_project_config
+    @eg_project_config ||= if eg_project_id
+      EgProjectResolver.new(eg_project_id).project_config
+    else
+      ProjectDetector.new.project_config
+    end
+  end
+
+  def submit
+    config = eg_project_config
 
     rc = RepoCache.new(config.gh_upstream_owner_name, config.gh_repo_name)
     rc.update_cache
 
     base_sha = rc.commitish_sha(base_branch)
     ChildProcessHelper.check_call(%w(git fetch origin))
-    process, diff_text = ChildProcessHelper.get_output(%w(git diff) + [base_branch + '...'])
+
+    if options[:full]
+      ChildProcessHelper.check_call(%W(
+        rsync -a --exclude .git --delete .
+      ) + [rc.cached_repo_path.to_s])
+
+      ChildProcessHelper.check_call(%W(
+        git add .
+      ), cwd: rc.cached_repo_path)
+
+      diff_text = get_diff_text(cmd: %w(git diff --binary --cached), cwd: rc.cached_repo_path)
+    else
+      diff_text = get_diff_text
+
+      patch_path = Pathname.new(File.expand_path('~/.cache/patches')).join(config.eg_project_name + '.patch')
+      FileUtils.mkdir_p(patch_path.dirname)
+      File.open(patch_path, 'w') do |f|
+        f << diff_text
+      end
+      puts "Saved patch to #{patch_path}"
+
+      # Occasionally the output of `git diff` does not apply back to the base
+      # using git apply, if the output was actually caculated against an old
+      # (e.g. outdated) base.
+      puts "Trying to apply the patch back to the base"
+      ChildProcessHelper.check_call(%W(
+        git apply --stat
+      ) + [patch_path.to_s])
+      rc.checkout(base_branch)
+      rc.apply_patch(patch_path)
+    end
+
+    create_patch(base_sha, diff_text)
+  end
+
+  def get_diff_text(cmd: %w(git diff --binary) + [base_branch + '...'], cwd: nil)
+    process, diff_text = ChildProcessHelper.get_output(cmd, cwd: cwd)
     diff_text.force_encoding('utf-8')
 
     # Verify valid utf-8
     diff_text.encode('utf-16')
 
-    patch_path = Pathname.new(File.expand_path('~/.cache/patches')).join(eg_project_id + '.patch')
-    FileUtils.mkdir_p(patch_path.dirname)
-    File.open(patch_path, 'w') do |f|
-      f << diff_text
-    end
-    puts "Saved patch to #{patch_path}"
+    diff_text
+  end
 
-    # Occasionally the output of `git diff` does not apply back to the base
-    # using git apply, if the output was actually caculated against an old
-    # (e.g. outdated) base.
-    puts "Trying to apply the patch back to the base"
-    ChildProcessHelper.check_call(%W(
-      git apply --stat
-    ) + [patch_path.to_s])
-    rc.checkout(base_branch)
-    rc.apply_patch(patch_path)
-
-=begin
-    if force
-      begin
-        diff_text.encode('utf-16')
-      rescue
-        raise e.class
-      end
-    end
-=end
-
+  def create_patch(base_sha, diff_text)
     patch = eg_client.create_patch(
-      project_id: eg_project_id,
+      project_id: eg_project_config.eg_project_name,
       base_sha: base_sha,
       diff_text: diff_text,
       finalize: true,

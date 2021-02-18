@@ -16,9 +16,14 @@ OptionParser.new do |opts|
   opts.on('-p', '--project=PROJECT', 'Evergreen project to patch into') do |v|
     options[:eg_project_id] = v
   end
+  opts.on('-f', '--full', 'Use current directory contents as new tree rather than diff output') do
+    options[:full] = true
+  end
+=begin
   opts.on('-f', '--force', 'Force submission') do |v|
     options[:force] = true
   end
+=end
   opts.on('-y', '--priority=PRIORITY', 'Specify priority') do |v|
     if v.to_i.to_s != v
       raise "Invalid priority (must be an integer): #{v}"
@@ -27,4 +32,5 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-PatchBuildMaker.new.run(**options)
+pbm = PatchBuildMaker.new(**options)
+pbm.submit

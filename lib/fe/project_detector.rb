@@ -114,3 +114,13 @@ class ProjectDetector
 
   attr_reader :project_config
 end
+
+class EgProjectResolver
+  def initialize(eg_project_name)
+    @project_config = PROJECT_CONFIGS.detect do |key, config|
+      config.eg_project_name == eg_project_name
+    end.last
+  end
+
+  attr_reader :project_config
+end
