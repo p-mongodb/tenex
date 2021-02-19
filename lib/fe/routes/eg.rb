@@ -257,10 +257,12 @@ Routes.included do
     do_evergreen_task_log(task, title, :task)
   end
 
-  get '/eg/:project/versions/:version/builds/:build/tasks/:task/log/agent' do |project_id, version_id, build_id, task_id|
-    task = Evergreen::Task.new(eg_client, task_id)
-    title = "EG task log"
-    do_evergreen_task_log(task, title, :agent)
+  %i(agent all).each do |which|
+    get "/eg/:project/versions/:version/builds/:build/tasks/:task/log/#{which}" do |project_id, version_id, build_id, task_id|
+      task = Evergreen::Task.new(eg_client, task_id)
+      title = "EG #{which} log"
+      do_evergreen_task_log(task, title, which)
+    end
   end
 
   get '/eg/:project/versions/:version/builds/:build/log/buildlogger' do |project_id, version_id, build_id|

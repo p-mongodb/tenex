@@ -10,6 +10,7 @@ class EgTask
   field :finished_at, type: Time
   field :task_log_url, type: String
   field :agent_log_url, type: String
+  field :all_log_url, type: String
 
   # Zero-based line index of first failure, if any
   field :first_failure_index, type: Integer
