@@ -3,9 +3,10 @@ autoload :JiraQueryBuilder, 'fe/jira_query_builder'
 Routes.included do
 
   get '/jira/query' do
-    if params[:q]
+    if params[:q] && !params[:edit]
       do_query
     else
+      @query = params[:q]
       @queries = JiraQuery.recent
       slim :jira_query
     end

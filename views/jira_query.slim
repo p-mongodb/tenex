@@ -4,6 +4,7 @@ form method='post'
   h2 Query
   div
     textarea name='q' rows=5 cols=100
+      = @query
   input type='submit' value='Go'
 
 - if @queries.any?
@@ -12,6 +13,8 @@ form method='post'
     - @queries.each do |query|
       li
         a href="/jira/query?q=#{CGI.escape(query.input_text)}"= query.input_text
+        '
+        a href="/jira/query?q=#{CGI.escape(query.input_text)}&edit=true" [edit]
 
 div
   h2 Helpful tips
