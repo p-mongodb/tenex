@@ -1,14 +1,23 @@
 h1 Jira query
 
 form method='post'
-  p Query
+  h2 Query
   div
     textarea name='q' rows=5 cols=100
   input type='submit' value='Go'
 
 - if @queries.any?
-  p Recent
+  h2 Recent
   ul
     - @queries.each do |query|
       li
         a href="/jira/query?q=#{CGI.escape(query.input_text)}"= query.input_text
+
+div
+  h2 Helpful tips
+  
+  ul
+    li <tt>ame</tt> = assigned to me, <tt>rme</tt> = reported by me
+    li <tt>rm</tt> (project) expands to <tt>ruby,mongoid</tt>
+    li <tt>doc</tt> (project) expands to <tt>docs,docsp,dop</tt>
+    li <tt>imp</tt> (type) expands to <tt>improvement,new feature</tt>
