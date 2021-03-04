@@ -22,6 +22,24 @@ PROJECT_CONFIGS = {
     'MONGOID',
     'mongoid',
   ),
+  'mongoid-7.2' => ProjectConfig.new(
+    'mongodb',
+    'mongoid',
+    'MONGOID',
+    'mongoid-7.2',
+  ),
+  'mongoid-7.1' => ProjectConfig.new(
+    'mongodb',
+    'mongoid',
+    'MONGOID',
+    'mongoid-7.1',
+  ),
+  'mongoid-7.0' => ProjectConfig.new(
+    'mongodb',
+    'mongoid',
+    'MONGOID',
+    'mongoid-7.0',
+  ),
   'bson-ruby' => ProjectConfig.new(
     'mongodb',
     'bson-ruby',
