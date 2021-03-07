@@ -93,6 +93,7 @@ class PatchBuildMaker
       base_sha: base_sha,
       diff_text: diff_text,
       finalize: true,
+      description: options[:message],
     )
 
     puts "Created #{patch.id}: #{patch.description}"
