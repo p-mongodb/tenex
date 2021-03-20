@@ -281,6 +281,13 @@ Routes.included do
     do_buildlogger_log(task, title)
   end
 
+  # eg build task restart
+  get '/eg/:project/versions/:version/builds/:build/tasks/:task/restart' do |project_id, version_id, build_id, task_id|
+    task = Evergreen::Task.new(eg_client, task_id)
+    task.restart
+    redirect return_path || "/eg/#{project_id}/versions/#{version_id}"
+  end
+
   # eg build results
   get '/eg/:project/versions/:version/results/:build' do |project_id, version_id, build_id|
     @build = Evergreen::Build.new(eg_client, build_id)

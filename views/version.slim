@@ -91,6 +91,8 @@ table
                   a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
                   '
                   | (p=#{task.priority})
+                '
+                a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/tasks/#{task.id}/restart" Restart
       td
         - if build.tasks.length == 1
           - task = build.tasks.first
