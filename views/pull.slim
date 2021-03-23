@@ -20,9 +20,9 @@ p
   - else
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/request-review" Request review
   '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/rebase" Rebase
-  '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/reword" Reword
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/rebase" Rebase
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/edit-msg" Edit commit msg
   '
@@ -31,30 +31,13 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle-commit" Retitle from commit
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle-jira" Retitle from Jira
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/submit-patch" Submit as EG patch
-  - if @pull.patch
-    '
-    a href="/eg/#{@pull.patch.eg_project_id}/patches/#{@pull.patch.id}" EG patch build
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/perf" Perf
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-perf" EG Perf
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results" MRI results
-  '
-  | (
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results?failed=1" failed
-  | )
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/jruby-results" JRuby results
+
+p
   - if (@pull.jira_ticket_number rescue nil)
     '
     a href="https://jira.mongodb.org/browse/#{@pull.jira_issue_key!}" Jira
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-validate" Validate EG config
-  '
-  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/in-progress" In progress
+    '
+    a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/in-progress" In progress
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/merge" Merge
   '
@@ -69,6 +52,14 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-failed" Restart failed
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/restart-all" Restart all
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results" MRI results
+  '
+  | (
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/mri-results?failed=1" failed
+  | )
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/jruby-results" JRuby results
   - if eg_status&.pending?
     '
     ' Bump priority to:
@@ -81,6 +72,17 @@ p
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/bump?priority=99" 99
     '
     a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/bump?priority=100" 100
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/submit-patch" Submit as EG patch
+  - if @pull.patch
+    '
+    a href="/eg/#{@pull.patch.eg_project_id}/patches/#{@pull.patch.id}" EG patch build
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-validate" Validate EG config
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/perf" Perf
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/eg-perf" EG Perf
 
 - if @pull.repo_full_name == 'mongodb/mongo-ruby-driver' && @category_values
   table.status-table
