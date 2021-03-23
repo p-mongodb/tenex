@@ -8,7 +8,7 @@ module PullExt
     if @jira_ticket_number_looked_up
       return @jira_ticket_number
     end
-    if title =~ /\A((#{jira_project})-(\d+)) /i
+    if title =~ /\A((#{jira_project})-(\d+)):? /i
       number = $3.to_i
     else
       number = nil
