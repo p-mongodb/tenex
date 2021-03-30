@@ -19,7 +19,7 @@ module PaginatedGet
   private def yielding_paginated_get(url)
     resp = connection.get(url)
     if resp.status != 200
-      raise "Bad status #{resp.status}"
+      raise "Bad status #{resp.status} for GET #{url}"
     end
     payload = Oj.load(resp.body)
 
@@ -38,10 +38,10 @@ module PaginatedGet
       resp = connection.get(next_link.href)
       while resp.status >= 300 && resp.status < 400
         # https://jira.mongodb.org/browse/EVG-5169
-        resp = connection.get(resp.headers['location'])
+        resp = connection.get(url = resp.headers['location'])
       end
       if resp.status != 200
-        raise "Bad status #{resp.status}"
+        raise "Bad status #{resp.status} for GET #{url}"
       end
       payload = Oj.load(resp.body)
     end
