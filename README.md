@@ -18,7 +18,9 @@ See README.features.md for a detailed list.
 
 To use the Docker image:
 
-    docker pull pmongo/tenex
+    docker run -p 8080:80 pmongo/tenex
+
+The application will be available at http://localhost:8080.
 
 ### Local
 
