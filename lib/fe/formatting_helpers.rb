@@ -1,3 +1,5 @@
+autoload :Addressable, 'addressable'
+
 module FormattingHelpers
   def sdam_log_entries(result)
     if result[:sdam_log_entries] && !result[:sdam_log_entries].empty?
@@ -95,5 +97,9 @@ module FormattingHelpers
     else
       ''
     end
+  end
+
+  def escape_uri(uri)
+    Addressable::URI.encode(uri)
   end
 end

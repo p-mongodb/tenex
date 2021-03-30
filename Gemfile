@@ -40,6 +40,7 @@ gem 'curb'
 gem 'aws-sdk-core'
 gem 'human_size'
 gem 'git'
+gem 'addressable'
 
 # version pins that we do not directly depend on
 

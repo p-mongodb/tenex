@@ -45,7 +45,7 @@ p
 
 p
   - if (eg_status = @pull.top_evergreen_status) && @pull.evergreen_version_id
-    a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}" Evergreen build
+    a href="/eg/#{escape_uri(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}" Evergreen build
     '
     - if str = eg_status.build_count_str
       = "(#{str}) "
@@ -131,7 +131,7 @@ p
                             i.fa.fa-repeat title='Restart'
                         - if status.finished? && @pull.have_rspec_json? && !status.top_level?
                           '
-                          a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
+                          a href="/eg/#{escape_uri(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
                             i.fa.fa-bomb title='Results'
 
 table.status-table
@@ -156,7 +156,7 @@ table.status-table
             a href=status.restart_url Restart
         - if status.finished? && @pull.have_rspec_json? && !status.top_level?
           td
-            a href="/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
+            a href="/eg/#{escape_uri(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{status.build_id}?branch=#{@pull.head_branch_name}"
               | Results
       - if status.eg_unauthorized?
         td
