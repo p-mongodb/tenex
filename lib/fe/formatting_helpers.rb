@@ -1,3 +1,4 @@
+gem 'addressable'
 autoload :Addressable, 'addressable'
 
 module FormattingHelpers
