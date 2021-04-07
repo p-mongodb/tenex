@@ -1,5 +1,4 @@
-gem 'addressable'
-autoload :Addressable, 'addressable'
+require 'addressable'
 
 module FormattingHelpers
   def sdam_log_entries(result)
