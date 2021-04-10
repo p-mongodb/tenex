@@ -55,7 +55,7 @@ PROJECT_CONFIGS = {
   'specifications' => ProjectConfig.new(
     'mongodb',
     'specifications',
-    'SPEC',
+    'DRIVERS',
     nil,
   ),
   'writing' => ProjectConfig.new(
