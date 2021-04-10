@@ -6,6 +6,8 @@ autoload :Jirra, 'jirra/client'
 autoload :Confluence , 'confluence/client'
 autoload :JIRA, 'jira-ruby'
 
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
 module Env
 
   module_function def jira_client
@@ -48,22 +50,32 @@ module Env
     @confluence_client ||= begin
       if ENV['CONFLUENCE_AUTH_TOKEN']
         auth_token = ENV['CONFLUENCE_AUTH_TOKEN']
-      elsif ENV['CORP_AUTH_TOKEN_URL'] && !ENV['CORP_AUTH_TOKEN_URL'].empty?
-        auth_token_url = ENV['CORP_AUTH_TOKEN_URL']
+      elsif ENV['CONFLUENCE_COOKIES_URL'] && !ENV['CONFLUENCE_COOKIES_URL'].empty?
+        cookies_url = ENV['CONFLUENCE_COOKIES_URL']
         require 'open-uri'
-        auth_token = open(auth_token_url).read
+        cookies = JSON.parse(open(ENV.fetch('CORP_COOKIES_URL')).read)
+        #cookies.update(JSON.parse(open(cookies_url).read))
       else
         raise "No auth token mechanism defined"
       end
 
       options = {
-        :username     => ENV['JIRA_USERNAME'],
-        :password     => ENV['JIRA_PASSWORD'],
-        :site         => ENV['CONFLUENCE_SITE'],
-        auth_token: auth_token,
+        #username: empty_to_nil(ENV['JIRA_USERNAME']),
+        #password: empty_to_nil(ENV['JIRA_PASSWORD']),
+        site: ENV['CONFLUENCE_SITE'],
+        #auth_token: auth_token,
+        cookies: cookies,
       }
 
       ::Confluence::Client.new(options)
+    end
+  end
+
+  module_function def empty_to_nil(str)
+    if str && str.empty?
+      nil
+    else
+      str
     end
   end
 

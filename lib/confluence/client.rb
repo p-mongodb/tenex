@@ -15,14 +15,30 @@ module Confluence
       attr_reader :status
     end
 
-    def initialize(username:, password:, site:, auth_token:)
+    def initialize(site:, username: nil, password: nil, auth_token: nil, cookies: nil)
+      if username && !password  || password && !username
+        raise ArgumentError, 'Username and password must be given together'
+      end
+      if auth_token && !username
+        raise ArgumentError, 'Auth token requires username'
+      end
+
       @connection ||= Faraday.new("#{site}/rest/api") do |f|
         f.request :url_encoded
         f.response :detailed_logger
         f.adapter Faraday.default_adapter
         f.headers['user-agent'] = 'EvergreenRubyClient'
-        f.headers['cookie'] = "auth_user=#{username}; auth_token=#{auth_token}"
-        f.basic_auth(username, password)
+        if username
+          if auth_token
+            f.headers['cookie'] = "auth_user=#{username}; auth_token=#{auth_token}"
+          end
+          f.basic_auth(username, password)
+        end
+        if cookies
+          hv = cookies.map { |k, v| "#{k}=#{v}" }.join('; ')
+          p hv
+          f.headers['cookie'] = hv
+        end
       end
     end
 
