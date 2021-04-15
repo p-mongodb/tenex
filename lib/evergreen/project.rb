@@ -44,6 +44,10 @@ module Evergreen
       info.fetch('pr_testing_enabled')
     end
 
+    def admins
+      info.fetch('admins')
+    end
+
     def recent_patches
       begin
         payload = client.get_json("projects/#{id}/patches")
