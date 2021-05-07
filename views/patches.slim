@@ -40,3 +40,7 @@ a href="https://evergreen.mongodb.com/projects###{@project.id}"
       li
         a href="/eg/#{@project.id}/versions/#{version.id}"
           = version.message
+        - if version.builds.any? { |b| b.activated? && !b.finished? }
+          '
+          a href="/eg/#{@project.id}/versions/#{version.id}/abort"
+            ' Abort
