@@ -16,7 +16,7 @@ module Evergreen
     end
 
     def project_name
-      info['project']
+      info.fetch('project')
     end
 
     def patch?
@@ -61,7 +61,7 @@ module Evergreen
 
     # sha of the commit
     def revision
-      info['revision']
+      info.fetch('revision')
     end
 
     def pr_info
@@ -79,9 +79,9 @@ module Evergreen
       end
     end
 
-    %w(message).each do |m|
+    %w(status message).each do |m|
       define_method(m) do
-        info[m]
+        info.fetch(m)
       end
     end
 
