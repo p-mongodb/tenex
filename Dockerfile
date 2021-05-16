@@ -19,6 +19,7 @@ COPY Gemfile .
 COPY Gemfile.lock .
 RUN bundle install
 COPY . .
+RUN ln -s /etc/tenex /app/config
 
 CMD ["puma", ".config.ru", "-b", "tcp://0.0.0.0:80", "-e", "production"]
 ENTRYPOINT ["/app/entrypoint.sh"]

@@ -20,11 +20,12 @@ Create a MongoDB container for persistence:
 
     docker network create --driver bridge mongodb-net
     docker run -d --name mongodb --network mongodb-net \
-      -v /var/lib/mongodb:/data/db mongo:4.4
+      -v /path/to/db:/data/db mongo:4.4
 
 To use the Docker image:
 
-    docker run -p 8080:80 pmongo/tenex
+    docker run -p 8080:80 --network mongodb-net --rm \
+      -v /path/to/config:/etc/tenex pmongo/tenex
 
 The application will be available at http://localhost:8080.
 
@@ -37,11 +38,11 @@ of these dependencies installed. Then:
     git clone https://github.com/p-mongo/tenex
     cd tenex
     bundle install
-    cp .env.sample .env
+    cp config/env.sample config/env
 
 ## Configuration
 
-Edit `.env` file in project directory, and fill out:
+Edit the `env` file in `config` directory, and fill out:
 
 - Your Evergreen credentials - get them [here](https://evergreen.mongodb.com/settings).
 - Your Github credentials - create a personal access token [here](https://github.com/settings/tokens).
