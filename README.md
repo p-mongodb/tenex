@@ -16,6 +16,12 @@ See README.features.md for a detailed list.
 
 ### Using Docker
 
+Create a MongoDB container for persistence:
+
+    docker network create --driver bridge mongodb-net
+    docker run -d --name mongodb --network mongodb-net \
+      -v /var/lib/mongodb:/data/db mongo:4.4
+
 To use the Docker image:
 
     docker run -p 8080:80 pmongo/tenex

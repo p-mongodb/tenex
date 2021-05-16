@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:testing
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -6,10 +6,10 @@ RUN apt-get update && \
   apt-get -y install git ruby-dev libxml2-dev libxslt-dev \
     gcc zlib1g-dev patch pkg-config make curl libcurl4-gnutls-dev gnupg
 
-RUN curl -sfL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - && \
-  echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list && \
-  apt-get update && \
-  apt-get -y install mongodb-org-server
+#RUN curl -sfL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - && \
+#  echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list && \
+#  apt-get update && \
+#  apt-get -y install mongodb-org-server
 
 RUN gem install bundler --no-document && \
   gem install nokogiri --no-document -- --use-system-libraries
