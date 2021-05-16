@@ -12,6 +12,6 @@ if test -n "$DOTENV"; then
   echo "$DOTENV" >config/env
 fi
 
-erb mongodb_uri="$MONGODB_URI" config/mongoid.yml.docker >config/mongoid.yml
+#erb mongodb_uri="$MONGODB_URI" config/mongoid.yml.docker >config/mongoid.yml
 
 exec "$@"
