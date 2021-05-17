@@ -71,7 +71,8 @@ module Evergreen
           next
         end
         values.each_with_index do |value, index|
-          unless value['id']
+          # `id: no` is interpreted by YAML to mean `id: false`
+          unless value.key?('id')
             errors << %Q`Axis #{axis['id']} value #{index+1} does not have an id: #{value.inspect}`
           end
         end
