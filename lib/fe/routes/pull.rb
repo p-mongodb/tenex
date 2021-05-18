@@ -422,9 +422,10 @@ Routes.included do
 
     summaries = {}
 
-    paths = Dir[rc.cached_repo_path.join('.evergreen', '*.yml')]
-    paths += Dir[rc.cached_repo_path.join('.evergreen', '.*.yml')]
-    paths.sort.each do |project_eg_config_path = rc.cached_repo_path|
+    @paths = Dir[rc.cached_repo_path.join('.evergreen', '*.yml')]
+    @paths += Dir[rc.cached_repo_path.join('.evergreen', '.*.yml')]
+    @paths += Dir[rc.cached_repo_path.join('evergreen.yml')]
+    @paths.sort.each do |project_eg_config_path = rc.cached_repo_path|
       summary = OpenStruct.new(status: 'ok')
 
       contents = File.read(project_eg_config_path)

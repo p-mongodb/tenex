@@ -1,5 +1,14 @@
 h1 Evergreen project file validation
 
+- if @paths.empty?
+  p Didn't detect any evergreen config files to validate.
+- else
+  p
+    ' Validated the following files:
+    ul
+      - @paths.each do |path|
+        li= path
+
 - @summaries.each do |basename, summary|
   div
     p

@@ -34,7 +34,7 @@ class RepoCache
           ChildProcessHelper.check_call(%w(git reset --hard))
           ChildProcessHelper.check_call(%w(git checkout master))
           ChildProcessHelper.check_call(%w(git fetch origin))
-          ChildProcessHelper.check_call(%w(git fetch p))
+          ChildProcessHelper.check_call(%w(git fetch p-mongo))
           ChildProcessHelper.check_call(%w(git reset --hard origin/master))
         end
       else
@@ -47,11 +47,11 @@ class RepoCache
         Dir.chdir(cached_repo_path) do
           ChildProcessHelper.check_call(%W(git remote set-url --push origin git@github.com:#{full_name}))
           if full_name =~ /10gen/
-            ChildProcessHelper.check_call(%W(git remote add p git@github.com:p-mongo/#{name} -f))
+            ChildProcessHelper.check_call(%W(git remote add p-mongo git@github.com:p-mongo/#{name} -f))
           else
-            ChildProcessHelper.check_call(%W(git remote add p https://github.com/p-mongo/#{name} -f))
+            ChildProcessHelper.check_call(%W(git remote add p-mongo https://github.com/p-mongo/#{name} -f))
           end
-          ChildProcessHelper.check_call(%W(git remote set-url --push p git@github.com:p-mongo/#{name}))
+          ChildProcessHelper.check_call(%W(git remote set-url --push p-mongo git@github.com:p-mongo/#{name}))
         end
       end
       true
@@ -67,7 +67,13 @@ class RepoCache
           ChildProcessHelper.check_call(%W(git remote rm #{owner_name}))
         rescue
         end
-        ChildProcessHelper.check_call(%W(git remote add #{owner_name} https://github.com/#{owner_name}/#{repo_name} -f))
+        p [full_name,owner_name,repo_name]
+        if full_name =~ /10gen/
+          git.add_remote(owner_name, "git@github.com:#{owner_name}/#{repo_name}")
+        else
+          git.add_remote(owner_name, "https://github.com/#{owner_name}/#{repo_name}")
+        end
+        git.fetch(owner_name)
       end
     end
   end
