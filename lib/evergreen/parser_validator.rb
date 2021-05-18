@@ -75,6 +75,12 @@ module Evergreen
           unless value.key?('id')
             errors << %Q`Axis #{axis['id']} value #{index+1} does not have an id: #{value.inspect}`
           end
+          unless vars = value['variables']
+            errors << %Q`Axis #{axis['id']} value #{index+1} has no variables: #{value.inspect}`
+          end
+          unless Hash === vars
+            errors << %Q`Axis #{axis['id']} value #{index+1} variables are of the wrong type: Hash required: #{value.inspect}`
+          end
         end
         axes[axis['id']] = values.map { |value| value['id'] }.compact
       end
