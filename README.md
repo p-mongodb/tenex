@@ -22,10 +22,21 @@ Create a MongoDB container for persistence:
     docker run -d --name mongodb --network mongodb-net \
       -v /path/to/db:/data/db mongo:4.4
 
-To use the Docker image:
+Create a configuration directory, `/path/to/config`. In this directory
+place the following files:
+
+- `env`: The file with most settings.
+- `id_*`: The SSH identity file(s).
+
+The SSH identity is used for reading and writing private repositories in
+GitHub. To generate it, run:
+
+    ssh-keygen -t ed25519 -C tenex -f config/id_tenex
+
+Run tenex as a Docker container:
 
     docker run -p 8080:80 --network mongodb-net --rm \
-      -v /path/to/config:/etc/tenex pmongo/tenex
+      -v /path/to/config:/etc/tenex:ro pmongo/tenex
 
 The application will be available at http://localhost:8080.
 
