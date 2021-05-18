@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+
+docker build -t pmongo/tenex .
+docker push pmongo/tenex
