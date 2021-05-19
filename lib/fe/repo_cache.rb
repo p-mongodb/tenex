@@ -183,7 +183,7 @@ class RepoCache
         (git rebase --abort || true) &&
         git checkout master &&
         (git branch -D #{branch_name} || true) &&
-        git checkout -b #{branch_name} --track p/#{branch_name} &&
+        git checkout -b #{branch_name} --track p-mongo/#{branch_name} &&
         git rebase master &&
         git push -f
 CMD
