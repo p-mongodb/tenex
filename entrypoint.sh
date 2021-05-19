@@ -21,4 +21,6 @@ for id in /etc/tenex/id_*; do
   fi
 done || true
 
+test -x /etc/tenex/bootstrap.sh && /etc/tenex/bootstrap.sh
+
 exec "$@"
