@@ -303,7 +303,7 @@ Routes.included do
     rc = RepoCache.new(@pull.base_owner_name, @pull.head_repo_name)
     rc.update_cache
     rc.add_remote(@pull.head_owner_name, @pull.head_repo_name)
-    diff = rc.diff_to_master(@pull.head_sha)
+    diff = rc.diff_to_master_with_submodules(@pull.head_sha)
     repo = system.hit_repo(org_name, repo_name)
     eg_patch = eg_client.create_patch(
       project_id: repo.evergreen_project_id,

@@ -167,6 +167,10 @@ class RepoCache
     git.diff('master', head).patch
   end
 
+  def diff_to_master_with_submodules(head)
+    git.diff('master', head).patch
+  end
+
   # Applies patch at the specified path the way Evergreen woud do it.
   def apply_patch(path)
     output = Dir.chdir(cached_repo_path) do
