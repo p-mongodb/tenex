@@ -160,7 +160,7 @@ Routes.included do
         end
       end
       if @category_values['topology']
-        @category_values['topology'] = %w(standalone replica-set sharded-cluster rhel ubuntu)
+        @category_values['topology'] = %w(standalone replica-set sharded-cluster load-balanced rhel ubuntu)
       end
     end
     if @category_values.empty?
