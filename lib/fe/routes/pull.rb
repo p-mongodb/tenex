@@ -13,7 +13,7 @@ Routes.included do
     #@pull.aggregate_result
 
     @configs = {
-      'mongodb-version' => %w(4.9 4.7 4.4 4.2 4.0 3.6 3.4 3.2 3.0 2.6 latest krb),
+      'mongodb-version' => %w(5.0 4.9 4.7 4.4 4.2 4.0 3.6 3.4 3.2 3.0 2.6 latest krb),
       'topology' => %w(standalone replica-set sharded-cluster load-balanced),
       'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
