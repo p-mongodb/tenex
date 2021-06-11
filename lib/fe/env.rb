@@ -6,7 +6,7 @@ autoload :Jirra, 'jirra/client'
 autoload :Confluence , 'confluence/client'
 autoload :JIRA, 'jira-ruby'
 
-OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+#OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 module Env
 
