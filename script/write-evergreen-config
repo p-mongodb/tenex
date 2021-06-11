@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+$: << File.join(File.dirname(__FILE__), '../lib')
+
+ENV['MONGOID_ENV'] = 'development'
+
+require 'fe/boot_lite'
+require 'fe/system'
+require 'fe/env'
+
+Env.system.write_evergreen_config(File.expand_path('~/.evergreen.yml'))

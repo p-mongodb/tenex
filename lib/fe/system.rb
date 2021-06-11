@@ -1,4 +1,5 @@
 require 'pathname'
+autoload :FileUtils, 'fileutils'
 
 class System
   EVERGREEN_BINARY_URL = 'https://evergreen.mongodb.com/clients/linux_amd64/evergreen'
@@ -118,19 +119,27 @@ class System
     TMP_DIR.join('evergreen.yml')
   end
 
+  def evergreen_config
+    {
+      'api_server_host' => 'https://evergreen.mongodb.com/api',
+      'ui_server_host' => 'https://evergreen.mongodb.com',
+      'api_key' => ENV.fetch('EVERGREEN_API_KEY'),
+      'user' => ENV.fetch('EVERGREEN_AUTH_USERNAME'),
+    }
+  end
+
+  def write_evergreen_config(path)
+    config = evergreen_config
+    File.open("#{path}.part", 'w') do |f|
+      f << YAML.dump(config)
+    end
+    FileUtils.mv("#{path}.part", path)
+  end
+
   def create_global_evergreen_config_if_needed
     unless File.exists?(evergreen_global_config_path)
-      config = {
-        'api_server_host' => 'https://evergreen.mongodb.com/api',
-        'ui_server_host' => 'https://evergreen.mongodb.com',
-        'api_key' => ENV['EVERGREEN_API_KEY'],
-        'user' => ENV['EVERGREEN_AUTH_USERNAME'],
-      }
       FileUtils.mkdir_p(File.dirname(evergreen_global_config_path))
-      File.open("#{evergreen_global_config_path}.part", 'w') do |f|
-        f << YAML.dump(config)
-      end
-      FileUtils.mv("#{evergreen_global_config_path}.part", evergreen_global_config_path)
+      write_evergreen_config(evergreen_global_config_path)
     end
   end
 end

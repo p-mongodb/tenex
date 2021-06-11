@@ -94,6 +94,10 @@ module Env
       )
   end
 
+  module_function def system
+    @system ||= System.new(eg_client, gh_client)
+  end
+
   module Access
     %i(
       jira_client jirra_client confluence_client gh_client eg_client
