@@ -8,8 +8,13 @@ require 'evergreen/parser_validator'
 require 'fe/boot_lite'
 require 'fe/env'
 
+path = ARGV.shift
+unless path
+  raise "Usage: validate-eg-config path"
+end
+
 begin
-  Evergreen::ParserValidator.new(File.read(ARGV.shift)).validate!
+  Evergreen::ParserValidator.new(File.read(path)).validate!
 rescue Evergreen::ProjectFileInvalid => e
   puts e.to_s
   exit 1
