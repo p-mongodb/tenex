@@ -1,15 +1,15 @@
 class EvergreenStatusPresenter
   extend Forwardable
 
-  def initialize(status, pull, eg_client, system)
+  def initialize(status, pull, eg_client, system_fe)
     @status = status
     @pull = pull
     @eg_client = eg_client
-    @system = system
+    @system_fe = system_fe
   end
 
   attr_reader :status
-  attr_reader :eg_client, :system
+  attr_reader :eg_client, :system_fe
   def_delegators :@status, :[], :context, :updated_at, :finished?
 
   def name
@@ -42,12 +42,12 @@ class EvergreenStatusPresenter
   end
 
   def mongod_log_url
-    project = system.evergreen_project_for_github_repo(@pull.base_owner_name, @pull.base_repo_name)
+    project = system_fe.evergreen_project_for_github_repo(@pull.base_owner_name, @pull.base_repo_name)
     "/eg/#{project.id}/versions/#{@pull.evergreen_version_id}/builds/#{build_id}/mongod-log"
   end
 
   def server_logs_url
-    project = system.evergreen_project_for_github_repo(@pull.base_owner_name, @pull.base_repo_name)
+    project = system_fe.evergreen_project_for_github_repo(@pull.base_owner_name, @pull.base_repo_name)
     "/eg/#{project.id}/versions/#{@pull.evergreen_version_id}/builds/#{build_id}/artifact-logs"
   end
 

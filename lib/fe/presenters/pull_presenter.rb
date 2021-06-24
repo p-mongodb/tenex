@@ -5,15 +5,15 @@ require 'fe/mappings'
 class PullPresenter
   extend Forwardable
 
-  def initialize(pull, eg_client, system, repo)
+  def initialize(pull, eg_client, system_fe, repo)
     @pull = pull
     @eg_client = eg_client
-    @system = system
+    @system_fe = system_fe
     @repo = repo
   end
 
   attr_reader :pull
-  attr_reader :eg_client, :system
+  attr_reader :eg_client, :system_fe
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
     :evergreen_version_id, :head_branch_name,
     :approved?, :review_requested?,
@@ -23,7 +23,7 @@ class PullPresenter
     # Sometimes statuses in github are duplicated, work around
     @statuses ||= begin
       statuses = @pull.statuses.map do |status|
-        status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
+        status = EvergreenStatusPresenter.new(status, @pull, eg_client, system_fe)
         if status.travis? && @repo.project && !@repo.project.travis?
           nil
         else
@@ -64,7 +64,7 @@ class PullPresenter
   def top_evergreen_status
     status = @pull.top_evergreen_status
     if status
-      status = EvergreenStatusPresenter.new(status, @pull, eg_client, system)
+      status = EvergreenStatusPresenter.new(status, @pull, eg_client, system_fe)
     end
     status
   end
@@ -74,11 +74,11 @@ class PullPresenter
   end
 
   def evergreen_project_id?
-    !!system.evergreen_project_for_github_repo
+    !!system_fe.evergreen_project_for_github_repo
   end
 
   def evergreen_project_id
-    system.evergreen_project_for_github_repo!(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
+    system_fe.evergreen_project_for_github_repo!(pull.repo_full_name.split('/').first, pull.repo_full_name.split('/')[1]).id
   end
 
   def have_rspec_json?

@@ -10,14 +10,15 @@ Routes.included do
 
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
-    @repo = system.hit_repo(org_name, repo_name)
+  byebug
+    @repo = Env.system_fe.hit_repo(org_name, repo_name)
     begin
       @pulls = gh_repo(org_name, repo_name).pulls(
         creator: params[:creator],
       )
     rescue Github::Client::ApiError => e
       if e.status == 404
-        project = system.evergreen_project_for_github_repo(org_name, repo_name)
+        project = system_fe.evergreen_project_for_github_repo(org_name, repo_name)
         if project
           redirect "/projects/#{project.id}"
           return
@@ -25,26 +26,26 @@ Routes.included do
       end
       raise
     end
-    @pulls.map! { |pull| PullPresenter.new(pull, eg_client, system, @repo) }
+    @pulls.map! { |pull| PullPresenter.new(pull, eg_client, system_fe, @repo) }
     @jira_project = Mappings.repo_full_name_to_jira_project(@repo.full_name)
     slim :pulls
   end
 
   get '/repos/:org/:repo/settings' do |org_name, repo_name|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     @project = @repo.project
     slim :repo_settings
   end
 
   get '/repos/:org/:repo/workflow/:settting' do |org_name, repo_name, setting|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     @repo.workflow = setting == 'on'
     @repo.save!
     redirect "/repos/#{@repo.full_name}"
   end
 
   get '/repos/:org/:repo/create-project' do |org_name, repo_name|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     project = @repo.project
     if project.nil?
       project = Project.where(name: @repo.full_name).first
@@ -62,7 +63,7 @@ Routes.included do
   end
 
   get '/repos/:org/:repo/recent-branches' do |org_name, repo_name|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     rc = RepoCache.new('p-mongo', @repo.repo_name)
     rc.update_cache
     @branches = rc.recent_remote_branches(10)
@@ -70,7 +71,7 @@ Routes.included do
   end
 
   get '/repos/:org/:repo/upstream-branches' do |org_name, repo_name|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     rc = RepoCache.new('mongodb', @repo.repo_name)
     rc.update_cache
     branches = rc.branches('-r').select do |name|
@@ -89,7 +90,7 @@ Routes.included do
   end
 
   get '/repos/:org/:repo/branches/:branch/make-pr' do |org_name, repo_name, branch_name|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     if branch_name.to_i.to_s == branch_name
       pr_num = TicketedPrMaker.new(branch_name.to_i).make_pr
     else
@@ -99,7 +100,7 @@ Routes.included do
   end
 
   get '/repos/:org/:repo/branches/:branch/submit-patch' do |org_name, repo_name, branch_name|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     branch_owner_name, branch_name = branch_name.split(':')
     rc = RepoCache.new('mongodb', @repo.repo_name)
     rc.update_cache

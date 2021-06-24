@@ -4,9 +4,9 @@ Routes.included do
 
   # pull
   get '/repos/:org/:repo/pulls/:id' do |org_name, repo_name, id|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
-    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull = PullPresenter.new(pull, eg_client, system_fe, @repo)
     @statuses = pull.statuses
 
     #@pull.fetch_results
@@ -174,9 +174,9 @@ Routes.included do
 
   # pull perf
   get '/repos/:org/:repo/pulls/:id/perf' do |org_name, repo_name, id|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
-    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull = PullPresenter.new(pull, eg_client, system_fe, @repo)
     @statuses = @pull.statuses.sort_by do |status|
       if status.build_id.nil?
         # top level build
@@ -191,15 +191,15 @@ Routes.included do
 
   # pull eg perf
   get '/repos/:org/:repo/pulls/:id/eg-perf' do |org_name, repo_name, id|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(id)
-    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull = PullPresenter.new(pull, eg_client, system_fe, @repo)
     eg_version = @pull.evergreen_version
     tasks = eg_version.builds.map { |build| build.tasks.first }
     @tasks = tasks.sort_by do |task|
       -task.time_taken
     end.map do |task|
-      EvergreenTaskPresenter.new(task, @pull, eg_client, system)
+      EvergreenTaskPresenter.new(task, @pull, eg_client, system_fe)
     end
     @branch_name = @pull.head_branch_name
     slim :eg_perf
@@ -274,11 +274,11 @@ Routes.included do
 
   get '/repos/:org/:repo/pulls/:id/request-review' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     @pull.update(draft: false)
     @statuses = @pull.request_review(*ENV['PR_REVIEWERS'].split(','))
 
-    pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+    pull_p = PullPresenter.new(@pull, eg_client, system_fe, @repo)
     jira_ticket = pull_p.jira_ticket_number
     if jira_ticket
       orchestrator = Orchestrator.new
@@ -304,7 +304,7 @@ Routes.included do
     rc.update_cache
     rc.add_remote(@pull.head_owner_name, @pull.head_repo_name)
     diff = rc.diff_to_master_with_submodules(@pull.head_sha)
-    repo = system.hit_repo(org_name, repo_name)
+    repo = system_fe.hit_repo(org_name, repo_name)
     eg_patch = eg_client.create_patch(
       project_id: repo.evergreen_project_id,
       diff_text: diff,
@@ -348,9 +348,9 @@ Routes.included do
 
   # aggregated results - mri
   get '/repos/:org/:repo/pulls/:id/mri-results' do |org_name, repo_name, pull_id|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(pull_id)
-    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull = PullPresenter.new(pull, eg_client, system_fe, @repo)
     failed = params[:failed] == '1'
     @pull.fetch_results(failed: failed)
     @result = @pull.aggregate_result(failed: failed) do |result|
@@ -374,9 +374,9 @@ Routes.included do
 
   # aggregated results - jruby
   get '/repos/:org/:repo/pulls/:id/jruby-results' do |org_name, repo_name, pull_id|
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
     pull = gh_repo(org_name, repo_name).pull(pull_id)
-    @pull = PullPresenter.new(pull, eg_client, system, @repo)
+    @pull = PullPresenter.new(pull, eg_client, system_fe, @repo)
     @pull.fetch_results
     @result = @pull.aggregate_result { |result| result.jruby? }
     @filtered = true
@@ -395,7 +395,7 @@ Routes.included do
 
   get '/repos/:org/:repo/pulls/:id/retitle-jira' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
-    pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+    pull_p = PullPresenter.new(@pull, eg_client, system_fe, @repo)
 
     subject = jirra_client.subject_for_issue(pull_p.jira_issue_key!)
     @pull.update(title: subject)
@@ -408,9 +408,9 @@ Routes.included do
   get '/repos/:org/:repo/pulls/:id/eg-validate' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
 
-    system.create_global_evergreen_config_if_needed
+    system_fe.create_global_evergreen_config_if_needed
 
-    eg_path = system.evergreen_binary_path
+    eg_path = system_fe.evergreen_binary_path
     unless eg_path
       raise 'No evergreen binary path'
     end
@@ -441,7 +441,7 @@ Routes.included do
         summary.ruby_error = e.to_s
       end
 
-      cmd = [eg_path, '-c', system.evergreen_global_config_path.to_s,
+      cmd = [eg_path, '-c', system_fe.evergreen_global_config_path.to_s,
         'validate', project_eg_config_path.to_s]
       proc, output = ChildProcessHelper.get_output(cmd)
       if proc.exit_code != 0
@@ -480,9 +480,9 @@ Routes.included do
 
   get '/repos/:org/:repo/pulls/:id/in-progress' do |org_name, repo_name, pull_id|
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
-    @repo = system.hit_repo(org_name, repo_name)
+    @repo = system_fe.hit_repo(org_name, repo_name)
 
-    pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+    pull_p = PullPresenter.new(@pull, eg_client, system_fe, @repo)
     jira_ticket = pull_p.jira_ticket_number
     if jira_ticket
       orchestrator = Orchestrator.new

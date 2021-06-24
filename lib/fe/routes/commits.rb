@@ -17,8 +17,8 @@ Routes.included do
     subject, message = rc.commitish_message(@pull.head_branch_name)
     @pull.update(title: subject, body: message)
 
-    @repo = system.hit_repo(org_name, repo_name)
-    pull_p = PullPresenter.new(@pull, eg_client, system, @repo)
+    @repo = system_fe.hit_repo(org_name, repo_name)
+    pull_p = PullPresenter.new(@pull, eg_client, system_fe, @repo)
     jira_ticket = pull_p.jira_ticket_number
     if jira_ticket
       orchestrator = Orchestrator.new

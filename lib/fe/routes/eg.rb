@@ -10,7 +10,7 @@ end
 Routes.included do
 
   get '/eg/update-binary' do
-    system.fetch_evergreen_binary
+    system_fe.fetch_evergreen_binary
     redirect return_path || '/'
   end
 
@@ -141,7 +141,7 @@ Routes.included do
     @project_id = project_id
     @version = Evergreen::Version.new(eg_client, version_id)
     if @version.pr_info
-      @newest_version = system.newest_evergreen_version(@version)
+      @newest_version = system_fe.newest_evergreen_version(@version)
       if @newest_version && @newest_version.id == @version.id
         @newest_version = nil
       end

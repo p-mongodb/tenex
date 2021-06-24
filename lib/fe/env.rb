@@ -94,13 +94,13 @@ module Env
       )
   end
 
-  module_function def system
-    @system ||= System.new(eg_client, gh_client)
+  module_function def system_fe
+    @system_fe ||= System.new(eg_client, gh_client)
   end
 
   module Access
     %i(
-      jira_client jirra_client confluence_client gh_client eg_client
+      jira_client jirra_client confluence_client gh_client eg_client system_fe
     ).each do |m|
       define_method(m) do
         Env.send(m)
