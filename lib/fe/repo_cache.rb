@@ -28,32 +28,38 @@ class RepoCache
   def update_cache
     @cache_updated ||= begin
       FileUtils.mkdir_p(repos_path)
-      if File.exist?(cached_repo_path)
-        Dir.chdir(cached_repo_path) do
-          ChildProcessHelper.call(%w(git rebase --abort))
-          ChildProcessHelper.check_call(%w(git reset --hard))
-          ChildProcessHelper.check_call(%w(git checkout master))
-          ChildProcessHelper.check_call(%w(git fetch origin))
-          ChildProcessHelper.check_call(%w(git fetch p-mongo))
-          ChildProcessHelper.check_call(%w(git reset --hard origin/master))
-        end
-      else
-        ENV['GIT_SSH_COMMAND'] = 'ssh -o StrictHostKeyChecking=no'
-        if full_name =~ /10gen/
-          ChildProcessHelper.check_call(%W(git clone git@github.com:#{full_name}) + [cached_repo_path.to_s])
-        else
-          ChildProcessHelper.check_call(%W(git clone https://github.com/#{full_name}) + [cached_repo_path.to_s])
-        end
-        Dir.chdir(cached_repo_path) do
-          ChildProcessHelper.check_call(%W(git remote set-url --push origin git@github.com:#{full_name}))
-          if full_name =~ /10gen/
-            ChildProcessHelper.check_call(%W(git remote add p-mongo git@github.com:p-mongo/#{name} -f))
-          else
-            ChildProcessHelper.check_call(%W(git remote add p-mongo https://github.com/p-mongo/#{name} -f))
-          end
-          ChildProcessHelper.check_call(%W(git remote set-url --push p-mongo git@github.com:p-mongo/#{name}))
-        end
+      unless File.exist?(cached_repo_path)
+        ChildProcessHelper.call(['git', 'init', cached_repo_path])
       end
+      ENV['GIT_SSH_COMMAND'] = 'ssh -o StrictHostKeyChecking=no'
+      Dir.chdir(cached_repo_path) do
+        ChildProcessHelper.call(%w(git rebase --abort))
+        ChildProcessHelper.check_call(%w(git reset --hard))
+        #ChildProcessHelper.check_call(%w(git checkout master))
+        #ChildProcessHelper.check_call(%w(git fetch upstream))
+        #ChildProcessHelper.check_call(%w(git fetch p-mongo))
+        #ChildProcessHelper.check_call(%w(git reset --hard upstream/master))
+      end
+
+      upstream_full_name = if full_name =~ /10gen/
+        "git@github.com:#{full_name}"
+      else
+        "https://github.com/#{full_name}"
+      end
+      upstream_remote = git.remotes.detect { |r| r.name == 'upstream' } ||
+        git.add_remote('upstream', upstream_full_name)
+      upstream_remote.fetch
+      git.set_remote_url('upstream', "git@github.com:#{full_name}", push: true)
+
+      p_full_name = if full_name =~ /10gen/
+        "git@github.com:p-mongo/#{name}"
+      else
+        "https://github.com/p-mongo/#{name}"
+      end
+      p_remote = git.remotes.detect { |r| r.name == 'p-mongo' } ||
+        git.add_remote('p-mongo', p_full_name)
+      git.set_remote_url('p-mongo', "git@github.com:p-mongo/#{name}", push: true)
+      p_remote.fetch
       true
     end
     self
@@ -89,6 +95,10 @@ class RepoCache
       output = ChildProcessHelper.check_output(%w(git show --pretty=%H -s) + [commitish])
       output.strip
     end
+  end
+
+  def remote_names
+    git.remotes.map(&:name)
   end
 
   def my_remote_branches
@@ -300,7 +310,7 @@ CMD
 
   def upstream_branches
     branches('-r').map do |name|
-      if name =~ /^origin\//
+      if name =~ /^upstream\//
         name.sub(/.+?\//, '')
       else
         nil

@@ -9,12 +9,18 @@ ProjectConfig = Struct.new(
   :eg_project_name,
 )
 
+class ProjectConfig
+  def eg_project_names
+    Array(eg_project_name)
+  end
+end
+
 PROJECT_CONFIGS = {
   'mongo-ruby-driver' => ProjectConfig.new(
     'mongodb',
     'mongo-ruby-driver',
     'RUBY',
-    'mongo-ruby-driver',
+    %w(mongo-ruby-driver mongo-ruby-driver-atlas),
   ),
   'mongoid' => ProjectConfig.new(
     'mongodb',
@@ -135,9 +141,15 @@ end
 
 class EgProjectResolver
   def initialize(eg_project_name)
-    @project_config = PROJECT_CONFIGS.detect do |key, config|
-      config.eg_project_name == eg_project_name
-    end.last
+    map = PROJECT_CONFIGS.detect do |key, config|
+      config.eg_project_names.include?(eg_project_name)
+    end
+
+    unless map
+      raise "No project config for #{eg_project_name}"
+    end
+
+    @project_config = map.last
   end
 
   attr_reader :project_config

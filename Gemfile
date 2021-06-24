@@ -39,8 +39,10 @@ gem 'oj'
 gem 'curb'
 gem 'aws-sdk-core'
 gem 'human_size'
-gem 'git'
 gem 'addressable'
+#gem 'git'
+gem 'p-mongo-git'
+#gem 'git', path: '../exp/ruby-git'
 
 # version pins that we do not directly depend on
 

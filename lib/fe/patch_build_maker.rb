@@ -23,7 +23,7 @@ class PatchBuildMaker
   end
 
   def base_branch
-    options[:base_branch] || 'origin/master'
+    options[:base_branch] || 'upstream/master'
   end
 
   def eg_project_config
@@ -31,6 +31,8 @@ class PatchBuildMaker
       EgProjectResolver.new(eg_project_id).project_config
     else
       ProjectDetector.new.project_config
+    end.tap do |v|
+      @eg_project_id ||= v.eg_project_names.first
     end
   end
 
@@ -41,7 +43,12 @@ class PatchBuildMaker
     rc.update_cache
 
     base_sha = rc.commitish_sha(base_branch)
-    ChildProcessHelper.check_call(%w(git fetch origin))
+    remote_name = if rc.remote_names.include?('upstream')
+      'upstream'
+    else
+      'origin'
+    end
+    ChildProcessHelper.check_call(['git', 'fetch', remote_name])
 
     if options[:full]
       ChildProcessHelper.check_call(%W(
@@ -56,7 +63,7 @@ class PatchBuildMaker
     else
       diff_text = get_diff_text
 
-      patch_path = Pathname.new(File.expand_path('~/.cache/patches')).join(config.eg_project_name + '.patch')
+      patch_path = Pathname.new(File.expand_path('~/.cache/patches')).join(@eg_project_id + '.patch')
       FileUtils.mkdir_p(patch_path.dirname)
       File.open(patch_path, 'w') do |f|
         f << diff_text
@@ -89,7 +96,7 @@ class PatchBuildMaker
 
   def create_patch(base_sha, diff_text)
     patch = eg_client.create_patch(
-      project_id: eg_project_config.eg_project_name,
+      project_id: @eg_project_id,
       base_sha: base_sha,
       diff_text: diff_text,
       finalize: true,
