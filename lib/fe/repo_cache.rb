@@ -29,7 +29,7 @@ class RepoCache
     @cache_updated ||= begin
       FileUtils.mkdir_p(repos_path)
       unless File.exist?(cached_repo_path)
-        ChildProcessHelper.call(['git', 'init', cached_repo_path])
+        ChildProcessHelper.call(['git', 'init', cached_repo_path.to_s])
       end
       ENV['GIT_SSH_COMMAND'] = 'ssh -o StrictHostKeyChecking=no'
       Dir.chdir(cached_repo_path) do
