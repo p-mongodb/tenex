@@ -10,7 +10,6 @@ Routes.included do
 
   # repo
   get '/repos/:org/:repo' do |org_name, repo_name|
-  byebug
     @repo = Env.system_fe.hit_repo(org_name, repo_name)
     begin
       @pulls = gh_repo(org_name, repo_name).pulls(
