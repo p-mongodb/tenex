@@ -195,10 +195,10 @@ class RepoCache
     Dir.chdir(cached_repo_path) do
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
         (git rebase --abort || true) &&
-        git checkout master &&
+        git fetch upstream &&
         (git branch -D #{branch_name} || true) &&
         git checkout -b #{branch_name} --track p-mongo/#{branch_name} &&
-        git rebase master &&
+        git rebase upstream/master &&
         git push -f
 CMD
     end
@@ -230,8 +230,7 @@ CMD
       subject = jirra_client.subject_for_issue(ticket)
 
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
-        git checkout master &&
-        git pull &&
+        git fetch upstream &&
         if ! git remote |grep -qx p; then
           git remote add p https://github.com/p-mongo/#{name} &&
           git remote set-url --push p git@github.com:p-mongo/#{name}
@@ -239,9 +238,9 @@ CMD
         git fetch p &&
         (git branch -D #{branch_name} || true) &&
         git checkout -b #{branch_name} --track p/#{branch_name} &&
-        git reset --soft $(git merge-base master #{branch_name}) &&
+        git reset --soft $(git merge-base upstream/master #{branch_name}) &&
         git commit -am "#{subject.gsub(/(["$`])/) { "\\#{$1}" }}" &&
-        git rebase master &&
+        git rebase upstream/master &&
         git push p #{branch_name} -f
 CMD
     end
