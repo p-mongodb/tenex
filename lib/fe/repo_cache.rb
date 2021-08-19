@@ -196,6 +196,7 @@ class RepoCache
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
         (git rebase --abort || true) &&
         git fetch upstream &&
+        git checkout upstream/master &&
         (git branch -D #{branch_name} || true) &&
         git checkout -b #{branch_name} --track p-mongo/#{branch_name} &&
         git rebase upstream/master &&
@@ -231,6 +232,7 @@ CMD
 
       ChildProcessHelper.check_call(['sh', '-c', <<-CMD])
         git fetch upstream &&
+        git checkout upstream/master &&
         if ! git remote |grep -qx p; then
           git remote add p https://github.com/p-mongo/#{name} &&
           git remote set-url --push p git@github.com:p-mongo/#{name}
