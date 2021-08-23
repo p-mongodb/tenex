@@ -30,6 +30,14 @@ module Github
       info['head']['label']
     end
 
+    def labels
+      info.fetch('labels')
+    end
+
+    def label_names
+      labels.map { |i| i.fetch('name') }
+    end
+
     # Who opened the PR (could be different from author of PR's head)
     def creator_name
       info['user']['login']
@@ -249,6 +257,16 @@ module Github
 
     def close
       update(state: 'closed')
+    end
+
+    def add_label(*labels)
+      client.post_json("repos/#{repo_full_name}/issues/#{number}/labels", labels: labels)
+    end
+
+    def remove_label(*labels)
+      labels.each do |label|
+        client.request_json(:delete, "repos/#{repo_full_name}/issues/#{number}/labels/#{label}")
+      end
     end
   end
 end

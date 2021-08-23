@@ -511,4 +511,20 @@ Routes.included do
 
     redirect "/repos/#{@pull.repo_full_name}"
   end
+
+  get '/repos/:org/:repo/pulls/:id/add-label' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    label = params.fetch('label')
+    @pull.add_label(label)
+
+    redirect "/repos/#{@pull.repo_full_name}"
+  end
+
+  get '/repos/:org/:repo/pulls/:id/remove-label' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    label = params.fetch('label')
+    @pull.remove_label(label)
+
+    redirect "/repos/#{@pull.repo_full_name}"
+  end
 end

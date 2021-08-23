@@ -17,7 +17,7 @@ class PullPresenter
   def_delegators :@pull, :[], :repo_full_name, :travis_statuses,
     :evergreen_version_id, :head_branch_name,
     :approved?, :review_requested?,
-    :jira_project, :jira_ticket_number, :jira_issue_key!
+    :jira_project, :jira_ticket_number, :jira_issue_key!, :labels, :label_names
 
   def statuses
     # Sometimes statuses in github are duplicated, work around

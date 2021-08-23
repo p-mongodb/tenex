@@ -45,3 +45,13 @@ p
       - elsif pull.review_requested?
         '
         span Review requested.
+      '
+      - if pull.label_names.include?('oleg-backlog')
+        a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/remove-label?label=oleg-backlog" -oleg-backlog
+      - else
+        a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/add-label?label=oleg-backlog" +oleg-backlog
+      '
+      - if pull.label_names.include?('oleg-deferred')
+        a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/remove-label?label=oleg-deferred" -oleg-deferred
+      - else
+        a href="/repos/#{pull.repo_full_name}/pulls/#{pull['number']}/add-label?label=oleg-deferred" +oleg-deferred
