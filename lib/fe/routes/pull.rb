@@ -527,4 +527,26 @@ Routes.included do
 
     redirect "/repos/#{@pull.repo_full_name}"
   end
+
+  get '/repos/:org/:repo/pulls/:id/smart-add-label/oleg-check' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @pull.add_label('oleg-check')
+    remove = @pull.label_names.select { |name| %w(oleg-deferred oleg-done).include?(name) }
+    if remove.any?
+      @pull.remove_label(*remove)
+    end
+
+    redirect "/repos/#{@pull.repo_full_name}"
+  end
+
+  get '/repos/:org/:repo/pulls/:id/smart-add-label/oleg-done' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @pull.add_label('oleg-done')
+    remove = @pull.label_names.select { |name| %w(oleg-deferred oleg-check).include?(name) }
+    if remove.any?
+      @pull.remove_label(*remove)
+    end
+
+    redirect "/repos/#{@pull.repo_full_name}"
+  end
 end

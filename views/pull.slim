@@ -42,6 +42,12 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/merge" Merge
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/close" Close
+  - unless @pull.label_names.include?('oleg-check') || @pull.label_names.include?('oleg-done')
+    '
+    a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/smart-add-label/oleg-check" +oleg-check
+  - unless @pull.label_names.include?('oleg-done')
+    '
+    a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/smart-add-label/oleg-done" +oleg-done
 
 p
   - if (eg_status = @pull.top_evergreen_status) && @pull.evergreen_version_id
