@@ -31,6 +31,8 @@ p
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle-commit" Retitle from commit
   '
   a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/retitle-jira" Retitle from Jira
+  '
+  a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull['number']}/unresolve" Unresolve comments
 
 p
   - if (@pull.jira_ticket_number rescue nil)

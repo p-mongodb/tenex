@@ -236,6 +236,12 @@ module Github
       end
     end
 
+    def reviews
+      @reviews ||= client.get_json("repos/#{repo_full_name}/pulls/#{number}/reviews").map do |info|
+        Review.new(client, info: info)
+      end
+    end
+
     def events
       client.paginated_get("repos/#{repo_full_name}/issues/#{number}/events")
     end

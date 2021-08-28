@@ -549,4 +549,15 @@ Routes.included do
 
     redirect "/repos/#{@pull.repo_full_name}"
   end
+
+=begin does not work because api does not expose resolved flag
+  get '/repos/:org/:repo/pulls/:id/unresolve' do |org_name, repo_name, pull_id|
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    @pull.reviews.each do |review|
+      review.comments
+    end
+
+    redirect "/repos/#{@pull.repo_full_name}"
+  end
+=end
 end
