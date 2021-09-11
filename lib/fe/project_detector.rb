@@ -94,6 +94,12 @@ PROJECT_CONFIGS = {
     nil,
     'drivers-atlas-testing',
   ),
+  'astrolabe-v1' => ProjectConfig.new(
+    'mongodb-labs',
+    'drivers-atlas-testing',
+    nil,
+    'drivers-atlas-testing-v1',
+  ),
 }
 
 class ProjectDetector
