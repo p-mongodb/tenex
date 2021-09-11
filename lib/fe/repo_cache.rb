@@ -1,3 +1,4 @@
+gem 'p-mongo-git'
 autoload :Git, 'git'
 require 'tempfile'
 require 'pathname'
