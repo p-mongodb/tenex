@@ -48,6 +48,10 @@ module Evergreen
       info.fetch('admins')
     end
 
+    def subscriptions
+      info.fetch('subscriptions').map { |info| Subscription.new(client, info: info, project: self) }
+    end
+
     def recent_patches
       begin
         payload = client.get_json("projects/#{id}/patches")
