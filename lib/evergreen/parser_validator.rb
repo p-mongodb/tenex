@@ -57,7 +57,30 @@ module Evergreen
             errors << %Q`Function "#{name}" command #{index+1} contains data of wrong type: expected Hash, found #{command.class}: #{command}`
             next
           end
-          unless command['command']
+          case command['command']
+          when 'shell.exec'
+            unless params = command['params']
+              errors << %Q~Function "#{name}" command #{index+1} is a #{command['command']} and it is required to have `params' but does not:\n#{command.to_yaml}~
+              next
+            end
+            if params['command']
+              errors << %Q~Function "#{name}" command #{index+1} is a shell.exec and it must use `script' not `command':\n#{command.to_yaml}~
+            end
+            unless params['script']
+              errors << %Q~Function "#{name}" command #{index+1} is a shell.exec and it must have params/script argument but does not:\n#{command.to_yaml}~
+            end
+          when 'subprocess.exec'
+            unless params = command['params']
+              errors << %Q~Function "#{name}" command #{index+1} is a #{command['command']} and it is required to have `params' but does not:\n#{command.to_yaml}~
+              next
+            end
+            if params['script']
+              errors << %Q~Function "#{name}" command #{index+1} is a subprocess.exec and it must use `command' not `script':\n#{command.to_yaml}~
+            end
+            unless params['command']
+              errors << %Q~Function "#{name}" command #{index+1} is a subprocess.exec and it must have params/command argument but does not:\n#{command.to_yaml}~
+            end
+          when nil
             errors << %Q`Function "#{name}" command #{index+1} does not have the "command" key:\n#{command.to_yaml}`
           end
         end

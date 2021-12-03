@@ -71,6 +71,50 @@ describe Evergreen::ParserValidator do
     end
   end
 
+  context 'shell.exec with script' do
+    let(:config_path) { CONFIG_ROOT.join('function_shell_exec_script.yml') }
+
+    include_examples 'succeeds'
+  end
+
+  context 'shell.exec with command' do
+    let(:config_path) { CONFIG_ROOT.join('function_shell_exec_command.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Function.*must use.*script.*not.*command/
+    end
+  end
+
+  context 'shell.exec without command or script' do
+    let(:config_path) { CONFIG_ROOT.join('function_shell_exec_no_script.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Function.*must have params.script argument but does not/
+    end
+  end
+
+  context 'subprocess.exec with command' do
+    let(:config_path) { CONFIG_ROOT.join('function_subprocess_exec_command.yml') }
+
+    include_examples 'succeeds'
+  end
+
+  context 'subprocess.exec with script' do
+    let(:config_path) { CONFIG_ROOT.join('function_subprocess_exec_script.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Function.*must use.*command.*not.*script/
+    end
+  end
+
+  context 'subprocess.exec without command or script' do
+    let(:config_path) { CONFIG_ROOT.join('function_subprocess_exec_no_command.yml') }
+
+    it 'fails' do
+      error_msg.should =~ /Function.*must have params.command argument but does not/
+    end
+  end
+
   context 'axis name missing' do
     let(:config_path) { CONFIG_ROOT.join('axis_name_missing.yml') }
 

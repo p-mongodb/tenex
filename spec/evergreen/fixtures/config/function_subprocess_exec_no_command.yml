@@ -1,0 +1,8 @@
+functions:
+
+  "execute":
+    - command: subprocess.exec
+      params:
+        not_command: |
+          ${PREPARE_SHELL}
+          echo '{"results": [{ "status": "FAIL", "test_file": "Build", "log_raw": "No test-results.json found was created"  } ]}' > ${PROJECT_DIRECTORY}/test-results.json
