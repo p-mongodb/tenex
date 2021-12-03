@@ -39,6 +39,13 @@ class PatchBuildMaker
   def submit
     config = eg_project_config
 
+    eg_config = eg_client.project_by_id(config.eg_project_name)
+    config_file_path = eg_config.config_file_path
+
+    contents = File.read(config_file_path)
+    validator = Evergreen::ParserValidator.new(contents)
+    validator.validate!
+
     rc = RepoCache.new(config.gh_upstream_owner_name, config.gh_repo_name)
     rc.update_cache
 

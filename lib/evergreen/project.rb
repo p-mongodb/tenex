@@ -48,6 +48,10 @@ module Evergreen
       info.fetch('admins')
     end
 
+    def config_file_path
+      info.fetch('remote_path')
+    end
+
     def subscriptions
       info.fetch('subscriptions').map { |info| Subscription.new(client, info: info, project: self) }
     end
