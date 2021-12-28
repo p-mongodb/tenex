@@ -94,6 +94,10 @@ module EvergreenCache
         end
       end
       text = span.text.gsub("\ufff9", "\x1b")
+
+      # Repair malformed UTF-8.
+      text = text.scrub('?')
+
       # Remove priority. https://jira.mongodb.org/browse/EVG-7615
       text.sub!(/\A\[P: \d+\] /, '')
       if text =~ /\A\[.+?\] \[egos:(.) (.+?\d{3})\d{3}\]( .*)?\z/
