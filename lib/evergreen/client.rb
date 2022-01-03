@@ -3,6 +3,10 @@ require 'faraday'
 require_relative '../paginated_get'
 require_relative './client_methods'
 require_relative './error'
+require 'active_support/version'
+if ActiveSupport.version >= Gem::Version.new(7)
+  require 'active_support/isolated_execution_state'
+end
 require 'active_support/core_ext/string'
 
 module Evergreen
