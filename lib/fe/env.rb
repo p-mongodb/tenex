@@ -22,7 +22,7 @@ module Env
         :auth_type    => :oauth,
       }
 
-      JIRA::Client.new(options).tap do |client|
+      JIRA::Client.new(**options).tap do |client|
         client.set_access_token(
           ENV['JIRA_ACCESS_TOKEN'],
           ENV['JIRA_ACCESS_TOKEN_SECRET'],
@@ -42,7 +42,7 @@ module Env
         :site         => ENV['JIRA_SITE'],
       }
 
-      ::Jirra::Client.new(options)
+      ::Jirra::Client.new(**options)
     end
   end
 

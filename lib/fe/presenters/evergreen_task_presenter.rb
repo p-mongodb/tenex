@@ -28,6 +28,6 @@ class EvergreenTaskPresenter
   end
 
   def results_url
-    "/eg/#{URI.escape(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{build_id}?branch=#{@pull.head_branch_name}"
+    "/eg/#{Addressable::URI.encode(@pull.evergreen_project_id)}/versions/#{@pull.evergreen_version_id}/results/#{build_id}?branch=#{@pull.head_branch_name}"
   end
 end

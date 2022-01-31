@@ -14,7 +14,8 @@ gem 'dotenv'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'slim'
-gem 'shotgun'
+# https://github.com/rtomayko/shotgun/pull/74
+gem 'shotgun3'
 gem 'link_header'
 # Per https://github.com/travis-ci/travis.rb/pull/747 patching travis
 # should not be necessary.

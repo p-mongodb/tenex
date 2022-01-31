@@ -60,16 +60,16 @@ table
           a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/artifact-logs" Server Logs
           - if task.failed? && build.artifact?('rspec.json')
             '
-            a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{build.id}"
+            a href="/eg/#{Addressable::URI.encode(@project_id)}/versions/#{@version.id}/results/#{build.id}"
               i.fa.fa-puzzle-piece title='Results'
           - if task.waiting?
             '
-            a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
+            a href="/eg/#{Addressable::URI.encode(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
             '
             | (p=#{task.priority})
           - if task.failed?
             '
-            a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/restart"
+            a href="/eg/#{Addressable::URI.encode(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/restart"
               i.fa.fa-repeat title='Restart'
         - else
           ul
@@ -84,11 +84,11 @@ table
                 a href="/eg/#{@project_id}/versions/#{@version.id}/builds/#{build.id}/tasks/#{task.id}/log" Log
                 - if task.failed? && (false&&@version.have_rspec_json?) && !task.top_level?
                   '
-                  a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
+                  a href="/eg/#{Addressable::URI.encode(@project_id)}/versions/#{@version.id}/results/#{task.builds.first.id}"
                     i.fa.fa-puzzle-piece title='Results'
                 - if task.waiting?
                   '
-                  a href="/eg/#{URI.escape(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
+                  a href="/eg/#{Addressable::URI.encode(@project_id)}/versions/#{@version.id}/tasks/#{task.id}/bump" Bump
                   '
                   | (p=#{task.priority})
                 '

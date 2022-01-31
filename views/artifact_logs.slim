@@ -7,7 +7,7 @@ p
 ul
   - @files.each do |info|
     li
-      a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@build_id}/artifact-log/#{URI.escape(info.name)}"
+      a href="/eg/#{@project_id}/versions/#{@version_id}/builds/#{@build_id}/artifact-log/#{Addressable::URI.encode(info.name)}"
         = info.name
       '
       ' (#{number_to_human_size(info.size)})
