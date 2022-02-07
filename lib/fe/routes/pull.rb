@@ -17,7 +17,7 @@ Routes.included do
       'topology' => %w(standalone replica-set sharded-cluster load-balanced),
       'auth-and-ssl' => %w(noauth-and-nossl auth-and-ssl),
     }
-    @ruby_versions = %w(2.6 2.5 2.4 2.3 2.2 1.9 head jruby-9.2 jruby-9.1)
+    @ruby_versions = %w(3.1 3.0 2.7 2.6 2.5 2.4 2.3 head jruby-9.3 jruby-9.2)
     @table_keys = %w(mongodb-version topology auth-and-ssl ruby)
     @category_values = {}
     @table = {}
