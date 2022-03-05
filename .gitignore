@@ -1,3 +1,5 @@
 /config/env
 /tmp
 /.config.docker
+/.bundle
+/vendor
