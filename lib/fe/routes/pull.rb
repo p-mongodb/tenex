@@ -375,10 +375,18 @@ Routes.included do
   # pull
   get '/repos/:org/:repo/pulls/:id/gha' do |org_name, repo_name, pull_id|
     @repo = system_fe.hit_repo(org_name, repo_name)
-    pull = gh_repo(org_name, repo_name).pull(pull_id)
-    run = gh_client.workflow_run_for_sha(org_name, repo_name, pull.head_sha)
+    @pull = gh_repo(org_name, repo_name).pull(pull_id)
+    run = gh_client.workflow_run_for_sha(org_name, repo_name, @pull.head_sha)
     @jobs = run.jobs
     slim :pull_gha
+  end
+
+  # pull
+  get '/repos/:org/:repo/pulls/:id/gha/:job_id/log' do |org_name, repo_name, pull_id, job_id|
+    @repo = system_fe.hit_repo(org_name, repo_name)
+    log = gh_client.log_for_workflow_job(org_name, repo_name, job_id)
+    response.header['content-type'] = 'text/plain'
+    log
   end
 
   # aggregated results - jruby

@@ -5,3 +5,5 @@ table.status-table
         = job.name
       td
         = job.conclusion
+      td
+        a href="/repos/#{@pull.repo_full_name}/pulls/#{@pull.number}/gha/#{job.id}/log" Log

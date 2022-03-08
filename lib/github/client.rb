@@ -105,5 +105,10 @@ module Github
       raise 'Not found' unless run
       WorkflowRun.new(self, info: run)
     end
+
+    def log_for_workflow_job(org_name, repo_name, job_id)
+      log = get("/repos/#{org_name}/#{repo_name}/actions/jobs/#{job_id}/logs")
+      log.body
+    end
   end
 end

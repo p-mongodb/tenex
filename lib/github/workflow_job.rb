@@ -13,7 +13,7 @@ module Github
 
     attr_reader :client, :info
 
-    %w(name status conclusion).each do |meth|
+    %w(id name status conclusion).each do |meth|
       define_method(meth) do
         @info.fetch(meth)
       end
