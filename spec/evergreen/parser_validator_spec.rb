@@ -1,3 +1,4 @@
+require 'pathname'
 require 'spec_helper'
 require 'evergreen/parser_validator'
 
