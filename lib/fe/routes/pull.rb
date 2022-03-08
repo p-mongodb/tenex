@@ -385,8 +385,8 @@ Routes.included do
   get '/repos/:org/:repo/pulls/:id/gha/:job_id/log' do |org_name, repo_name, pull_id, job_id|
     @repo = system_fe.hit_repo(org_name, repo_name)
     log = gh_client.log_for_workflow_job(org_name, repo_name, job_id)
-    response.header['content-type'] = 'text/plain'
-    log
+    #response.header['content-type'] = 'text/plain'
+    Ansi::To::Html.new(log).to_html.gsub("\n", '<br>')
   end
 
   # aggregated results - jruby
