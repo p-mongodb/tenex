@@ -1,0 +1,7 @@
+table.status-table
+  - @jobs.each do |job|
+    tr class=job.conclusion
+      td
+        = job.name
+      td
+        = job.conclusion

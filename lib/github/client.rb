@@ -2,6 +2,7 @@ autoload :JSON, 'json'
 require_relative '../paginated_get'
 require 'faraday'
 require 'faraday/detailed_logger'
+require 'faraday_middleware'
 
 module Github
   class Client
@@ -24,6 +25,7 @@ module Github
 
     def initialize(username:, auth_token:)
       @connection ||= Faraday.new('https://api.github.com') do |f|
+        f.use FaradayMiddleware::FollowRedirects
         f.request :url_encoded
         #f.response :detailed_logger
         f.adapter Faraday.default_adapter
@@ -34,6 +36,10 @@ module Github
 
     attr_reader :connection
 
+    def get(url)
+      request(:get, url)
+    end
+
     def get_json(url)
       request_json(:get, url)
     end
@@ -43,6 +49,11 @@ module Github
     end
 
     def request_json(meth, url, params: nil, headers: nil)
+      response = request(meth, url, params: params, headers: headers)
+      JSON.parse(response.body)
+    end
+
+    def request(meth, url, params: nil, headers: nil)
       response = connection.send(meth) do |req|
         req.url(url)
         if params
@@ -68,7 +79,7 @@ module Github
         end
         raise ApiError.new(msg, status: response.status, body: response.body)
       end
-      JSON.parse(response.body)
+      response
     end
 
     def repo(user_name, repo_name)
@@ -86,6 +97,13 @@ module Github
 
     def create_gist(payload)
       post_json('/gists', payload)
+    end
+
+    def workflow_run_for_sha(org_name, repo_name, head_sha)
+      runs = get_json("/repos/#{org_name}/#{repo_name}/actions/runs").fetch('workflow_runs')
+      run = runs.detect { |run| run.fetch('head_sha') == head_sha }
+      raise 'Not found' unless run
+      WorkflowRun.new(self, info: run)
     end
   end
 end

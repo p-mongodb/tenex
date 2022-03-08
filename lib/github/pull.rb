@@ -48,8 +48,13 @@ module Github
         {reviewers: reviewers})
     end
 
+    def statuses_url
+      info.fetch('_links').fetch('statuses').fetch('href')
+    end
+
     def statuses
       (@statuses ||= begin
+        # could use #status_url here
         payload = client.paginated_get("/repos/#{repo_full_name}/statuses/#{head_sha}?per_page=100")
 
         # sometimes the statuses are duplicated?
