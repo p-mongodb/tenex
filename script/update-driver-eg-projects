@@ -28,7 +28,7 @@ class EgProjectUpdater
   def setup_eg_project(suffix, branch_name)
     p [suffix,branch_name]
     project = Env.eg_client.project_by_id("#{eg_project_name}-#{suffix}")
-    previous_sha = repo_cache.commitish_sha("origin/#{branch_name}~1")
+    previous_sha = repo_cache.commitish_sha("upstream/#{branch_name}~1")
     p project.update(
       branch_name: branch_name,
       remote_path: '.evergreen/config.yml',
