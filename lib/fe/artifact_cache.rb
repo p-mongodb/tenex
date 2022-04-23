@@ -55,7 +55,7 @@ class ArtifactCache
     end
     unless File.exist?(local_path)
       puts "Fetching #{url}"
-      content = open(url).read
+      content = URI.open(url).read
       tmp_path = local_path + '.tmp'
       if compress
         Zlib::GzipWriter.open(tmp_path) do |gz|
