@@ -7,7 +7,7 @@ p
     a href="https://evergreen.mongodb.com/build/#{@cached_build.id}" @ Evergreen
 
 - if @result.summary[:failure_count] > 0
-  h2= @result.render_failure_count
+  h2 #{@result.render_failure_count} [#{@branch_name}]
   
   - if @local_test_command
     p
