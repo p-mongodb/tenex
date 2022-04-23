@@ -58,7 +58,7 @@ class Orchestrator
   def transition_issue_to_in_progress(jira_issue_key)
     fields = jirra_client.get_issue_fields(jira_issue_key)
     status_name = fields['status']['name']
-    if ['Needs Triage', 'Open', 'Scheduled'].include?(status_name)
+    if ['Needs Triage', 'Backlog', 'Open', 'Scheduled'].include?(status_name)
       # could raise Jirra::TransitionNotFound
       jirra_client.transition_issue(jira_issue_key, 'In Progress',
         assignee: {name: ENV['JIRA_USERNAME']})
@@ -68,7 +68,7 @@ class Orchestrator
   def transition_issue_to_in_review(jira_issue_key)
     fields = jirra_client.get_issue_fields(jira_issue_key)
     status_name = fields['status']['name']
-    if ['Needs Triage', 'Investigating', 'Open', 'Scheduled', 'In Progress'].include?(status_name)
+    if ['Needs Triage', 'Investigating', 'Backlog', 'Open', 'Scheduled', 'In Progress'].include?(status_name)
       # could raise Jirra::TransitionNotFound
       jirra_client.transition_issue(jira_issue_key, 'In Code Review',
         assignee: {name: ENV['JIRA_USERNAME']})
