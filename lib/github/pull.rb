@@ -258,7 +258,7 @@ module Github
     end
 
     def add_comment(text)
-      client.post_json("repos/#{repo_full_name}/issues/#{number}/comments", body: text)
+      client.post_json("repos/#{repo_full_name}/issues/#{number}/comments", {body: text})
     end
 
     def merge
@@ -271,7 +271,7 @@ module Github
     end
 
     def add_label(*labels)
-      client.post_json("repos/#{repo_full_name}/issues/#{number}/labels", labels: labels)
+      client.post_json("repos/#{repo_full_name}/issues/#{number}/labels", {labels: labels})
     end
 
     def remove_label(*labels)
