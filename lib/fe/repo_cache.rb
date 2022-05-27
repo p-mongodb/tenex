@@ -33,14 +33,7 @@ class RepoCache
         ChildProcessHelper.call(['git', 'init', cached_repo_path.to_s])
       end
       ENV['GIT_SSH_COMMAND'] = 'ssh -o StrictHostKeyChecking=no'
-      Dir.chdir(cached_repo_path) do
-        ChildProcessHelper.call(%w(git rebase --abort))
-        ChildProcessHelper.check_call(%w(git reset --hard))
-        #ChildProcessHelper.check_call(%w(git checkout master))
-        #ChildProcessHelper.check_call(%w(git fetch upstream))
-        #ChildProcessHelper.check_call(%w(git fetch p-mongo))
-        #ChildProcessHelper.check_call(%w(git reset --hard upstream/master))
-      end
+      reset_repo
 
       upstream_full_name = if full_name =~ /10gen/
         "git@github.com:#{full_name}"
@@ -64,6 +57,23 @@ class RepoCache
       true
     end
     self
+  end
+
+  def reset_repo
+    Dir.chdir(cached_repo_path) do
+      ChildProcessHelper.call(%w(git rebase --abort))
+      ChildProcessHelper.check_call(%w(git reset --hard))
+      #ChildProcessHelper.check_call(%w(git checkout master))
+      #ChildProcessHelper.check_call(%w(git fetch upstream))
+      #ChildProcessHelper.check_call(%w(git fetch p-mongo))
+      #ChildProcessHelper.check_call(%w(git reset --hard upstream/master))
+    end
+  end
+
+  def reinit_repo
+    git.remotes.each do |remote|
+      git.remove_remote(remote.name)
+    end
   end
 
   def add_remote(owner_name, repo_name)
@@ -178,12 +188,32 @@ class RepoCache
     git.diff('master', head).patch
   end
 
+  def diff_to_upstream_master(head)
+    git.diff('upstream/master', head).patch
+  end
+
   def diff_to_master_with_submodules(head)
     git.diff('master', head).patch
   end
 
   # Applies patch at the specified path the way Evergreen woud do it.
-  def apply_patch(path)
+  def apply_patch(path: nil, text: nil)
+    unless [path, text].compact.any?
+      raise ArgumentError, 'Exactly one argument must be provided - all were nil'
+    end
+    if [path, text].compact.length > 1
+      raise ArgumentError, 'Multiple arguments were provided'
+    end
+
+    if text
+      Tempfile.create do |file|
+        file << text
+        file.flush
+        apply_patch(path: file.path)
+      end
+      return
+    end
+
     output = Dir.chdir(cached_repo_path) do
       ChildProcessHelper.check_output(%W(
         git apply --binary --index

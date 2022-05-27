@@ -85,7 +85,7 @@ class PatchBuildMaker
         git apply --stat
       ) + [patch_path.to_s])
       rc.checkout(base_branch)
-      rc.apply_patch(patch_path)
+      rc.apply_patch(path: patch_path)
     end
 
     create_patch(base_sha, diff_text)
