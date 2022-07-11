@@ -1,3 +1,4 @@
+require 'base64'
 require 'fe/child_process_helper'
 require 'fe/env'
 
@@ -39,7 +40,7 @@ class PatchBuildMaker
   def submit
     config = eg_project_config
 
-    eg_config = eg_client.project_by_id(config.eg_project_name)
+    eg_config = eg_client.project_by_id(config.default_eg_project_name)
     config_file_path = eg_config.config_file_path
 
     contents = File.read(config_file_path)

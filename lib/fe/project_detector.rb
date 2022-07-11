@@ -13,6 +13,15 @@ class ProjectConfig
   def eg_project_names
     Array(eg_project_name)
   end
+
+  def default_eg_project_name
+    case eg_project_name
+    when Array
+      eg_project_name.first
+    else
+      eg_project_name
+    end
+  end
 end
 
 PROJECT_CONFIGS = {
