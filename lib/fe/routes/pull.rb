@@ -276,7 +276,9 @@ Routes.included do
     @pull = gh_repo(org_name, repo_name).pull(pull_id)
     @repo = system_fe.hit_repo(org_name, repo_name)
     @pull.update(draft: false)
-    @statuses = @pull.request_review(*ENV['PR_REVIEWERS'].split(','))
+    # Dotenv only reads environment variables with keys matching \A\w+\z
+    reviewers = ENV["PR_REVIEWERS_#{repo_name.gsub(/[^\w]/, '_')}"] || ENV['PR_REVIEWERS']
+    @statuses = @pull.request_review(*reviewers.split(','))
 
     pull_p = PullPresenter.new(@pull, eg_client, system_fe, @repo)
     jira_ticket = pull_p.jira_ticket_number
